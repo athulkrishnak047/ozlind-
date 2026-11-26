@@ -47,9 +47,11 @@ export function parseChatRequest(raw: string): ParsedChatRequest {
     const message = item as Record<string, unknown>;
     if ((message.role !== "user" && message.role !== "assistant") ||
         typeof message.content !== "string" ||
-        message.content.trim().length === 0 ||
-        message.content.length > MAX_MESSAGE_CHARS) {
+        message.content.trim().length === 0) {
       return { ok: false, code: "INVALID_MESSAGES", message: "A message has an invalid role or content." };
+    }
+    if (message.content.length > MAX_MESSAGE_CHARS) {
+      return { ok: false, code: "PAYLOAD_TOO_LARGE", message: "A message is too large." };
     }
 
     totalChars += message.content.length;
