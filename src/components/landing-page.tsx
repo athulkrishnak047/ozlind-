@@ -49,7 +49,7 @@ export function LandingPage() {
             <div className="preview-prompt">How can I turn a big idea into a clear first step?</div>
             <div className="preview-response">
               <span className="preview-response-mark">✳</span>
-              <div><strong>Start with the outcome.</strong><p>Let's make the goal concrete, identify what matters most, and find one useful action to take next.</p></div>
+              <div><strong>Start with the outcome.</strong><p>Let&apos;s make the goal concrete, identify what matters most, and find one useful action to take next.</p></div>
             </div>
             <div className="preview-input"><span>Ask Ozlind anything...</span><b>↑</b></div>
           </div>
