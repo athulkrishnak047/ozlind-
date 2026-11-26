@@ -91,6 +91,9 @@ export function ChatWorkspace() {
   const [copiedId, setCopiedId] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const recordingChunksRef = useRef<Blob[]>([]);
+  const [isRecording, setIsRecording] = useState(false);
   const isBusy = status !== "idle";
 
   useEffect(() => {
@@ -156,6 +159,70 @@ export function ChatWorkspace() {
     setDraft("");
     setStatus("idle");
     setErrorMessage("");
+  }
+
+  async function toggleVoiceRecording() {
+    if (isRecording) {
+      recorderRef.current?.stop();
+      setIsRecording(false);
+      return;
+    }
+    if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
+      setErrorMessage("Voice recording is not supported in this browser.");
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const preferredType = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"]
+        .find((type) => MediaRecorder.isTypeSupported(type));
+      const recorder = preferredType
+        ? new MediaRecorder(stream, { mimeType: preferredType })
+        : new MediaRecorder(stream);
+      recordingChunksRef.current = [];
+      recorderRef.current = recorder;
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) recordingChunksRef.current.push(event.data);
+      };
+      recorder.onerror = () => {
+        stream.getTracks().forEach((track) => track.stop());
+        setIsRecording(false);
+        setErrorMessage("The microphone recording failed. Please try again.");
+      };
+      recorder.onstop = async () => {
+        stream.getTracks().forEach((track) => track.stop());
+        recorderRef.current = null;
+        const blob = new Blob(recordingChunksRef.current, { type: recorder.mimeType || "audio/webm" });
+        recordingChunksRef.current = [];
+        if (!blob.size) return;
+        if (blob.size > 4 * 1024 * 1024) {
+          setErrorMessage("This recording is too large. Please record a shorter message (under 4 MB).");
+          return;
+        }
+        setStatus("connecting");
+        setErrorMessage("");
+        try {
+          const form = new FormData();
+          const extension = blob.type.includes("mp4") ? "m4a" : "webm";
+          form.append("audio", blob, `voice-message.${extension}`);
+          const response = await fetch("/api/transcribe", { method: "POST", body: form, cache: "no-store" });
+          const body: unknown = await response.json().catch(() => null);
+          if (!response.ok) throw new Error(errorText(body, `Transcription failed (HTTP ${response.status}).`));
+          const transcript = body && typeof body === "object" && "text" in body ? (body as { text?: unknown }).text : null;
+          if (typeof transcript !== "string" || !transcript.trim()) throw new Error("No speech could be detected.");
+          setDraft((current) => current ? `${current.trim()} ${transcript.trim()}` : transcript.trim());
+        } catch (error) {
+          setErrorMessage(error instanceof Error ? error.message : "Voice transcription failed.");
+        } finally {
+          setStatus("idle");
+        }
+      };
+      recorder.start(250);
+      setIsRecording(true);
+      setErrorMessage("");
+    } catch {
+      setErrorMessage("Allow microphone access in your browser to use voice input.");
+      setIsRecording(false);
+    }
   }
 
   async function copyMessage(message: ChatMessage) {
@@ -405,7 +472,8 @@ export function ChatWorkspace() {
                   <option value="gemini">Gemini</option>
                   <option value="groq">Groq</option>
                 </select>
-                <span className="composer-hint">Shift + Enter for a new line</span>
+                <button className={`voice-button ${isRecording ? "recording" : ""}`} type="button" onClick={() => void toggleVoiceRecording()} disabled={isBusy} aria-label={isRecording ? "Stop voice recording" : "Start voice recording"} title={isRecording ? "Stop recording" : "Speak your message"}>{isRecording ? "■" : "🎙"}</button>
+                <span className="composer-hint">{isRecording ? "Listening… tap stop when finished" : "Shift + Enter for a new line"}</span>
               </div>
               {isBusy ? (
                 <button className="send-button stop-button" type="button" onClick={() => abortRef.current?.abort()} aria-label="Stop generating">■</button>
