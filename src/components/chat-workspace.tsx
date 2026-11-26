@@ -235,6 +235,9 @@ export function ChatWorkspace() {
         ));
       }
     } finally {
+      if (controller.signal.aborted && !receivedText) {
+        setMessages((current) => current.filter((message) => message.id !== assistantMessage.id));
+      }
       if (abortRef.current === controller) abortRef.current = null;
       setStatus("idle");
     }
