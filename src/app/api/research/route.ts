@@ -1,3 +1,5 @@
+import { generateText, type ModelMessage } from "ai";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { consumeAiRateLimit, RateLimitUnavailableError } from "@/lib/ai/access";
 import { MAX_CHAT_BODY_BYTES, parseChatRequest, PayloadTooLargeError, readBoundedRequestBody } from "@/lib/ai/contracts";
 import { jsonFailure } from "@/lib/http";
@@ -34,6 +36,26 @@ function extractSources(tools: unknown): { title: string; url: string }[] {
   return [...sources.values()].slice(0, 8);
 }
 
+function normalizeSources(value: unknown): { title: string; url: string }[] {
+  if (!Array.isArray(value)) return [];
+  const sources = new Map<string, { title: string; url: string }>();
+  for (const item of value) {
+    if (!item || typeof item !== "object") continue;
+    const record = item as Record<string, unknown>;
+    if (typeof record.url !== "string") continue;
+    try {
+      const parsed = new URL(record.url);
+      if (parsed.protocol !== "https:" && parsed.protocol !== "http:") continue;
+      const title = typeof record.title === "string" && record.title.trim()
+        ? record.title.trim().slice(0, 120)
+        : parsed.hostname.replace(/^www\\./, "");
+      sources.set(parsed.href, { title, url: parsed.href });
+    } catch {
+      // Ignore malformed source URLs.
+    }
+  }
+  return [...sources.values()].slice(0, 8);
+}
 export async function POST(request: Request): Promise<Response> {
   try {
     if (!await consumeAiRateLimit(clientKey(request))) {
@@ -48,7 +70,7 @@ export async function POST(request: Request): Promise<Response> {
     throw error;
   }
 
-  if (!process.env.GROQ_API_KEY) {
+  if (!process.env.GEMINI_API_KEY && !process.env.GROQ_API_KEY) {
     return jsonFailure("WEB_SEARCH_UNAVAILABLE", "Live web search is not configured yet.", 503);
   }
 
@@ -69,6 +91,41 @@ export async function POST(request: Request): Promise<Response> {
 
   const parsed = parseChatRequest(rawBody);
   if (!parsed.ok) return jsonFailure(parsed.code, parsed.message, parsed.code === "PAYLOAD_TOO_LARGE" ? 413 : 400);
+
+  const modelMessages: ModelMessage[] = parsed.messages.map(({ role, content }) => ({ role, content }));
+  const system = "You are Ozlind Research. Research the user question using live web search. Prefer primary and authoritative sources, distinguish verified facts from uncertainty, include dates when relevant, and never invent sources. Give a concise but useful answer.";
+  const signal = AbortSignal.any([request.signal, AbortSignal.timeout(45_000)]);
+
+  if (process.env.GEMINI_API_KEY) {
+    try {
+      const google = createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY });
+      const modelId = process.env.GEMINI_MODEL || "gemini-3.8-flash";
+      const result = await generateText({
+        model: google(modelId),
+        system,
+        messages: modelMessages,
+        tools: { google_search: google.tools.googleSearch({}) },
+        maxOutputTokens: 2048,
+        temperature: 0.2,
+        abortSignal: signal
+      });
+      if (result.text.trim()) {
+        return Response.json({
+          text: result.text,
+          provider: "gemini",
+          model: modelId,
+          sources: normalizeSources(result.sources)
+        }, { headers: { "Cache-Control": "no-store" } });
+      }
+    } catch {
+      if (request.signal.aborted) return jsonFailure("REQUEST_CANCELLED", "The research request was cancelled.", 499);
+      // Fall back to Groq when Gemini Search is unavailable for this model or key.
+    }
+  }
+
+  if (!process.env.GROQ_API_KEY) {
+    return jsonFailure("WEB_SEARCH_FAILED", "Gemini web research is temporarily unavailable.", 502);
+  }
 
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -92,7 +149,7 @@ export async function POST(request: Request): Promise<Response> {
         max_completion_tokens: 2048
       }),
       cache: "no-store",
-      signal: AbortSignal.any([request.signal, AbortSignal.timeout(45_000)])
+      signal
     });
 
     if (!response.ok) {
