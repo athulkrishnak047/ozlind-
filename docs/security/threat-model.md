@@ -1,23 +1,24 @@
-# Initial threat model
+# AI platform threat model
 
-**Scope:** Core platform foundation, before user accounts and AI provider calls.
+**Scope:** Core platform and protected Gemini/Groq streaming endpoint.
 
-| Threat | Initial control | Required before public AI launch |
+| Threat | Control in this phase | Remaining requirement |
 | --- | --- | --- |
-| Provider key disclosure | Server-only environment variables; no public env status endpoint | Secret scanning and key rotation runbook |
-| Prompt/request injection | No model/tool execution in this phase | Input boundaries, tool allowlists, output validation, untrusted-content isolation |
-| API abuse and cost exhaustion | No expensive public endpoints | Per-user/IP rate limits, quotas, concurrency limits, spend alerts |
-| Cross-user data exposure | No user data persistence in this phase | Tenant-scoped authorization and isolation tests |
-| Sensitive logs | Response helpers avoid internal error details | Structured redaction policy and log access controls |
-| Browser-based attacks | Security headers; no authenticated surface yet | Nonce-based CSP and CSRF strategy for cookie-authenticated mutations |
-| Supply-chain compromise | Exact direct dependency versions; automated checks required | Lockfile, dependency update policy, vulnerability scanning and review |
+| Provider key disclosure | Server-only env vars; no secret status endpoint | Secret scanning and rotation runbook |
+| Unauthorized model spend | Long bearer-token gate; route disabled without it | Real user identity and per-user authorization before browser exposure |
+| API abuse and cost exhaustion | Body/token limits, per-instance rate limit, provider timeout | Shared distributed quotas, concurrency controls, edge/WAF limits and spend alerts |
+| Prompt injection | No tools, retrieval, or privileged actions; constrained role/content contract | Untrusted-content isolation and tool allowlists before tools are introduced |
+| Cross-user data exposure | No persistence or user-specific data in this phase | Tenant-scoped authorization and isolation tests |
+| Sensitive logs | No prompts, completions, credentials, or raw provider errors logged | Central redaction policy and log access controls |
+| Provider outage | Pre-first-token fallback; bounded per-provider timeout | Provider health metrics and measured routing policy |
+| Supply-chain compromise | Exact direct dependency versions and Dependabot | Committed lockfile, vulnerability scanning and reviewed updates |
 
 ## Data classification
 
-- **Secrets:** API keys, tokens, signing keys. Never log or commit.
+- **Secrets:** API keys, access tokens, signing keys. Never log or commit.
 - **Personal data:** account identifiers, prompts, uploads, memory. Collect only for a declared purpose and retention period.
 - **Operational metadata:** request IDs, latency, status, model IDs, usage counters. Avoid prompt/body capture by default.
 
 ## Release gates
 
-Before a feature handles user data or spends provider credits, it must have an abuse-case review, authorization tests, rate/usage controls, safe failure behavior, retention/deletion behavior, and an operator runbook.
+Before public browser access or user-specific AI features, require authentication, tenant isolation, shared rate/usage controls, concurrency budgets, provider spend alerts, safe failure behavior, retention/deletion behavior, and an operator runbook.
