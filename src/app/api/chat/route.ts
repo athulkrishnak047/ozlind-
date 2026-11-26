@@ -53,7 +53,7 @@ async function streamWithFallback(
       });
 
       for await (const chunk of result.textStream) {
-        if (request.signal.aborted) return;
+        if (signal.aborted) return;
         if (!chunk) continue;
         if (!emittedText) {
           emittedText = true;
@@ -91,7 +91,7 @@ async function streamWithFallback(
       });
       return;
     } catch {
-      if (request.signal.aborted) return;
+      if (signal.aborted) return;
       if (emittedText) {
         event(controller, "error", {
           code: "STREAM_INTERRUPTED",
@@ -102,7 +102,7 @@ async function streamWithFallback(
     }
   }
 
-  if (!request.signal.aborted) {
+  if (!signal.aborted) {
     event(controller, "error", {
       code: "PROVIDERS_UNAVAILABLE",
       message: "Ozlind could not get a response from its AI providers. Please try again shortly."
