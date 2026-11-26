@@ -12,6 +12,26 @@ const HISTORY_KEY = "ozlind:conversations:v1";
 const MAX_SAVED_CONVERSATIONS = 12;
 const MAX_SAVED_MESSAGES = 40;
 
+function isConversation(value: unknown): value is Conversation {
+  if (!value || typeof value !== "object") return false;
+  const item = value as Record<string, unknown>;
+  return typeof item.id === "string" &&
+    typeof item.title === "string" &&
+    typeof item.updatedAt === "number" &&
+    Array.isArray(item.messages) &&
+    item.messages.every((message) => {
+      if (!message || typeof message !== "object") return false;
+      const entry = message as Record<string, unknown>;
+      return typeof entry.id === "string" &&
+        (entry.role === "user" || entry.role === "assistant") &&
+        typeof entry.content === "string";
+    });
+}
+type Conversation = { id: string; title: string; updatedAt: number; messages: ChatMessage[] };
+const HISTORY_KEY = "ozlind:conversations:v1";
+const MAX_SAVED_CONVERSATIONS = 12;
+const MAX_SAVED_MESSAGES = 40;
+
 const suggestions = [
   { title: "Think through an idea", prompt: "Help me think through an idea. Ask focused questions before proposing a solution." },
   { title: "Explain something clearly", prompt: "Explain a difficult topic clearly, with an intuitive example and the important caveats." },
@@ -49,7 +69,26 @@ function errorText(value: unknown, fallback: string): string {
 }
 
 export function ChatWorkspace() {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [activeConversationId, setActiveConversationId] = useState("");
+  const [historyLoaded, setHistoryLoaded] = useState(false);
+  const activeConversation = conversations.find((conversation) => conversation.id === activeConversationId);
+  const messages = activeConversation?.messages ?? [];
+
+  function setMessages(updater: (current: ChatMessage[]) => ChatMessage[]) {
+    if (!activeConversationId) return;
+    setConversations((current) => current.map((conversation) => {
+      if (conversation.id !== activeConversationId) return conversation;
+      const nextMessages = updater(conversation.messages);
+      const firstUserMessage = nextMessages.find((message) => message.role === "user");
+      return {
+        ...conversation,
+        messages: nextMessages,
+        title: firstUserMessage ? firstUserMessage.content.trim().slice(0, 48) : "New chat",
+        updatedAt: Date.now()
+      };
+    }));
+  }
   const [draft, setDraft] = useState("");
   const [provider, setProvider] = useState<Provider>("auto");
   const [status, setStatus] = useState<"idle" | "connecting" | "streaming">("idle");
@@ -58,6 +97,43 @@ export function ChatWorkspace() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
   const isBusy = status !== "idle";
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(HISTORY_KEY);
+      const parsed: unknown = stored ? JSON.parse(stored) : [];
+      const recent = Array.isArray(parsed)
+        ? parsed.filter(isConversation).sort((a, b) => b.updatedAt - a.updatedAt).slice(0, MAX_SAVED_CONVERSATIONS)
+        : [];
+      if (recent.length > 0) {
+        setConversations(recent);
+        setActiveConversationId(recent[0].id);
+      } else {
+        const initial: Conversation = { id: newId(), title: "New chat", updatedAt: Date.now(), messages: [] };
+        setConversations([initial]);
+        setActiveConversationId(initial.id);
+      }
+    } catch {
+      const initial: Conversation = { id: newId(), title: "New chat", updatedAt: Date.now(), messages: [] };
+      setConversations([initial]);
+      setActiveConversationId(initial.id);
+    } finally {
+      setHistoryLoaded(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!historyLoaded) return;
+    try {
+      const recent = [...conversations]
+        .sort((a, b) => b.updatedAt - a.updatedAt)
+        .slice(0, MAX_SAVED_CONVERSATIONS)
+        .map((conversation) => ({ ...conversation, messages: conversation.messages.slice(-MAX_SAVED_MESSAGES) }));
+      window.localStorage.setItem(HISTORY_KEY, JSON.stringify(recent));
+    } catch {
+      setErrorMessage("This browser could not save chat history. You can continue chatting, but history may not persist.");
+    }
+  }, [conversations, historyLoaded]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -69,7 +145,19 @@ export function ChatWorkspace() {
   function startNewChat() {
     abortRef.current?.abort();
     abortRef.current = null;
-    setMessages([]);
+    const conversation: Conversation = { id: newId(), title: "New chat", updatedAt: Date.now(), messages: [] };
+    setConversations((current) => [conversation, ...current].slice(0, MAX_SAVED_CONVERSATIONS));
+    setActiveConversationId(conversation.id);
+    setDraft("");
+    setStatus("idle");
+    setErrorMessage("");
+  }
+
+  function openConversation(conversationId: string) {
+    if (isBusy || conversationId === activeConversationId) return;
+    abortRef.current?.abort();
+    abortRef.current = null;
+    setActiveConversationId(conversationId);
     setDraft("");
     setStatus("idle");
     setErrorMessage("");
@@ -218,7 +306,16 @@ export function ChatWorkspace() {
         <div className="sidebar-section">
           <p className="sidebar-label">WORKSPACE</p>
           <div className="nav-item active"><span aria-hidden="true">✳</span> Assistant</div>
-          <div className="nav-item muted"><span aria-hidden="true">◷</span> Current session</div>
+        </div>
+
+        <div className="sidebar-section recent-chats">
+          <p className="sidebar-label">RECENT CHATS</p>
+          {conversations.filter((conversation) => conversation.messages.length > 0).map((conversation) => (
+            <button className={`nav-item history-item ${conversation.id === activeConversationId ? "active" : ""}`} key={conversation.id} type="button" onClick={() => openConversation(conversation.id)} disabled={isBusy}>
+              <span aria-hidden="true">◷</span><span className="history-title">{conversation.title}</span>
+            </button>
+          ))}
+          {conversations.every((conversation) => conversation.messages.length === 0) && <p className="history-empty">Your conversations will appear here.</p>}
         </div>
 
         <div className="sidebar-spacer" />
@@ -262,8 +359,8 @@ export function ChatWorkspace() {
           ) : (
             <section className="conversation" aria-label="Conversation" aria-live="polite" aria-relevant="additions text">
               <div className="conversation-heading">
-                <span>THIS SESSION</span>
-                <button type="button" onClick={startNewChat}>Clear conversation</button>
+                <span>{activeConversation?.title || "NEW CONVERSATION"}</span>
+                <button type="button" onClick={startNewChat}>New chat</button>
               </div>
               {messages.map((message) => (
                 <article className={`message-row ${message.role}`} key={message.id}>
