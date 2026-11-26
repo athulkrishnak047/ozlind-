@@ -689,3 +689,6 @@ body {
 .attachment-chip > span:nth-child(2) { min-width: 0; overflow: hidden; flex: 1; text-overflow: ellipsis; white-space: nowrap; }
 .attachment-chip > button { width: 22px; height: 22px; border: 0; border-radius: 6px; background: transparent; color: #c6bddf; font-size: 17px; cursor: pointer; }
 .attachment-chip > button:hover { background: rgba(255,255,255,.08); }
+
+/* Video attachment state shares the same compact file chip */
+.attachment-chip > span:first-child { display: grid; width: 20px; height: 20px; flex: 0 0 20px; place-items: center; border-radius: 5px; background: rgba(166,155,255,.12); color: #c4baff; }
