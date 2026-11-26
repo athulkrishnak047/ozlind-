@@ -1,7 +1,7 @@
 import { streamText, type ModelMessage } from "ai";
 import { createRequestId, jsonFailure } from "@/lib/http";
 import { consumeAiRateLimit, isValidAiAccessToken } from "@/lib/ai/access";
-import { MAX_CHAT_BODY_BYTES, parseChatRequest } from "@/lib/ai/contracts";
+import { MAX_CHAT_BODY_BYTES, parseChatRequest, PayloadTooLargeError, readBoundedRequestBody } from "@/lib/ai/contracts";
 import { getProviderCandidates, type ProviderCandidate } from "@/lib/ai/providers";
 
 export const runtime = "nodejs";
@@ -133,8 +133,11 @@ export async function POST(request: Request): Promise<Response> {
 
   let rawBody: string;
   try {
-    rawBody = await request.text();
-  } catch {
+    rawBody = await readBoundedRequestBody(request);
+  } catch (error) {
+    if (error instanceof PayloadTooLargeError) {
+      return jsonFailure("PAYLOAD_TOO_LARGE", "The request is too large.", 413);
+    }
     return jsonFailure("INVALID_REQUEST", "The request body could not be read.", 400);
   }
 
