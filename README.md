@@ -34,6 +34,10 @@ npm run build
 
 Or run all checks in sequence with `npm run verify`.
 
+## Product experience
+
+The responsive Ozlind chat workspace is implemented in `src/components/chat-workspace.tsx`. It supports streaming responses, Gemini/Groq/automatic provider preference, stop generation, prompt starters, and session-only conversation state. See [chat experience](docs/product/chat-experience.md) for the preview access model and limitations.
+
 ## AI core
 
 Phase 2 adds a protected streaming endpoint at `POST /api/chat`, Gemini-first/Groq-fallback routing, bounded retries through provider failover, request validation, timeouts, output limits, and safe error events. The endpoint stays disabled until `OZLIND_AI_ACCESS_TOKEN` is configured. It is not yet a public browser chat API: real user authentication and shared quotas are required first.
@@ -50,4 +54,4 @@ See [AI orchestration](docs/ai/orchestration.md) for model defaults, environment
 - Definition of done: docs/engineering/definition-of-done.md
 - Security policy: SECURITY.md
 
-Database, identity provider, persistent memory, and user-facing chat UI remain separate phases because they require explicit data lifecycle, residency, retention, tenancy, and cost decisions.
+Database, public identity, persistent memory, and server-side conversation history remain separate phases because they require explicit data lifecycle, residency, retention, tenancy, and cost decisions.
