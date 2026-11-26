@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent as ReactKeyboardEvent } from "react";
 
 type Role = "user" | "assistant";
-type ChatMessage = { id: string; role: Role; content: string; provider?: string; model?: string; fallback?: boolean };
+type ChatMessage = { id: string; role: Role; content: string; provider?: string; model?: string; fallback?: boolean; sources?: { title: string; url: string }[] };
 type Provider = "auto" | "gemini" | "groq";
 type StreamEvent = { event: string; data: Record<string, unknown> };
 type Conversation = { id: string; title: string; updatedAt: number; messages: ChatMessage[] };
@@ -86,6 +86,7 @@ export function ChatWorkspace() {
   }
   const [draft, setDraft] = useState("");
   const [provider, setProvider] = useState<Provider>("auto");
+  const [webSearchEnabled, setWebSearchEnabled] = useState(false);
   const [status, setStatus] = useState<"idle" | "connecting" | "streaming">("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [copiedId, setCopiedId] = useState("");
@@ -265,6 +266,40 @@ export function ChatWorkspace() {
     setErrorMessage("");
     setStatus("connecting");
 
+    if (webSearchEnabled) {
+      try {
+        const response = await fetch("/api/research", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ provider: "auto", messages: requestMessages }),
+          cache: "no-store"
+        });
+        const body: unknown = await response.json().catch(() => null);
+        if (!response.ok) throw new Error(errorText(body, `Research failed (HTTP ${response.status}).`));
+        const result = body && typeof body === "object" ? body as { text?: unknown; provider?: unknown; model?: unknown; sources?: unknown } : {};
+        if (typeof result.text !== "string" || !result.text.trim()) throw new Error("The research provider returned an empty answer.");
+        const sources = Array.isArray(result.sources)
+          ? result.sources.filter((item): item is { title: string; url: string } =>
+              !!item && typeof item === "object" &&
+              typeof (item as { title?: unknown }).title === "string" &&
+              typeof (item as { url?: unknown }).url === "string" &&
+              /^https?:\\/\\//.test((item as { url: string }).url)
+            ).slice(0, 8)
+          : [];
+        setMessages((current) => current.map((message) =>
+          message.id === assistantMessage.id
+            ? { ...message, content: result.text as string, provider: "groq", model: "groq/compound", sources }
+            : message
+        ));
+      } catch (error) {
+        setErrorMessage(error instanceof Error ? error.message : "Live web research failed.");
+        setMessages((current) => current.filter((message) => message.id !== assistantMessage.id));
+      } finally {
+        setStatus("idle");
+      }
+      return;
+    }
+
     const controller = new AbortController();
     abortRef.current = controller;
     let receivedText = false;
@@ -443,6 +478,17 @@ export function ChatWorkspace() {
                     </div>
                     {message.content ? (
                       <div className="message-content">{message.content}</div>
+                    )}
+                    {message.role === "assistant" && message.sources && message.sources.length > 0 && (
+                      <div className="message-sources" aria-label="Research sources">
+                        <strong>Sources</strong>
+                        {message.sources.map((source) => (
+                          <a href={source.url} key={source.url} target="_blank" rel="noopener noreferrer">{source.title} ↗</a>
+                        ))}
+                      </div>
+                    )}
+                    {message.role === "assistant" && message.content && (
+                      <div className="message-actions">
                     ) : (
                       <div className="typing-indicator" aria-label="Ozlind is thinking"><i /><i /><i /></div>
                     )}
@@ -479,6 +525,7 @@ export function ChatWorkspace() {
                   <option value="gemini">Gemini</option>
                   <option value="groq">Groq</option>
                 </select>
+                <button className={`web-search-button ${webSearchEnabled ? "enabled" : ""}`} type="button" onClick={() => setWebSearchEnabled((value) => !value)} disabled={isBusy} aria-pressed={webSearchEnabled} title="Use live web research">Web</button>
                 <button className={`voice-button ${isRecording ? "recording" : ""}`} type="button" onClick={() => void toggleVoiceRecording()} disabled={isBusy} aria-label={isRecording ? "Stop voice recording" : "Start voice recording"} title={isRecording ? "Stop recording" : "Speak your message"}>{isRecording ? "■" : "🎙"}</button>
                 <span className="composer-hint">{isRecording ? "Listening… tap stop when finished" : "Shift + Enter for a new line"}</span>
               </div>
