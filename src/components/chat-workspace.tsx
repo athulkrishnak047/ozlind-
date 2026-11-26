@@ -48,9 +48,6 @@ export function ChatWorkspace() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [draft, setDraft] = useState("");
   const [provider, setProvider] = useState<Provider>("auto");
-  const [serviceToken, setServiceToken] = useState("");
-  const [tokenDraft, setTokenDraft] = useState("");
-  const [connectOpen, setConnectOpen] = useState(false);
   const [status, setStatus] = useState<"idle" | "connecting" | "streaming">("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [copiedId, setCopiedId] = useState("");
@@ -64,36 +61,6 @@ export function ChatWorkspace() {
 
   useEffect(() => () => abortRef.current?.abort(), []);
 
-  useEffect(() => {
-    if (!connectOpen) return;
-    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    document.getElementById("service-token")?.focus();
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setConnectOpen(false);
-        return;
-      }
-      if (event.key === "Tab") {
-        const focusable = document.querySelectorAll<HTMLElement>(
-          ".connect-modal button:not([disabled]), .connect-modal input:not([disabled])"
-        );
-        const first = focusable.item(0);
-        const last = focusable.item(focusable.length - 1);
-        if (event.shiftKey && document.activeElement === first) {
-          event.preventDefault();
-          last?.focus();
-        } else if (!event.shiftKey && document.activeElement === last) {
-          event.preventDefault();
-          first?.focus();
-        }
-      }
-    };
-    window.addEventListener("keydown", handleEscape);
-    return () => {
-      window.removeEventListener("keydown", handleEscape);
-      previousFocus?.focus();
-    };
-  }, [connectOpen]);
 
   function startNewChat() {
     abortRef.current?.abort();
@@ -101,18 +68,6 @@ export function ChatWorkspace() {
     setMessages([]);
     setDraft("");
     setStatus("idle");
-    setErrorMessage("");
-  }
-
-  function saveToken() {
-    const value = tokenDraft.trim();
-    if (value.length < 32) {
-      setErrorMessage("The service token must contain at least 32 characters.");
-      return;
-    }
-    setServiceToken(value);
-    setTokenDraft("");
-    setConnectOpen(false);
     setErrorMessage("");
   }
 
@@ -130,12 +85,6 @@ export function ChatWorkspace() {
     event.preventDefault();
     const content = draft.trim();
     if (!content || isBusy) return;
-    if (!serviceToken) {
-      setConnectOpen(true);
-      setErrorMessage("Connect the protected AI service before sending a message.");
-      return;
-    }
-
     const userMessage: ChatMessage = { id: newId(), role: "user", content };
     const assistantMessage: ChatMessage = { id: newId(), role: "assistant", content: "" };
     const previousMessages: { role: Role; content: string }[] = [];
@@ -195,7 +144,6 @@ export function ChatWorkspace() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${serviceToken}`
         },
         body: JSON.stringify({ provider, messages: requestMessages }),
         signal: controller.signal,
@@ -273,12 +221,11 @@ export function ChatWorkspace() {
         <div className="sidebar-note">
           <span className="note-icon" aria-hidden="true">◇</span>
           <p>Thoughtful AI, built with care.</p>
-          <span>Private preview · v0.3</span>
+          <span>Built for curious minds</span>
         </div>
         <div className="profile-row">
           <div className="profile-avatar">O</div>
-          <div><strong>Ozlind workspace</strong><span>Preview access</span></div>
-          <button className="icon-button profile-menu" type="button" aria-label="Connect AI service" onClick={() => setConnectOpen(true)}>•••</button>
+          <div><strong>Ozlind</strong><span>AI workspace</span></div>
         </div>
       </aside>
 
@@ -286,10 +233,7 @@ export function ChatWorkspace() {
         <header className="topbar">
           <div className="breadcrumbs"><span>Workspace</span><span className="crumb-separator">/</span><strong>Assistant</strong></div>
           <div className="topbar-actions">
-            <span className="privacy-pill"><span /> Private preview</span>
-            <button className="connect-button" type="button" onClick={() => setConnectOpen(true)}>
-              <span aria-hidden="true">⌘</span> {serviceToken ? "Token in this tab" : "Add access token"}
-            </button>
+            <span className="privacy-pill"><span /> Public workspace</span>
           </div>
         </header>
 
@@ -378,22 +322,6 @@ export function ChatWorkspace() {
         </div>
       </section>
 
-      {connectOpen && (
-        <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setConnectOpen(false); }}>
-          <section className="connect-modal" role="dialog" aria-modal="true" aria-labelledby="connect-title">
-            <button className="modal-close" type="button" onClick={() => setConnectOpen(false)} aria-label="Close">×</button>
-            <div className="modal-mark">⌘</div>
-            <p className="welcome-kicker">PRIVATE SERVICE ACCESS</p>
-            <h2 id="connect-title">Connect Ozlind AI</h2>
-            <p className="modal-copy">Enter the <code>OZLIND_AI_ACCESS_TOKEN</code> configured by the project owner in Vercel. This token stays in this tab’s memory only and is never saved to browser storage.</p>
-            <label className="token-label" htmlFor="service-token">Service access token</label>
-            <input id="service-token" type="password" autoComplete="off" value={tokenDraft} onChange={(event) => setTokenDraft(event.target.value)} placeholder="Paste your private service token" />
-            <button className="modal-submit" type="button" onClick={saveToken} disabled={tokenDraft.trim().length < 32}>Use token for this tab <span>→</span></button>
-            {serviceToken && <button className="disconnect-button" type="button" onClick={() => { setServiceToken(""); setTokenDraft(""); setConnectOpen(false); }}>Disconnect current token</button>}
-            <p className="modal-footnote">Do not share this token. Public user accounts and shared usage limits are not part of this preview.</p>
-          </section>
-        </div>
-      )}
     </main>
   );
 }
