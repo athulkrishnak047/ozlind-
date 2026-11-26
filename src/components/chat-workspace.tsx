@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { RichText } from "./rich-text";
 import { useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent as ReactKeyboardEvent } from "react";
 
 type Role = "user" | "assistant";
@@ -75,6 +76,7 @@ export function ChatWorkspace() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConversationId, setActiveConversationId] = useState("");
   const [historyLoaded, setHistoryLoaded] = useState(false);
+  const [historySearch, setHistorySearch] = useState("");
   const activeConversation = conversations.find((conversation) => conversation.id === activeConversationId);
   const messages = useMemo(() => activeConversation?.messages ?? [], [activeConversation]);
 
@@ -99,6 +101,7 @@ export function ChatWorkspace() {
   const [errorMessage, setErrorMessage] = useState("");
   const [copiedId, setCopiedId] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
+  const composerRef = useRef<HTMLFormElement>(null);
   const abortRef = useRef<AbortController | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const recordingChunksRef = useRef<Blob[]>([]);
@@ -253,6 +256,57 @@ export function ChatWorkspace() {
     } catch {
       setErrorMessage("Clipboard access is unavailable in this browser.");
     }
+  }
+
+  function exportConversation() {
+    if (!activeConversation || activeConversation.messages.length === 0) return;
+    const markdown = [
+      `# ${activeConversation.title || "Ozlind conversation"}`,
+      "",
+      ...activeConversation.messages.flatMap((message) => [
+        `## ${message.role === "user" ? "You" : "Ozlind"}`,
+        "",
+        message.content,
+        ""
+      ])
+    ].join("\n");
+    const blob = new Blob([markdown], { type: "text/markdown;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const filename = (activeConversation.title || "ozlind-chat")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 48) || "ozlind-chat";
+    link.href = url;
+    link.download = `${filename}.md`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function clearConversation() {
+    if (isBusy) return;
+    setMessages(() => []);
+    setDraft("");
+    setErrorMessage("");
+  }
+
+  function editMessage(message: ChatMessage, index: number) {
+    if (isBusy || message.role !== "user") return;
+    setMessages((current) => current.slice(0, index));
+    setDraft(message.content);
+    setErrorMessage("");
+  }
+
+  function regenerateResponse(index: number) {
+    if (isBusy) return;
+    const previousUser = messages.slice(0, index).reverse().find((message) => message.role === "user");
+    if (!previousUser) return;
+    const userIndex = messages.findIndex((message) => message.id === previousUser.id);
+    setMessages((current) => current.slice(0, userIndex + 1));
+    setDraft(previousUser.content);
+    setErrorMessage("");
+    window.requestAnimationFrame(() => composerRef.current?.requestSubmit());
   }
 
   async function sendMessage(event: FormEvent<HTMLFormElement>) {
@@ -432,7 +486,18 @@ export function ChatWorkspace() {
 
         <div className="sidebar-section recent-chats">
           <p className="sidebar-label">RECENT CHATS</p>
-          {conversations.filter((conversation) => conversation.messages.length > 0).map((conversation) => (
+          <input
+            className="history-search"
+            type="search"
+            value={historySearch}
+            onChange={(event) => setHistorySearch(event.target.value)}
+            placeholder="Search conversations"
+            aria-label="Search conversations"
+          />
+          {conversations
+            .filter((conversation) => conversation.messages.length > 0)
+            .filter((conversation) => conversation.title.toLowerCase().includes(historySearch.trim().toLowerCase()))
+            .map((conversation) => (
             <button className={`nav-item history-item ${conversation.id === activeConversationId ? "active" : ""}`} key={conversation.id} type="button" onClick={() => openConversation(conversation.id)} disabled={isBusy}>
               <span aria-hidden="true">◷</span><span className="history-title">{conversation.title}</span>
             </button>
@@ -482,9 +547,13 @@ export function ChatWorkspace() {
             <section className="conversation" aria-label="Conversation" aria-live="polite" aria-relevant="additions text">
               <div className="conversation-heading">
                 <span>{activeConversation?.title || "NEW CONVERSATION"}</span>
-                <button type="button" onClick={startNewChat}>New chat</button>
+                <div className="conversation-tools">
+                  <button type="button" onClick={exportConversation}>Export .md</button>
+                  <button type="button" onClick={clearConversation} disabled={isBusy}>Clear chat</button>
+                  <button type="button" onClick={startNewChat}>New chat</button>
+                </div>
               </div>
-              {messages.map((message) => (
+              {messages.map((message, index) => (
                 <article className={`message-row ${message.role}`} key={message.id}>
                   <div className={`message-avatar ${message.role === "assistant" ? "assistant-avatar" : "user-avatar"}`}>
                     {message.role === "assistant" ? "✳" : "U"}
@@ -495,7 +564,7 @@ export function ChatWorkspace() {
                       {message.role === "assistant" && message.provider && <span>{[message.provider, message.model].filter(Boolean).join(" · ")}{message.fallback ? " · fallback" : ""}</span>}
                     </div>
                     {message.content ? (
-                      <div className="message-content">{message.content}</div>
+                      <RichText content={message.content} />
                     ) : (
                       <div className="typing-indicator" aria-label="Ozlind is thinking"><i /><i /><i /></div>
                     )}
@@ -510,6 +579,14 @@ export function ChatWorkspace() {
                     {message.role === "assistant" && message.content && (
                       <div className="message-actions">
                         <button type="button" onClick={() => void copyMessage(message)}>{copiedId === message.id ? "Copied" : "Copy"}</button>
+                        {!isBusy && message.id === messages[messages.length - 1]?.id && (
+                          <button type="button" onClick={() => regenerateResponse(index)}>Regenerate</button>
+                        )}
+                      </div>
+                    )}
+                    {message.role === "user" && !isBusy && (
+                      <div className="message-actions">
+                        <button type="button" onClick={() => editMessage(message, index)}>Edit</button>
                       </div>
                     )}
                   </div>
@@ -522,7 +599,7 @@ export function ChatWorkspace() {
 
         <div className="composer-area">
           {errorMessage && <div className="error-banner" role="alert"><span>!</span>{errorMessage}<button type="button" onClick={() => setErrorMessage("")} aria-label="Dismiss error">×</button></div>}
-          <form className="composer" onSubmit={sendMessage}>
+          <form className="composer" onSubmit={sendMessage} ref={composerRef}>
             <textarea
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
