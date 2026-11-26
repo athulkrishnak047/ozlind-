@@ -35,6 +35,7 @@ async function streamWithFallback(
 
     let emittedText = false;
     let providerError: unknown;
+    const attemptStartedAt = Date.now();
     const timeout = AbortSignal.timeout(25_000);
     const signal = AbortSignal.any([request.signal, timeout]);
 
@@ -60,7 +61,8 @@ async function streamWithFallback(
             requestId,
             provider: candidate.id,
             model: candidate.modelId,
-            fallback: candidate !== candidates[0]
+            fallback: candidate !== candidates[0],
+            timeToFirstTokenMs: Date.now() - attemptStartedAt
           });
         }
         event(controller, "delta", { text: chunk });
@@ -70,13 +72,23 @@ async function streamWithFallback(
         if (!emittedText) continue;
         event(controller, "error", {
           code: "STREAM_INTERRUPTED",
-          message: "The response was interrupted. Please retry your message."
+          message: "The response was interrupted. Please retry your message.",
+          durationMs: Date.now() - attemptStartedAt
         });
         return;
       }
 
       if (!emittedText) continue;
-      event(controller, "done", { requestId });
+      const usage = await result.totalUsage;
+      event(controller, "done", {
+        requestId,
+        durationMs: Date.now() - attemptStartedAt,
+        usage: {
+          inputTokens: usage.inputTokens ?? null,
+          outputTokens: usage.outputTokens ?? null,
+          totalTokens: usage.totalTokens ?? null
+        }
+      });
       return;
     } catch {
       if (request.signal.aborted) return;
@@ -167,7 +179,6 @@ export async function POST(request: Request): Promise<Response> {
     headers: {
       "Content-Type": "text/event-stream; charset=utf-8",
       "Cache-Control": "no-cache, no-transform",
-      "Connection": "keep-alive",
       "X-Accel-Buffering": "no",
       "X-Content-Type-Options": "nosniff",
       "X-Request-Id": requestId
