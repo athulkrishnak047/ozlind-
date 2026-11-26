@@ -137,7 +137,11 @@ export function ChatWorkspace() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages]);
 
-  useEffect(() => () => {\n    abortRef.current?.abort();\n    recorderRef.current?.stream.getTracks().forEach((track) => track.stop());\n    recorderRef.current?.stop();\n  }, []);
+  useEffect(() => () => {
+    abortRef.current?.abort();
+    recorderRef.current?.stream.getTracks().forEach((track) => track.stop());
+    recorderRef.current?.stop();
+  }, []);
 
 
   function startNewChat() {
