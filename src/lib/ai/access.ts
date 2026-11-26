@@ -1,4 +1,4 @@
-import { createHash, randomUUID, timingSafeEqual } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 8;
@@ -12,12 +12,6 @@ export class RateLimitUnavailableError extends Error {
   }
 }
 
-export function isValidAiAccessToken(header: string | null, expectedToken: string | undefined): boolean {
-  if (!expectedToken || expectedToken.length < 32 || !header?.startsWith("Bearer ")) return false;
-  const supplied = Buffer.from(header.slice(7));
-  const expected = Buffer.from(expectedToken);
-  return supplied.length === expected.length && timingSafeEqual(supplied, expected);
-}
 
 async function consumeDistributedRateLimit(clientKey: string, now: number): Promise<boolean> {
   const url = process.env.UPSTASH_REDIS_REST_URL?.replace(/\/$/, "");
