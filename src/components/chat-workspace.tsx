@@ -298,7 +298,7 @@ export function ChatWorkspace() {
           <span className="brand-word">ozlind<span className="brand-period">.</span></span>
         </Link>
 
-        <button className="new-chat-button" type="button" onClick={startNewChat}>
+        <button className="new-chat-button" type="button" onClick={startNewChat} disabled={!historyLoaded}>
           <span aria-hidden="true">＋</span> New chat
 
         </button>
