@@ -65,3 +65,40 @@ export function parseChatRequest(raw: string): ParsedChatRequest {
 
   return { ok: true, messages, preferredProvider: provider };
 }
+
+export class PayloadTooLargeError extends Error {
+  constructor() {
+    super("The request is too large.");
+    this.name = "PayloadTooLargeError";
+  }
+}
+
+export async function readBoundedRequestBody(request: Request): Promise<string> {
+  const reader = request.body?.getReader();
+  if (!reader) return "";
+
+  const chunks: Uint8Array[] = [];
+  let totalBytes = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      totalBytes += value.byteLength;
+      if (totalBytes > MAX_CHAT_BODY_BYTES) {
+        await reader.cancel();
+        throw new PayloadTooLargeError();
+      }
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+
+  const body = new Uint8Array(totalBytes);
+  let offset = 0;
+  for (const chunk of chunks) {
+    body.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return new TextDecoder().decode(body);
+}
