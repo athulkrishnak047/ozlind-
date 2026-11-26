@@ -42,7 +42,7 @@ Body:
 - `auto` tries Gemini first, then Groq. Selecting one provider makes it preferred, not exclusive.
 - Only user and assistant messages are accepted. The final message must be from the user.
 - Maximum 20 messages, 8,000 characters per message, 24,000 total characters, and 48 KiB request body.
-- The endpoint streams Server-Sent Events: `start`, `delta`, `done`, or `error`.
+- The endpoint streams Server-Sent Events: `start`, `delta`, `done`, or `error`. The start event includes provider/model and time-to-first-token; the done event includes total duration and provider-reported token usage when available.
 - The first provider that emits text wins. If a provider fails before its first text chunk, the next configured provider is attempted. Once output has begun, the stream is not silently restarted on another model because that could duplicate or contradict already delivered text.
 
 ## Safety and operational controls
@@ -52,7 +52,7 @@ Body:
 - A per-instance in-memory limit of 8 requests per client per minute is included as defense in depth. It is not a distributed/global quota and can reset when Vercel instances recycle.
 - Before public browser access, add real user authentication, tenant-level quotas, and a shared rate-limit/usage store or enforce equivalent controls at the edge. Do not treat the in-memory limiter as sufficient protection against distributed abuse.
 - Each provider attempt has a 25-second timeout; the route has a 60-second maximum duration.
-- No prompt, completion, key, or raw upstream error is written to logs by this implementation.
+- No prompt, completion, key, or raw upstream error is written to logs by this implementation. Stream metadata reports latency and provider token usage without retaining conversation content.
 - No tools are exposed to the model in this phase; model output is plain text only.
 - Responses are not persisted. Conversation history is supplied by the caller on each request.
 
