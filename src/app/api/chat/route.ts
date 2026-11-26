@@ -27,24 +27,24 @@ async function streamWithFallback(
   controller: ReadableStreamDefaultController<Uint8Array>,
   candidates: ProviderCandidate[],
   messages: ModelMessage[],
-  request: Request,
+  signal: AbortSignal,
   requestId: string
 ): Promise<void> {
   for (const candidate of candidates) {
-    if (request.signal.aborted) return;
+    if (signal.aborted) return;
 
     let emittedText = false;
     let providerError: unknown;
     const attemptStartedAt = Date.now();
     const timeout = AbortSignal.timeout(25_000);
-    const signal = AbortSignal.any([request.signal, timeout]);
+    const providerSignal = AbortSignal.any([signal, timeout]);
 
     try {
       const result = streamText({
         model: candidate.model,
         system: SYSTEM_INSTRUCTIONS,
         messages,
-        abortSignal: signal,
+        abortSignal: providerSignal,
         maxOutputTokens: 2_048,
         temperature: 0.3,
         onError: ({ error }) => {
@@ -121,17 +121,9 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   if (!consumeAiRateLimit(clientKey(request))) {
-    return new Response(JSON.stringify({
-      ok: false,
-      error: { code: "RATE_LIMITED", message: "Too many requests. Please wait and try again." }
-    }), {
-      status: 429,
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        "Cache-Control": "no-store, max-age=0",
-        "Retry-After": "60"
-      }
-    });
+    const response = jsonFailure("RATE_LIMITED", "Too many requests. Please wait and try again.", 429);
+    response.headers.set("Retry-After", "60");
+    return response;
   }
 
   const declaredLength = Number(request.headers.get("content-length") || 0);
@@ -159,18 +151,25 @@ export async function POST(request: Request): Promise<Response> {
 
   const messages: ModelMessage[] = parsed.messages.map(({ role, content }) => ({ role, content }));
   const requestId = createRequestId();
+  const streamAbort = new AbortController();
+  const streamSignal = AbortSignal.any([request.signal, streamAbort.signal]);
   const body = new ReadableStream<Uint8Array>({
     start(controller) {
-      void streamWithFallback(controller, candidates, messages, request, requestId)
+      void streamWithFallback(controller, candidates, messages, streamSignal, requestId)
         .catch(() => {
-          if (!request.signal.aborted) {
+          if (!streamSignal.aborted) {
             event(controller, "error", {
               code: "INTERNAL_STREAM_ERROR",
               message: "The response could not be completed. Please retry."
             });
           }
         })
-        .finally(() => controller.close());
+        .finally(() => {
+          if (!streamSignal.aborted) controller.close();
+        });
+    },
+    cancel() {
+      streamAbort.abort();
     }
   });
 
