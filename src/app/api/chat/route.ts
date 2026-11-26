@@ -19,7 +19,7 @@ function event(controller: ReadableStreamDefaultController<Uint8Array>, name: st
 }
 
 function clientKey(request: Request): string {
-  const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  const forwarded = request.headers.get("x-forwarded-for")?.split(",").at(-1)?.trim();
   return request.headers.get("x-real-ip") || forwarded || "unknown";
 }
 
