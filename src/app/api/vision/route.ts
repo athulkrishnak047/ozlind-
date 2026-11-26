@@ -59,12 +59,12 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   if (!process.env.GEMINI_API_KEY) {
-    return jsonFailure("VISION_NOT_CONFIGURED", "Image and PDF analysis is not configured yet.", 503);
+    return jsonFailure("VISION_NOT_CONFIGURED", "Multimodal file analysis is not configured yet.", 503);
   }
 
   const contentType = request.headers.get("content-type") || "";
   if (!contentType.toLowerCase().startsWith("multipart/form-data;")) {
-    return jsonFailure("INVALID_CONTENT_TYPE", "Send an image or PDF as multipart form data.", 415);
+    return jsonFailure("INVALID_CONTENT_TYPE", "Send an image, PDF, or short video as multipart form data.", 415);
   }
 
   const declaredLength = Number(request.headers.get("content-length") || 0);
@@ -88,7 +88,7 @@ export async function POST(request: Request): Promise<Response> {
   const uploaded = form.get("file");
   const history = form.get("messages");
   if (!(uploaded instanceof File) || typeof history !== "string") {
-    return jsonFailure("INVALID_ATTACHMENT", "Attach one image or PDF and include the conversation.", 400);
+    return jsonFailure("INVALID_ATTACHMENT", "Attach one image, PDF, or short video and include the conversation.", 400);
   }
   if (uploaded.size === 0) {
     return jsonFailure("EMPTY_ATTACHMENT", "The selected file is empty.", 400);
@@ -97,7 +97,7 @@ export async function POST(request: Request): Promise<Response> {
     return jsonFailure("PAYLOAD_TOO_LARGE", "The attachment is too large. The limit is 10 MB.", 413);
   }
   if (!(SUPPORTED_ATTACHMENT_TYPES as readonly string[]).includes(uploaded.type)) {
-    return jsonFailure("UNSUPPORTED_ATTACHMENT", "Use a PDF, PNG, JPEG, or WebP file.", 415);
+    return jsonFailure("UNSUPPORTED_ATTACHMENT", "Use a PDF, PNG, JPEG, WebP, MP4, or WebM file.", 415);
   }
 
   const parsed = parseChatRequest(JSON.stringify({ provider: "gemini", messages: (() => {
@@ -144,8 +144,8 @@ export async function POST(request: Request): Promise<Response> {
       ? {
           model,
           input: [
-            { type: "text", text: prompt },
-            { type: "video", data: base64, mime_type: uploaded.type }
+            { type: "video", data: base64, mime_type: uploaded.type },
+            { type: "text", text: prompt }
           ],
           store: false
         }
