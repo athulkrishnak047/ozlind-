@@ -79,6 +79,7 @@ export function ChatWorkspace() {
   const [activeConversationId, setActiveConversationId] = useState("");
   const [historyLoaded, setHistoryLoaded] = useState(false);
   const [historySearch, setHistorySearch] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const activeConversation = conversations.find((conversation) => conversation.id === activeConversationId);
   const messages = useMemo(() => activeConversation?.messages ?? [], [activeConversation]);
 
@@ -173,6 +174,7 @@ export function ChatWorkspace() {
     const conversation: Conversation = { id: newId(), title: "New chat", updatedAt: Date.now(), messages: [] };
     setConversations((current) => [conversation, ...current].slice(0, MAX_SAVED_CONVERSATIONS));
     setActiveConversationId(conversation.id);
+    setSidebarOpen(false);
     setDraft("");
     setAttachment(null);
     setStatus("idle");
@@ -184,6 +186,7 @@ export function ChatWorkspace() {
     abortRef.current?.abort();
     abortRef.current = null;
     setActiveConversationId(conversationId);
+    setSidebarOpen(false);
     setDraft("");
     setAttachment(null);
     setStatus("idle");
@@ -408,7 +411,7 @@ export function ChatWorkspace() {
         const response = await fetch("/api/research", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ provider: "auto", messages: requestMessages }),
+          body: JSON.stringify({ provider, messages: requestMessages }),
           cache: "no-store",
           signal: researchController.signal
         });
@@ -537,7 +540,7 @@ export function ChatWorkspace() {
 
   return (
     <main className="workspace">
-      <aside className="sidebar" aria-label="Workspace navigation">
+      <aside className={`sidebar ${sidebarOpen ? "sidebar-open" : ""}`} aria-label="Workspace navigation">
         <Link className="brand" href="/" aria-label="Ozlind home">
           <span className="brand-symbol" aria-hidden="true"><span /></span>
           <span className="brand-word">ozlind<span className="brand-period">.</span></span>
@@ -585,9 +588,11 @@ export function ChatWorkspace() {
           <div><strong>Ozlind</strong><span>AI workspace</span></div>
         </div>
       </aside>
+      {sidebarOpen && <button className="mobile-sidebar-backdrop" type="button" aria-label="Close navigation" onClick={() => setSidebarOpen(false)} />}
 
       <section className="main-panel">
         <header className="topbar">
+          <button className="mobile-nav-toggle" type="button" aria-label={sidebarOpen ? "Close navigation" : "Open navigation"} aria-expanded={sidebarOpen} onClick={() => setSidebarOpen((open) => !open)}><span /><span /><span /></button>
           <div className="breadcrumbs"><span>Workspace</span><span className="crumb-separator">/</span><strong>Assistant</strong></div>
           <div className="topbar-actions">
             <span className="privacy-pill"><span /> Public workspace</span>
@@ -676,7 +681,7 @@ export function ChatWorkspace() {
               accept=".pdf,application/pdf,image/png,image/jpeg,image/webp,video/mp4,video/webm,.mp4,.webm"
               onChange={handleAttachmentChange}
               disabled={isBusy}
-              aria-label="Choose a PDF or image"
+              aria-label="Choose a PDF, image, or short video"
             />
             {attachment && (
               <div className="attachment-chip">
@@ -701,7 +706,7 @@ export function ChatWorkspace() {
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isBusy}
-                  aria-label="Attach a PDF or image"
+                  aria-label="Attach a PDF, image, or short video"
                   title="Attach a PDF, image or short video (up to 10 MB)"
                 >＋</button>
                 <label className="provider-select-label" htmlFor="provider-select">MODEL</label>
