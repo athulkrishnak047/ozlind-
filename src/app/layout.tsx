@@ -2,8 +2,8 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: { default: "Ozlind", template: "%s · Ozlind" },
-  description: "A carefully engineered AI platform.",
+  title: { default: "Ozlind — Think clearly. Build boldly.", template: "%s · Ozlind" },
+  description: "A thoughtful AI workspace for exploring ideas, solving problems, and building what matters.",
   applicationName: "Ozlind",
   robots: { index: false, follow: false }
 };
