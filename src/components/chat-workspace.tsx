@@ -275,12 +275,15 @@ export function ChatWorkspace() {
     setStatus("connecting");
 
     if (webSearchEnabled) {
+      const researchController = new AbortController();
+      abortRef.current = researchController;
       try {
         const response = await fetch("/api/research", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ provider: "auto", messages: requestMessages }),
-          cache: "no-store"
+          cache: "no-store",
+          signal: researchController.signal
         });
         const body: unknown = await response.json().catch(() => null);
         if (!response.ok) throw new Error(errorText(body, `Research failed (HTTP ${response.status}).`));
@@ -300,9 +303,12 @@ export function ChatWorkspace() {
             : message
         ));
       } catch (error) {
-        setErrorMessage(error instanceof Error ? error.message : "Live web research failed.");
+        if (!researchController.signal.aborted) {
+          setErrorMessage(error instanceof Error ? error.message : "Live web research failed.");
+        }
         setMessages((current) => current.filter((message) => message.id !== assistantMessage.id));
       } finally {
+        if (abortRef.current === researchController) abortRef.current = null;
         setStatus("idle");
       }
       return;
