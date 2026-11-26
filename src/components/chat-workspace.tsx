@@ -236,11 +236,11 @@ export function ChatWorkspace() {
         <Link className="brand" href="/" aria-label="Ozlind home">
           <span className="brand-symbol" aria-hidden="true"><span /></span>
           <span className="brand-word">ozlind<span className="brand-period">.</span></span>
-        </a>
+        </Link>
 
         <button className="new-chat-button" type="button" onClick={startNewChat}>
           <span aria-hidden="true">＋</span> New chat
-          <kbd>⌘ K</kbd>
+
         </button>
 
         <div className="sidebar-section">
