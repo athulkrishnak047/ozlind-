@@ -25,9 +25,9 @@
 
 ## Streaming AI contract
 
-`POST /api/chat` is a protected Server-Sent Events endpoint. It requires a bearer token and accepts only a constrained provider preference plus user/assistant messages. It emits `start`, `delta`, `done`, and `error` events. Request limits, model defaults, failover behavior, and access requirements are documented in [AI orchestration](../ai/orchestration.md).
+`POST /api/chat` is an anonymous public Server-Sent Events endpoint protected by a shared Upstash Redis sliding-window rate limit in production. It accepts a constrained provider preference plus user/assistant messages and emits `start`, `delta`, `done`, and `error` events. Request limits, model defaults, failover behavior, and rate-limit configuration are documented in [AI orchestration](../ai/orchestration.md).
 
-The route is disabled until the server-side `OZLIND_AI_ACCESS_TOKEN` is configured. Do not put that token in browser code.
+No visitor-supplied bearer token is required. Provider keys and Redis credentials remain server-side. Production requests fail closed if the shared limiter is unavailable.
 
 ## Rules
 
@@ -38,4 +38,4 @@ The route is disabled until the server-side `OZLIND_AI_ACCESS_TOKEN` is configur
 - Validate request bodies, query parameters, and external responses at trust boundaries.
 - Document authentication and authorization requirements for every non-public route.
 - Set explicit payload, timeout, and rate limits before accepting expensive work.
-- A per-instance in-memory rate limiter is not a substitute for shared/global quotas.
+- Production expensive endpoints must use shared atomic quotas; in-memory rate limiting is permitted only for local development and tests.
