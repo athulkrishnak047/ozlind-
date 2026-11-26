@@ -25,17 +25,25 @@
 
 ## Streaming AI contract
 
-`POST /api/chat` is an anonymous public Server-Sent Events endpoint protected by a shared Upstash Redis sliding-window rate limit in production. It accepts a constrained provider preference plus user/assistant messages and emits `start`, `delta`, `done`, and `error` events. Request limits, model defaults, failover behavior, and rate-limit configuration are documented in [AI orchestration](../ai/orchestration.md).
+`POST /api/chat` is an anonymous public Server-Sent Events endpoint. It accepts a constrained provider preference plus user/assistant messages and emits `start`, `delta`, `done`, and `error` events. Request limits, model defaults, failover behavior, and abuse controls are documented in [AI orchestration](../ai/orchestration.md).
 
-No visitor-supplied bearer token is required. Provider keys and Redis credentials remain server-side. Production requests fail closed if the shared limiter is unavailable.
+No visitor-supplied owner or provider bearer token is required. Provider credentials remain server-side. The current bounded in-memory sliding-window limiter is per serverless instance and is not a global quota.
+
+## Other public AI routes
+
+- `POST /api/research`: bounded chat-shaped request; performs live web research using Gemini Google Search grounding with Groq Compound fallback.
+- `POST /api/transcribe`: multipart audio upload; accepts bounded supported audio types and returns a transcript using Groq Whisper.
+
+Each route validates input, limits expensive work, normalizes public errors, and keeps provider credentials server-side.
 
 ## Rules
 
 - Use stable machine-readable error codes.
 - Do not return stack traces, raw provider errors, secrets, or internal implementation details.
-- Set a request ID on every API response.
-- Use Cache-Control: no-store unless a route has an explicit, reviewed caching policy.
-- Validate request bodies, query parameters, and external responses at trust boundaries.
-- Document authentication and authorization requirements for every non-public route.
-- Set explicit payload, timeout, and rate limits before accepting expensive work.
-- Production expensive endpoints must use shared atomic quotas; in-memory rate limiting is permitted only for local development and tests.
+- Include a request ID on API responses where applicable.
+- Use `Cache-Control: no-store` unless a route has an explicit, reviewed caching policy.
+- Validate request bodies, query parameters, uploads, and external responses at trust boundaries.
+- Document authentication and authorization requirements for every route. Current routes are intentionally anonymous and public.
+- Set explicit payload, timeout, output, and abuse limits before accepting expensive work.
+- The current in-memory rate limiter is best-effort per instance only. It must not be described as an atomic shared/global quota.
+- Cross-origin browser access must follow an explicit CORS allowlist; do not enable wildcard origins by default.
