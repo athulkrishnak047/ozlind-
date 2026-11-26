@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent as ReactKeyboardEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent as ReactKeyboardEvent } from "react";
 
 type Role = "user" | "assistant";
 type ChatMessage = { id: string; role: Role; content: string; provider?: string; model?: string; fallback?: boolean; sources?: { title: string; url: string }[] };
@@ -76,7 +76,7 @@ export function ChatWorkspace() {
   const [activeConversationId, setActiveConversationId] = useState("");
   const [historyLoaded, setHistoryLoaded] = useState(false);
   const activeConversation = conversations.find((conversation) => conversation.id === activeConversationId);
-  const messages = activeConversation?.messages ?? [];
+  const messages = useMemo(() => activeConversation?.messages ?? [], [activeConversation]);
 
   function setMessages(updater: (current: ChatMessage[]) => ChatMessage[]) {
     if (!activeConversationId) return;
@@ -106,27 +106,31 @@ export function ChatWorkspace() {
   const isBusy = status !== "idle";
 
   useEffect(() => {
-    try {
-      const stored = window.localStorage.getItem(HISTORY_KEY);
-      const parsed: unknown = stored ? JSON.parse(stored) : [];
-      const recent = Array.isArray(parsed)
-        ? parsed.filter(isConversation).sort((a, b) => b.updatedAt - a.updatedAt).slice(0, MAX_SAVED_CONVERSATIONS)
-        : [];
-      if (recent.length > 0) {
-        setConversations(recent);
-        setActiveConversationId(recent[0].id);
-      } else {
-        const initial: Conversation = { id: newId(), title: "New chat", updatedAt: Date.now(), messages: [] };
-        setConversations([initial]);
-        setActiveConversationId(initial.id);
+    let cancelled = false;
+    const frame = window.requestAnimationFrame(() => {
+      let recent: Conversation[] = [];
+      try {
+        const stored = window.localStorage.getItem(HISTORY_KEY);
+        const parsed: unknown = stored ? JSON.parse(stored) : [];
+        recent = Array.isArray(parsed)
+          ? parsed.filter(isConversation).sort((a, b) => b.updatedAt - a.updatedAt).slice(0, MAX_SAVED_CONVERSATIONS)
+          : [];
+      } catch {
+        // A malformed or unavailable local history should never block a fresh chat.
       }
-    } catch {
-      const initial: Conversation = { id: newId(), title: "New chat", updatedAt: Date.now(), messages: [] };
-      setConversations([initial]);
-      setActiveConversationId(initial.id);
-    } finally {
+      if (cancelled) return;
+      if (recent.length === 0) {
+        const initial: Conversation = { id: newId(), title: "New chat", updatedAt: Date.now(), messages: [] };
+        recent = [initial];
+      }
+      setConversations(recent);
+      setActiveConversationId(recent[0].id);
       setHistoryLoaded(true);
-    }
+    });
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(frame);
+    };
   }, []);
 
   useEffect(() => {
@@ -138,7 +142,7 @@ export function ChatWorkspace() {
         .map((conversation) => ({ ...conversation, messages: conversation.messages.slice(-MAX_SAVED_MESSAGES) }));
       window.localStorage.setItem(HISTORY_KEY, JSON.stringify(recent));
     } catch {
-      setErrorMessage("This browser could not save chat history. You can continue chatting, but history may not persist.");
+      console.warn("Ozlind could not persist chat history in this browser.");
     }
   }, [conversations, historyLoaded]);
 
