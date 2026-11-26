@@ -680,7 +680,7 @@ export function ChatWorkspace() {
               type="file"
               accept=".pdf,application/pdf,image/png,image/jpeg,image/webp,video/mp4,video/webm,.mp4,.webm"
               onChange={handleAttachmentChange}
-              disabled={isBusy}
+              disabled={!historyLoaded || isBusy}
               aria-label="Choose a PDF, image, or short video"
             />
             {attachment && (
@@ -691,6 +691,7 @@ export function ChatWorkspace() {
               </div>
             )}
             <textarea
+              disabled={!historyLoaded || isBusy}
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
               onKeyDown={handleComposerKeyDown}
@@ -705,24 +706,24 @@ export function ChatWorkspace() {
                   className="attach-button"
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  disabled={isBusy}
+                  disabled={!historyLoaded || isBusy}
                   aria-label="Attach a PDF, image, or short video"
                   title="Attach a PDF, image or short video (up to 10 MB)"
                 >＋</button>
                 <label className="provider-select-label" htmlFor="provider-select">MODEL</label>
-                <select id="provider-select" value={provider} onChange={(event) => setProvider(event.target.value as Provider)} disabled={isBusy}>
+                <select id="provider-select" value={provider} onChange={(event) => setProvider(event.target.value as Provider)} disabled={!historyLoaded || isBusy}>
                   <option value="auto">Auto</option>
                   <option value="gemini">Gemini</option>
                   <option value="groq">Groq</option>
                 </select>
-                <button className={`web-search-button ${webSearchEnabled ? "enabled" : ""}`} type="button" onClick={() => setWebSearchEnabled((value) => !value)} disabled={isBusy} aria-pressed={webSearchEnabled} title="Use live web research">Web</button>
-                <button className={`voice-button ${isRecording ? "recording" : ""}`} type="button" onClick={() => void toggleVoiceRecording()} disabled={isBusy} aria-label={isRecording ? "Stop voice recording" : "Start voice recording"} title={isRecording ? "Stop recording" : "Speak your message"}>{isRecording ? "■" : "🎙"}</button>
+                <button className={`web-search-button ${webSearchEnabled ? "enabled" : ""}`} type="button" onClick={() => setWebSearchEnabled((value) => !value)} disabled={!historyLoaded || isBusy} aria-pressed={webSearchEnabled} title="Use live web research">Web</button>
+                <button className={`voice-button ${isRecording ? "recording" : ""}`} type="button" onClick={() => void toggleVoiceRecording()} disabled={!historyLoaded || isBusy} aria-label={isRecording ? "Stop voice recording" : "Start voice recording"} title={isRecording ? "Stop recording" : "Speak your message"}>{isRecording ? "■" : "🎙"}</button>
                 <span className="composer-hint">{isRecording ? "Listening… tap stop when finished" : attachment ? "Gemini multimodal analysis · Shift + Enter for a new line" : "Shift + Enter for a new line"}</span>
               </div>
               {isBusy ? (
                 <button className="send-button stop-button" type="button" onClick={() => abortRef.current?.abort()} aria-label="Stop generating">■</button>
               ) : (
-                <button className="send-button" type="submit" disabled={!draft.trim() && !attachment} aria-label="Send message">↑</button>
+                <button className="send-button" type="submit" disabled={!historyLoaded || (!draft.trim() && !attachment)} aria-label="Send message">↑</button>
               )}
             </div>
           </form>
