@@ -1,15 +1,28 @@
 # Ozlind
 
-Ozlind is an extensible public AI workspace built with explicit architecture boundaries, secure defaults, and verified delivery.
+Ozlind is a public, provider-independent AI workspace designed to grow into a reliable multimodal AI platform. Its engineering priorities are correctness, user trust, security, low latency, operational clarity, and measured evolution.
+
+## Current product status
+
+The current foundation includes:
+- A public Next.js App Router application and chat workspace.
+- Streaming text chat through server-side Gemini and Groq adapters.
+- Provider preference with pre-first-token fallback.
+- Live web research through Gemini Google Search grounding, with Groq Compound fallback.
+- Browser microphone capture and Groq Whisper speech-to-text.
+- Browser-local conversation history; no account or cloud synchronization.
+- Bounded request validation, provider timeouts, output limits, and best-effort in-memory abuse protection.
+
+This is an early platform foundation, not a claim of feature parity with ChatGPT. Real-time bidirectional voice, image/document/video understanding, durable memory, accounts, cloud history, tool execution, agents, and billing remain future capabilities.
 
 ## Technology foundation
 
-- Next.js App Router + React + TypeScript
-- Node.js 26
-- Vercel Functions and Git-based production deployments
-- Vercel AI SDK with Google Gemini and Groq provider adapters
+- Next.js App Router, React, and strict TypeScript
+- Node.js 26 runtime
+- Vercel Functions and Git-based deployments
+- Vercel AI SDK adapters for Gemini and Groq
 - Vitest unit and contract tests
-- Upstash Redis REST for atomic shared rate limiting in production
+- No Redis or external rate-limit database in the current phase
 
 ## Local development
 
@@ -21,14 +34,19 @@ cp .env.example .env.local
 npm run dev
 ~~~
 
-Add at least one provider key to `.env.local` to enable AI responses. Provider credentials and Redis tokens must remain server-side. Never commit real credentials or use `NEXT_PUBLIC_` prefixes for secrets.
+Configure at least one provider key locally to enable AI responses. Provider credentials must remain server-side and must never use `NEXT_PUBLIC_` prefixes.
 
 ## Production configuration
 
-In Vercel Project Settings → Environment Variables, configure:
-- `GEMINI_API_KEY` and/or `GROQ_API_KEY`
+In Vercel Project Settings → Environment Variables, configure at least one:
+- `GEMINI_API_KEY`
+- `GROQ_API_KEY`
 
-The public chat route fails closed in production if shared rate limiting is unavailable. The current shared limit is 8 requests per IP per minute. This is an anonymous public beta guardrail, not a full account-based quota or billing system.
+Optional model overrides:
+- `GEMINI_MODEL`
+- `GROQ_MODEL`
+
+Apply secrets to the intended environments and redeploy. A configured key does not guarantee provider availability, quota, or free-tier access.
 
 ## Quality checks
 
@@ -43,21 +61,32 @@ Or run all checks in sequence with `npm run verify`.
 
 ## Product experience
 
-The public landing page is in `src/components/landing-page.tsx`; the chat workspace is served at `/workspace`. The workspace supports streamed Gemini/Groq responses, provider preference, stop generation, copy, prompt starters, and browser-local conversation history. Local history stays on the current browser and is not synced across devices.
+The public landing page is in `src/components/landing-page.tsx`; the chat workspace is served at `/workspace`. The workspace supports streamed Gemini/Groq responses, provider preference, stop generation, copy, prompt starters, live research, voice-to-text, and browser-local conversation history. Local history is not synced across devices.
 
 ## AI core
 
-`POST /api/chat` validates bounded input, streams server-sent events, applies provider fallback before the first token, enforces provider timeouts and output limits, and uses atomic shared rate limiting through Upstash Redis in production. Provider keys and model IDs remain server-side.
+- `POST /api/chat`: bounded JSON input and Server-Sent Events output.
+- `POST /api/research`: grounded web research with provider fallback and normalized citations.
+- `POST /api/transcribe`: bounded audio upload and speech-to-text.
 
-See [AI orchestration](docs/ai/orchestration.md) for the API contract and operational boundaries.
+Provider keys and model IDs remain server-side. See [AI orchestration](docs/ai/orchestration.md) for contracts, limits, fallback behavior, and deployment configuration.
 
-## Architecture and security
+## Security and scaling posture
 
-- System architecture: docs/architecture/system-overview.md
-- API contract: docs/architecture/api-contract.md
-- AI orchestration: docs/ai/orchestration.md
-- Threat model: docs/security/threat-model.md
-- Definition of done: docs/engineering/definition-of-done.md
-- Security policy: SECURITY.md
+- The current endpoints are anonymous and public; no visitor-supplied owner token is required.
+- A bounded in-memory sliding window provides best-effort per-instance abuse protection. Vercel serverless instances do not share memory, so this is not a global quota or a guarantee against distributed abuse.
+- Request bodies, audio size, provider timeouts, and output tokens are bounded.
+- No Redis, Upstash, database, account system, or cloud conversation store is currently required.
+- Provider secrets remain server-side. Do not expose them in client bundles or logs.
+- External websites calling Ozlind APIs cross-origin require an explicit CORS policy; public browser access alone does not imply unrestricted cross-origin API access.
 
-Account identity, cross-device synchronization, server-side chat history, long-term memory, retrieval, tools/agents, multimodal uploads, and billing are not represented as implemented. They require dedicated data lifecycle, tenancy, safety, and cost controls.
+Identity, cloud persistence, long-term memory, retrieval, tool execution, agents, multimodal uploads, and billing require dedicated privacy, tenancy, safety, cost, and lifecycle designs before release.
+
+## Engineering documents
+
+- [System architecture](docs/architecture/system-overview.md)
+- [API contract](docs/architecture/api-contract.md)
+- [AI orchestration](docs/ai/orchestration.md)
+- [Threat model](docs/security/threat-model.md)
+- [Definition of done](docs/engineering/definition-of-done.md)
+- [Security policy](SECURITY.md)
