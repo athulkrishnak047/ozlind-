@@ -48,7 +48,7 @@ function normalizeSources(value: unknown): { title: string; url: string }[] {
       if (parsed.protocol !== "https:" && parsed.protocol !== "http:") continue;
       const title = typeof record.title === "string" && record.title.trim()
         ? record.title.trim().slice(0, 120)
-        : parsed.hostname.replace(/^www\\./, "");
+        : parsed.hostname.replace(/^www[.]/, "");
       sources.set(parsed.href, { title, url: parsed.href });
     } catch {
       // Ignore malformed source URLs.
