@@ -476,3 +476,37 @@ body {
 @supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
   .landing-glass-card, .landing-float-chip, .landing-capability { background: #171c31; }
 }
+
+/* Conversation history and keyboard-friendly navigation */
+.history-item {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 10px;
+  overflow: hidden;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #a3a8c1;
+  text-align: left;
+  cursor: pointer;
+}
+.history-item:hover:not(:disabled) {
+  border-color: rgba(190, 198, 255, .11);
+  background: rgba(150, 143, 220, .07);
+  color: #e2defa;
+}
+.history-item:disabled { cursor: default; opacity: .65; }
+.history-title { overflow: hidden; flex: 1; text-overflow: ellipsis; white-space: nowrap; }
+.history-empty { margin: 4px 10px; color: #747b96; font-size: 10px; line-height: 1.6; }
+.recent-chats { min-height: 0; max-height: min(42vh, 360px); overflow-y: auto; scrollbar-width: thin; }
+.new-chat-button:disabled { cursor: wait; opacity: .65; }
+.history-item:focus-visible, .new-chat-button:focus-visible, .send-button:focus-visible,
+.suggestion-card:focus-visible, .message-actions button:focus-visible {
+  outline: 2px solid rgba(185, 171, 255, .85);
+  outline-offset: 3px;
+}
+@media (max-width: 760px) {
+  .recent-chats { max-height: 28vh; }
+}
