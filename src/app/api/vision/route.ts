@@ -123,44 +123,52 @@ export async function POST(request: Request): Promise<Response> {
 
   const model = process.env.GEMINI_MODEL || "gemini-3.8-flash";
   const context = getConversationContext(parsed.messages);
+  const isVideo = uploaded.type.startsWith("video/");
   const prompt = [
     "You are Ozlind, a careful multimodal AI assistant.",
     "Analyze the attached file and answer the user's request using only information supported by the file and conversation.",
     "For PDFs, refer to page numbers when possible. For images, describe relevant visible details without guessing.",
+    "For videos, cover both visual and audio events and include MM:SS timestamps for important moments where possible.",
     "If the file is unclear, incomplete, or unreadable, state that directly. Never claim to have read content that is not visible.",
     "",
     "Conversation:",
     context
   ].join("\n");
+  const base64 = Buffer.from(fileBytes).toString("base64");
 
   try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": process.env.GEMINI_API_KEY
-        },
-        body: JSON.stringify({
+    const endpoint = isVideo
+      ? "https://generativelanguage.googleapis.com/v1beta/interactions"
+      : `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+    const requestBody = isVideo
+      ? {
+          model,
+          input: [
+            { type: "text", text: prompt },
+            { type: "video", data: base64, mime_type: uploaded.type }
+          ],
+          store: false
+        }
+      : {
           contents: [{
             role: "user",
             parts: [
               { text: prompt },
-              {
-                inline_data: {
-                  mime_type: uploaded.type,
-                  data: Buffer.from(fileBytes).toString("base64")
-                }
-              }
+              { inline_data: { mime_type: uploaded.type, data: base64 } }
             ]
           }],
           generationConfig: { temperature: 0.2, maxOutputTokens: 4096 }
-        }),
-        cache: "no-store",
-        signal: AbortSignal.any([request.signal, AbortSignal.timeout(55_000)])
-      }
-    );
+        };
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": process.env.GEMINI_API_KEY
+      },
+      body: JSON.stringify(requestBody),
+      cache: "no-store",
+      signal: AbortSignal.any([request.signal, AbortSignal.timeout(55_000)])
+    });
 
     if (!response.ok) {
       return jsonFailure("VISION_PROVIDER_FAILED", "Gemini could not analyze this attachment. Please try a smaller file or try again.", 502);
@@ -170,19 +178,40 @@ export async function POST(request: Request): Promise<Response> {
     if (!payload || typeof payload !== "object") {
       return jsonFailure("VISION_PROVIDER_FAILED", "Gemini returned an invalid analysis response.", 502);
     }
-    const candidates = (payload as { candidates?: unknown }).candidates;
-    const first = Array.isArray(candidates) && candidates[0] && typeof candidates[0] === "object"
-      ? candidates[0] as { content?: unknown }
-      : null;
-    const parts = first?.content && typeof first.content === "object"
-      ? (first.content as { parts?: unknown }).parts
-      : null;
-    const answer = Array.isArray(parts)
-      ? parts.filter((part): part is { text: string } => !!part && typeof part === "object" && typeof (part as { text?: unknown }).text === "string")
-        .map((part) => part.text)
-        .join("\n")
-        .trim()
-      : "";
+
+    let answer = "";
+    if (isVideo) {
+      const record = payload as { output_text?: unknown; steps?: unknown };
+      if (typeof record.output_text === "string") answer = record.output_text.trim();
+      if (!answer && Array.isArray(record.steps)) {
+        const textParts: string[] = [];
+        for (const step of record.steps) {
+          if (!step || typeof step !== "object") continue;
+          const content = (step as { content?: unknown }).content;
+          if (!Array.isArray(content)) continue;
+          for (const part of content) {
+            if (part && typeof part === "object" && typeof (part as { text?: unknown }).text === "string") {
+              textParts.push((part as { text: string }).text);
+            }
+          }
+        }
+        answer = textParts.join("\n").trim();
+      }
+    } else {
+      const candidates = (payload as { candidates?: unknown }).candidates;
+      const first = Array.isArray(candidates) && candidates[0] && typeof candidates[0] === "object"
+        ? candidates[0] as { content?: unknown }
+        : null;
+      const parts = first?.content && typeof first.content === "object"
+        ? (first.content as { parts?: unknown }).parts
+        : null;
+      answer = Array.isArray(parts)
+        ? parts.filter((part): part is { text: string } => !!part && typeof part === "object" && typeof (part as { text?: unknown }).text === "string")
+          .map((part) => part.text)
+          .join("\n")
+          .trim()
+        : "";
+    }
 
     if (!answer) {
       return jsonFailure("VISION_EMPTY_RESPONSE", "Gemini did not return an analysis for this file.", 502);
