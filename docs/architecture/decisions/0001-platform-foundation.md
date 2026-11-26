@@ -17,7 +17,7 @@ The repository previously contained a single static HTML test page. Ozlind needs
 6. Use structured API envelopes with request IDs and no-store caching by default.
 7. Require lint, strict typecheck, unit tests, and production build to pass.
 8. Do not provision a database or identity provider until data lifecycle, residency, tenancy, and cost requirements are documented.
-9. Keep production deployment changes behind a reviewed pull request and preview deployment.
+9. Commit directly to main only after automated quality gates pass; keep rollback available and do not deploy unverified code.
 
 ## Consequences
 
