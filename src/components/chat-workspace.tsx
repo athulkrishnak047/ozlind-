@@ -478,6 +478,8 @@ export function ChatWorkspace() {
                     </div>
                     {message.content ? (
                       <div className="message-content">{message.content}</div>
+                    ) : (
+                      <div className="typing-indicator" aria-label="Ozlind is thinking"><i /><i /><i /></div>
                     )}
                     {message.role === "assistant" && message.sources && message.sources.length > 0 && (
                       <div className="message-sources" aria-label="Research sources">
@@ -486,11 +488,6 @@ export function ChatWorkspace() {
                           <a href={source.url} key={source.url} target="_blank" rel="noopener noreferrer">{source.title} ↗</a>
                         ))}
                       </div>
-                    )}
-                    {message.role === "assistant" && message.content && (
-                      <div className="message-actions">
-                    ) : (
-                      <div className="typing-indicator" aria-label="Ozlind is thinking"><i /><i /><i /></div>
                     )}
                     {message.role === "assistant" && message.content && (
                       <div className="message-actions">
