@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { RichText } from "./rich-text";
-import { useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent as ReactKeyboardEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent, type KeyboardEvent as ReactKeyboardEvent } from "react";
 
 type Role = "user" | "assistant";
 type ChatMessage = { id: string; role: Role; content: string; provider?: string; model?: string; fallback?: boolean; sources?: { title: string; url: string }[] };
@@ -12,6 +12,8 @@ type Conversation = { id: string; title: string; updatedAt: number; messages: Ch
 const HISTORY_KEY = "ozlind:conversations:v1";
 const MAX_SAVED_CONVERSATIONS = 12;
 const MAX_SAVED_MESSAGES = 40;
+const MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024;
+const ACCEPTED_ATTACHMENT_TYPES = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
 
 function isConversation(value: unknown): value is Conversation {
   if (!value || typeof value !== "object") return false;
@@ -95,6 +97,7 @@ export function ChatWorkspace() {
     }));
   }
   const [draft, setDraft] = useState("");
+  const [attachment, setAttachment] = useState<File | null>(null);
   const [provider, setProvider] = useState<Provider>("auto");
   const [webSearchEnabled, setWebSearchEnabled] = useState(false);
   const [status, setStatus] = useState<"idle" | "connecting" | "streaming">("idle");
@@ -102,6 +105,7 @@ export function ChatWorkspace() {
   const [copiedId, setCopiedId] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
   const composerRef = useRef<HTMLFormElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const recordingChunksRef = useRef<Blob[]>([]);
@@ -170,6 +174,7 @@ export function ChatWorkspace() {
     setConversations((current) => [conversation, ...current].slice(0, MAX_SAVED_CONVERSATIONS));
     setActiveConversationId(conversation.id);
     setDraft("");
+    setAttachment(null);
     setStatus("idle");
     setErrorMessage("");
   }
@@ -180,6 +185,7 @@ export function ChatWorkspace() {
     abortRef.current = null;
     setActiveConversationId(conversationId);
     setDraft("");
+    setAttachment(null);
     setStatus("idle");
     setErrorMessage("");
   }
@@ -298,6 +304,22 @@ export function ChatWorkspace() {
     setErrorMessage("");
   }
 
+  function handleAttachmentChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0] ?? null;
+    event.target.value = "";
+    if (!file) return;
+    if (!ACCEPTED_ATTACHMENT_TYPES.includes(file.type)) {
+      setErrorMessage("Attach a PDF, PNG, JPEG, or WebP file.");
+      return;
+    }
+    if (file.size === 0 || file.size > MAX_ATTACHMENT_BYTES) {
+      setErrorMessage("Choose a non-empty file smaller than 10 MB.");
+      return;
+    }
+    setErrorMessage("");
+    setAttachment(file);
+  }
+
   function regenerateResponse(index: number) {
     if (isBusy) return;
     const previousUser = messages.slice(0, index).reverse().find((message) => message.role === "user");
@@ -311,9 +333,11 @@ export function ChatWorkspace() {
 
   async function sendMessage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const content = draft.trim();
-    if (!content || isBusy) return;
-    const userMessage: ChatMessage = { id: newId(), role: "user", content };
+    const selectedAttachment = attachment;
+    const content = draft.trim() || (selectedAttachment ? "Please analyze the attached file and explain its most important details." : "");
+    if ((!content && !selectedAttachment) || isBusy) return;
+    const visibleContent = selectedAttachment ? `${content}\n\n[Attached file: ${selectedAttachment.name}]` : content;
+    const userMessage: ChatMessage = { id: newId(), role: "user", content: visibleContent };
     const assistantMessage: ChatMessage = { id: newId(), role: "assistant", content: "" };
     const previousMessages: { role: Role; content: string }[] = [];
     let remainingChars = 24_000 - content.length;
@@ -331,6 +355,51 @@ export function ChatWorkspace() {
     setDraft("");
     setErrorMessage("");
     setStatus("connecting");
+
+    if (selectedAttachment) {
+      const visionController = new AbortController();
+      abortRef.current = visionController;
+      try {
+        const form = new FormData();
+        form.append("file", selectedAttachment, selectedAttachment.name);
+        form.append("messages", JSON.stringify(requestMessages));
+        const response = await fetch("/api/vision", {
+          method: "POST",
+          body: form,
+          cache: "no-store",
+          signal: visionController.signal
+        });
+        const body: unknown = await response.json().catch(() => null);
+        if (!response.ok) throw new Error(errorText(body, `File analysis failed (HTTP ${response.status}).`));
+        const result = body && typeof body === "object"
+          ? body as { text?: unknown; provider?: unknown; model?: unknown }
+          : {};
+        if (typeof result.text !== "string" || !result.text.trim()) {
+          throw new Error("Gemini returned an empty file analysis.");
+        }
+        setMessages((current) => current.map((message) =>
+          message.id === assistantMessage.id
+            ? {
+                ...message,
+                content: result.text as string,
+                provider: typeof result.provider === "string" ? result.provider : "gemini",
+                model: typeof result.model === "string" ? result.model : "multimodal"
+              }
+            : message
+        ));
+      } catch (error) {
+        if (!visionController.signal.aborted) {
+          setErrorMessage(error instanceof Error ? error.message : "File analysis failed.");
+        }
+        setMessages((current) => current.filter((message) => message.id !== assistantMessage.id));
+      } finally {
+        if (abortRef.current === visionController) abortRef.current = null;
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        setAttachment(null);
+        setStatus("idle");
+      }
+      return;
+    }
 
     if (webSearchEnabled) {
       const researchController = new AbortController();
@@ -600,6 +669,22 @@ export function ChatWorkspace() {
         <div className="composer-area">
           {errorMessage && <div className="error-banner" role="alert"><span>!</span>{errorMessage}<button type="button" onClick={() => setErrorMessage("")} aria-label="Dismiss error">×</button></div>}
           <form className="composer" onSubmit={sendMessage} ref={composerRef}>
+            <input
+              ref={fileInputRef}
+              className="attachment-input"
+              type="file"
+              accept=".pdf,application/pdf,image/png,image/jpeg,image/webp"
+              onChange={handleAttachmentChange}
+              disabled={isBusy}
+              aria-label="Choose a PDF or image"
+            />
+            {attachment && (
+              <div className="attachment-chip">
+                <span aria-hidden="true">{attachment.type === "application/pdf" ? "▤" : "▧"}</span>
+                <span>{attachment.name} · {Math.max(1, Math.round(attachment.size / 1024))} KB</span>
+                <button type="button" onClick={() => setAttachment(null)} disabled={isBusy} aria-label="Remove attachment">×</button>
+              </div>
+            )}
             <textarea
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
@@ -611,6 +696,14 @@ export function ChatWorkspace() {
             />
             <div className="composer-toolbar">
               <div className="composer-options">
+                <button
+                  className="attach-button"
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isBusy}
+                  aria-label="Attach a PDF or image"
+                  title="Attach a PDF or image (up to 10 MB)"
+                >＋</button>
                 <label className="provider-select-label" htmlFor="provider-select">MODEL</label>
                 <select id="provider-select" value={provider} onChange={(event) => setProvider(event.target.value as Provider)} disabled={isBusy}>
                   <option value="auto">Auto</option>
@@ -624,7 +717,7 @@ export function ChatWorkspace() {
               {isBusy ? (
                 <button className="send-button stop-button" type="button" onClick={() => abortRef.current?.abort()} aria-label="Stop generating">■</button>
               ) : (
-                <button className="send-button" type="submit" disabled={!draft.trim()} aria-label="Send message">↑</button>
+                <button className="send-button" type="submit" disabled={!draft.trim() && !attachment} aria-label="Send message">↑</button>
               )}
             </div>
           </form>
