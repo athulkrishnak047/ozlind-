@@ -2,7 +2,9 @@
   "name": "ozlind",
   "version": "0.1.0",
   "private": true,
-  "engines": { "node": ">=26 <27" },
+  "engines": {
+    "node": ">=26 <27"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -15,7 +17,10 @@
   "dependencies": {
     "next": "16.4.6",
     "react": "19.3.1",
-    "react-dom": "19.3.1"
+    "react-dom": "19.3.1",
+    "ai": "7.0.182",
+    "@ai-sdk/google": "4.0.128",
+    "@ai-sdk/groq": "4.0.87"
   },
   "devDependencies": {
     "@types/node": "26.0.0",
