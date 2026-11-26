@@ -13,7 +13,7 @@ const HISTORY_KEY = "ozlind:conversations:v1";
 const MAX_SAVED_CONVERSATIONS = 12;
 const MAX_SAVED_MESSAGES = 40;
 const MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024;
-const ACCEPTED_ATTACHMENT_TYPES = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
+const ACCEPTED_ATTACHMENT_TYPES = ["application/pdf", "image/jpeg", "image/png", "image/webp", "video/mp4", "video/webm"];
 
 function isConversation(value: unknown): value is Conversation {
   if (!value || typeof value !== "object") return false;
@@ -673,14 +673,14 @@ export function ChatWorkspace() {
               ref={fileInputRef}
               className="attachment-input"
               type="file"
-              accept=".pdf,application/pdf,image/png,image/jpeg,image/webp"
+              accept=".pdf,application/pdf,image/png,image/jpeg,image/webp,video/mp4,video/webm,.mp4,.webm"
               onChange={handleAttachmentChange}
               disabled={isBusy}
               aria-label="Choose a PDF or image"
             />
             {attachment && (
               <div className="attachment-chip">
-                <span aria-hidden="true">{attachment.type === "application/pdf" ? "▤" : "▧"}</span>
+                <span aria-hidden="true">{attachment.type === "application/pdf" ? "▤" : attachment.type.startsWith("video/") ? "▶" : "▧"}</span>
                 <span>{attachment.name} · {Math.max(1, Math.round(attachment.size / 1024))} KB</span>
                 <button type="button" onClick={() => setAttachment(null)} disabled={isBusy} aria-label="Remove attachment">×</button>
               </div>
@@ -702,7 +702,7 @@ export function ChatWorkspace() {
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isBusy}
                   aria-label="Attach a PDF or image"
-                  title="Attach a PDF or image (up to 10 MB)"
+                  title="Attach a PDF, image or short video (up to 10 MB)"
                 >＋</button>
                 <label className="provider-select-label" htmlFor="provider-select">MODEL</label>
                 <select id="provider-select" value={provider} onChange={(event) => setProvider(event.target.value as Provider)} disabled={isBusy}>
