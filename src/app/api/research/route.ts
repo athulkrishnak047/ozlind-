@@ -92,7 +92,7 @@ export async function POST(request: Request): Promise<Response> {
         max_completion_tokens: 2048
       }),
       cache: "no-store",
-      signal: AbortSignal.timeout(45_000)
+      signal: AbortSignal.any([request.signal, AbortSignal.timeout(45_000)])
     });
 
     if (!response.ok) {
