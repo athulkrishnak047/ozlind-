@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 
 type Role = "user" | "assistant";
-type ChatMessage = { id: string; role: Role; content: string };
+type ChatMessage = { id: string; role: Role; content: string; provider?: string; model?: string; fallback?: boolean };
 type Provider = "auto" | "gemini" | "groq";
 type StreamEvent = { event: string; data: Record<string, unknown> };
 
@@ -52,8 +52,6 @@ export function ChatWorkspace() {
   const [connectOpen, setConnectOpen] = useState(false);
   const [status, setStatus] = useState<"idle" | "connecting" | "streaming">("idle");
   const [errorMessage, setErrorMessage] = useState("");
-  const [activeModel, setActiveModel] = useState("");
-  const [usedFallback, setUsedFallback] = useState(false);
   const [copiedId, setCopiedId] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -65,6 +63,20 @@ export function ChatWorkspace() {
 
   useEffect(() => () => abortRef.current?.abort(), []);
 
+  useEffect(() => {
+    if (!connectOpen) return;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    document.getElementById("service-token")?.focus();
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setConnectOpen(false);
+    };
+    window.addEventListener("keydown", handleEscape);
+    return () => {
+      window.removeEventListener("keydown", handleEscape);
+      previousFocus?.focus();
+    };
+  }, [connectOpen]);
+
   function startNewChat() {
     abortRef.current?.abort();
     abortRef.current = null;
@@ -72,8 +84,6 @@ export function ChatWorkspace() {
     setDraft("");
     setStatus("idle");
     setErrorMessage("");
-    setActiveModel("");
-    setUsedFallback(false);
   }
 
   function saveToken() {
@@ -125,8 +135,6 @@ export function ChatWorkspace() {
     setMessages((current) => [...current, userMessage, assistantMessage]);
     setDraft("");
     setErrorMessage("");
-    setActiveModel("");
-    setUsedFallback(false);
     setStatus("connecting");
 
     const controller = new AbortController();
@@ -142,8 +150,11 @@ export function ChatWorkspace() {
       if (item.event === "start") {
         const providerName = typeof item.data.provider === "string" ? item.data.provider : "";
         const modelName = typeof item.data.model === "string" ? item.data.model : "";
-        setActiveModel([providerName, modelName].filter(Boolean).join(" · "));
-        setUsedFallback(item.data.fallback === true);
+        setMessages((current) => current.map((message) =>
+          message.id === assistantMessage.id
+            ? { ...message, provider: providerName, model: modelName, fallback: item.data.fallback === true }
+            : message
+        ));
         setStatus("streaming");
       } else if (item.event === "delta" && typeof item.data.text === "string") {
         receivedText = true;
@@ -234,7 +245,7 @@ export function ChatWorkspace() {
         <div className="sidebar-section">
           <p className="sidebar-label">WORKSPACE</p>
           <div className="nav-item active"><span aria-hidden="true">✳</span> Assistant</div>
-          <div className="nav-item muted"><span aria-hidden="true">◷</span> Session history</div>
+          <div className="nav-item muted"><span aria-hidden="true">◷</span> Current session</div>
         </div>
 
         <div className="sidebar-spacer" />
@@ -256,7 +267,7 @@ export function ChatWorkspace() {
           <div className="topbar-actions">
             <span className="privacy-pill"><span /> Private preview</span>
             <button className="connect-button" type="button" onClick={() => setConnectOpen(true)}>
-              <span aria-hidden="true">⌘</span> {serviceToken ? "Service connected" : "Connect service"}
+              <span aria-hidden="true">⌘</span> {serviceToken ? "Token in this tab" : "Add access token"}
             </button>
           </div>
         </header>
@@ -293,7 +304,7 @@ export function ChatWorkspace() {
                   <div className="message-body">
                     <div className="message-meta">
                       <strong>{message.role === "assistant" ? "Ozlind" : "You"}</strong>
-                      {message.role === "assistant" && activeModel && <span>{activeModel}{usedFallback ? " · fallback" : ""}</span>}
+                      {message.role === "assistant" && message.provider && <span>{[message.provider, message.model].filter(Boolean).join(" · ")}{message.fallback ? " · fallback" : ""}</span>}
                     </div>
                     {message.content ? (
                       <div className="message-content">{message.content}</div>
@@ -356,7 +367,7 @@ export function ChatWorkspace() {
             <p className="modal-copy">Enter the <code>OZLIND_AI_ACCESS_TOKEN</code> configured by the project owner in Vercel. This token stays in this tab’s memory only and is never saved to browser storage.</p>
             <label className="token-label" htmlFor="service-token">Service access token</label>
             <input id="service-token" type="password" autoComplete="off" value={tokenDraft} onChange={(event) => setTokenDraft(event.target.value)} placeholder="Paste your private service token" />
-            <button className="modal-submit" type="button" onClick={saveToken} disabled={tokenDraft.trim().length < 32}>Connect securely <span>→</span></button>
+            <button className="modal-submit" type="button" onClick={saveToken} disabled={tokenDraft.trim().length < 32}>Use token for this tab <span>→</span></button>
             {serviceToken && <button className="disconnect-button" type="button" onClick={() => { setServiceToken(""); setTokenDraft(""); setConnectOpen(false); }}>Disconnect current token</button>}
             <p className="modal-footnote">Do not share this token. Public user accounts and shared usage limits are not part of this preview.</p>
           </section>
