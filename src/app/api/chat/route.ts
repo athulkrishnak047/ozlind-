@@ -180,7 +180,7 @@ export async function POST(request: Request): Promise<Response> {
     status: 200,
     headers: {
       "Content-Type": "text/event-stream; charset=utf-8",
-      "Cache-Control": "no-cache, no-transform",
+      "Cache-Control": "no-store, no-transform",
       "X-Accel-Buffering": "no",
       "X-Content-Type-Options": "nosniff",
       "X-Request-Id": requestId
