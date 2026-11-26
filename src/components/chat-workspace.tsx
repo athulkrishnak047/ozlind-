@@ -346,9 +346,10 @@ export function ChatWorkspace() {
     let remainingChars = 24_000 - content.length;
     for (let index = messages.length - 1; index >= 0 && previousMessages.length < 19; index -= 1) {
       const item = messages[index];
-      if (item.content.length > remainingChars) continue;
-      previousMessages.unshift({ role: item.role, content: item.content });
-      remainingChars -= item.content.length;
+      const safeContent = item.content.length > 8_000 ? item.content.slice(0, 8_000) : item.content;
+      if (!safeContent.trim() || safeContent.length > remainingChars) continue;
+      previousMessages.unshift({ role: item.role, content: safeContent });
+      remainingChars -= safeContent.length;
     }
     const requestMessages = [
       ...previousMessages,
@@ -595,7 +596,7 @@ export function ChatWorkspace() {
           <button className="mobile-nav-toggle" type="button" aria-label={sidebarOpen ? "Close navigation" : "Open navigation"} aria-expanded={sidebarOpen} onClick={() => setSidebarOpen((open) => !open)}><span /><span /><span /></button>
           <div className="breadcrumbs"><span>Workspace</span><span className="crumb-separator">/</span><strong>Assistant</strong></div>
           <div className="topbar-actions">
-            <span className="privacy-pill"><span /> Public workspace</span>
+            <span className="privacy-pill"><span /> Local history</span>
           </div>
         </header>
 
