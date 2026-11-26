@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseChatRequest } from "./contracts";
+import { parseChatRequest, PayloadTooLargeError, readBoundedRequestBody } from "./contracts";
 
 describe("chat request contract", () => {
   it("accepts bounded user/assistant messages and defaults to automatic routing", () => {
@@ -22,5 +22,13 @@ describe("chat request contract", () => {
     expect(parseChatRequest(JSON.stringify({
       messages: [{ role: "user", content: "x".repeat(25_000) }]
     }))).toMatchObject({ ok: false, code: "PAYLOAD_TOO_LARGE" });
+  });
+
+  it("stops reading a streamed body once the byte limit is exceeded", async () => {
+    const request = new Request("https://ozlind.test/api/chat", {
+      method: "POST",
+      body: JSON.stringify({ messages: [{ role: "user", content: "x".repeat(50_000) }] })
+    });
+    await expect(readBoundedRequestBody(request)).rejects.toBeInstanceOf(PayloadTooLargeError);
   });
 });
