@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent as ReactKeyboardEvent } from "react";
 
 type Role = "user" | "assistant";
@@ -232,7 +233,7 @@ export function ChatWorkspace() {
   return (
     <main className="workspace">
       <aside className="sidebar" aria-label="Workspace navigation">
-        <a className="brand" href="/" aria-label="Ozlind home">
+        <Link className="brand" href="/" aria-label="Ozlind home">
           <span className="brand-symbol" aria-hidden="true"><span /></span>
           <span className="brand-word">ozlind<span className="brand-period">.</span></span>
         </a>
