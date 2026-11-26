@@ -8,8 +8,8 @@ Ozlind is being developed as a serious, extensible AI platform. The repository i
 - TypeScript strict mode
 - Node.js 26
 - Vercel Functions and Git-based deployments
-- Vitest unit tests
-- Centralized API response helpers and security headers
+- Vercel AI SDK with Google Gemini and Groq provider adapters
+- Vitest unit and contract tests
 
 ## Local development
 
@@ -21,7 +21,7 @@ cp .env.example .env.local
 npm run dev
 ~~~
 
-The current foundation does not call Gemini or Groq. Their server-side credentials are reserved for the AI orchestration phase. Never add API keys to source files or variables prefixed with NEXT_PUBLIC_.
+Provider credentials and the AI access token must remain server-side. Never add real credentials to source control or variables prefixed with NEXT_PUBLIC_.
 
 ## Quality checks
 
@@ -32,17 +32,22 @@ npm run test
 npm run build
 ~~~
 
-Or run all checks in sequence with npm run verify.
+Or run all checks in sequence with `npm run verify`.
+
+## AI core
+
+Phase 2 adds a protected streaming endpoint at `POST /api/chat`, Gemini-first/Groq-fallback routing, bounded retries through provider failover, request validation, timeouts, output limits, and safe error events. The endpoint stays disabled until `OZLIND_AI_ACCESS_TOKEN` is configured. It is not yet a public browser chat API: real user authentication and shared quotas are required first.
+
+See [AI orchestration](docs/ai/orchestration.md) for model defaults, environment variables, API contract, and operational limits.
 
 ## Architecture and security
 
 - System architecture: docs/architecture/system-overview.md
 - API contract: docs/architecture/api-contract.md
-- Architecture decision record: docs/architecture/decisions/0001-platform-foundation.md
-- Initial threat model: docs/security/threat-model.md
+- Initial architecture decision: docs/architecture/decisions/0001-platform-foundation.md
+- AI orchestration: docs/ai/orchestration.md
+- Threat model: docs/security/threat-model.md
 - Definition of done: docs/engineering/definition-of-done.md
 - Security policy: SECURITY.md
 
-## Current scope
-
-Phase 1 establishes the application/runtime structure, API conventions, baseline browser security headers, documentation, and quality gates. Database, identity provider, persistent memory, and AI provider adapters are intentionally not provisioned or implemented in this phase.
+Database, identity provider, persistent memory, and user-facing chat UI remain separate phases because they require explicit data lifecycle, residency, retention, tenancy, and cost decisions.
