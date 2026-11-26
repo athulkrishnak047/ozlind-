@@ -1,6 +1,6 @@
 import { transcribe } from "ai";
 import { createGroq } from "@ai-sdk/groq";
-import { consumeAiRateLimit, RateLimitUnavailableError } from "@/lib/ai/access";
+import { consumeAiRateLimit } from "@/lib/ai/access";
 import { jsonFailure } from "@/lib/http";
 
 export const runtime = "nodejs";
@@ -25,17 +25,10 @@ function clientKey(request: Request): string {
 }
 
 export async function POST(request: Request): Promise<Response> {
-  try {
-    if (!await consumeAiRateLimit(clientKey(request))) {
-      const response = jsonFailure("RATE_LIMITED", "Too many requests. Please wait and try again.", 429);
-      response.headers.set("Retry-After", "60");
-      return response;
-    }
-  } catch (error) {
-    if (error instanceof RateLimitUnavailableError) {
-      return jsonFailure("RATE_LIMIT_UNAVAILABLE", "The AI service is temporarily unavailable. Please try again shortly.", 503);
-    }
-    throw error;
+  if (!await consumeAiRateLimit(clientKey(request))) {
+    const response = jsonFailure("RATE_LIMITED", "Too many requests. Please wait and try again.", 429);
+    response.headers.set("Retry-After", "60");
+    return response;
   }
 
   if (!process.env.GROQ_API_KEY) {
