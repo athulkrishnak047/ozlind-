@@ -510,3 +510,38 @@ body {
 @media (max-width: 760px) {
   .recent-chats { max-height: 28vh; }
 }
+
+
+/* Voice input */
+.voice-button {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 9px;
+  background: rgba(166, 155, 255, .08);
+  color: #c8c0ff;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+.voice-button:hover:not(:disabled) {
+  border-color: rgba(166, 155, 255, .5);
+  background: rgba(166, 155, 255, .16);
+}
+.voice-button.recording {
+  border-color: rgba(255, 119, 132, .65);
+  background: rgba(255, 100, 120, .16);
+  color: #ff9aa7;
+  box-shadow: 0 0 0 4px rgba(255, 100, 120, .07);
+  animation: voice-pulse 1.4s ease-in-out infinite;
+}
+.voice-button:disabled { opacity: .4; cursor: not-allowed; }
+@keyframes voice-pulse {
+  50% { box-shadow: 0 0 0 7px rgba(255, 100, 120, .025); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .voice-button.recording { animation: none; }
+}
