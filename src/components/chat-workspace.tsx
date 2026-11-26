@@ -110,8 +110,16 @@ export function ChatWorkspace() {
 
     const userMessage: ChatMessage = { id: newId(), role: "user", content };
     const assistantMessage: ChatMessage = { id: newId(), role: "assistant", content: "" };
+    const previousMessages: { role: Role; content: string }[] = [];
+    let remainingChars = 24_000 - content.length;
+    for (let index = messages.length - 1; index >= 0 && previousMessages.length < 19; index -= 1) {
+      const item = messages[index];
+      if (item.content.length > remainingChars) continue;
+      previousMessages.unshift({ role: item.role, content: item.content });
+      remainingChars -= item.content.length;
+    }
     const requestMessages = [
-      ...messages.map(({ role, content: messageContent }) => ({ role, content: messageContent })),
+      ...previousMessages,
       { role: "user" as const, content }
     ];
     setMessages((current) => [...current, userMessage, assistantMessage]);
@@ -125,6 +133,7 @@ export function ChatWorkspace() {
     abortRef.current = controller;
     let receivedText = false;
     let receivedDone = false;
+    let streamHadError = false;
     let buffer = "";
 
     const handleFrame = (frame: string) => {
@@ -147,6 +156,7 @@ export function ChatWorkspace() {
       } else if (item.event === "done") {
         receivedDone = true;
       } else if (item.event === "error") {
+        streamHadError = true;
         setErrorMessage(typeof item.data.message === "string" ? item.data.message : "The response was interrupted.");
       }
     };
@@ -182,7 +192,7 @@ export function ChatWorkspace() {
       }
       buffer += decoder.decode();
       if (buffer.trim()) handleFrame(buffer);
-      if (!receivedDone && !controller.signal.aborted && !errorMessage) {
+      if (!receivedDone && !controller.signal.aborted && !streamHadError) {
         setErrorMessage("The connection ended before Ozlind completed its response.");
       }
       if (!receivedText) {
@@ -270,7 +280,7 @@ export function ChatWorkspace() {
               <div className="welcome-footnote"><span>✦</span> Ozlind can make mistakes. Verify important information.</div>
             </section>
           ) : (
-            <section className="conversation" aria-label="Conversation">
+            <section className="conversation" aria-label="Conversation" aria-live="polite" aria-relevant="additions text">
               <div className="conversation-heading">
                 <span>THIS SESSION</span>
                 <button type="button" onClick={startNewChat}>Clear conversation</button>
