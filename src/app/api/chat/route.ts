@@ -116,14 +116,14 @@ export async function POST(request: Request): Promise<Response> {
     return jsonFailure("AI_ACCESS_NOT_CONFIGURED", "The AI service is not enabled yet.", 503);
   }
 
-  if (!isValidAiAccessToken(request.headers.get("authorization"), accessToken)) {
-    return jsonFailure("UNAUTHORIZED", "A valid access token is required.", 401);
-  }
-
   if (!consumeAiRateLimit(clientKey(request))) {
     const response = jsonFailure("RATE_LIMITED", "Too many requests. Please wait and try again.", 429);
     response.headers.set("Retry-After", "60");
     return response;
+  }
+
+  if (!isValidAiAccessToken(request.headers.get("authorization"), accessToken)) {
+    return jsonFailure("UNAUTHORIZED", "A valid access token is required.", 401);
   }
 
   const declaredLength = Number(request.headers.get("content-length") || 0);
