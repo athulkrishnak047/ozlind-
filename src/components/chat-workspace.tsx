@@ -27,7 +27,7 @@ function isConversation(value: unknown): value is Conversation {
           !!source && typeof source === "object" &&
           typeof (source as Record<string, unknown>).title === "string" &&
           typeof (source as Record<string, unknown>).url === "string" &&
-          /^https?:\\/\\//.test((source as Record<string, string>).url)
+          (((source as Record<string, string>).url).startsWith("https://") || ((source as Record<string, string>).url).startsWith("http://"))
         ));
       return typeof entry.id === "string" &&
         (entry.role === "user" || entry.role === "assistant") &&
@@ -291,7 +291,7 @@ export function ChatWorkspace() {
               !!item && typeof item === "object" &&
               typeof (item as { title?: unknown }).title === "string" &&
               typeof (item as { url?: unknown }).url === "string" &&
-              /^https?:\\/\\//.test((item as { url: string }).url)
+              ((item as { url: string }).url.startsWith("https://") || (item as { url: string }).url.startsWith("http://"))
             ).slice(0, 8)
           : [];
         setMessages((current) => current.map((message) =>
