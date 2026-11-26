@@ -69,7 +69,24 @@ export function ChatWorkspace() {
     const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     document.getElementById("service-token")?.focus();
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setConnectOpen(false);
+      if (event.key === "Escape") {
+        setConnectOpen(false);
+        return;
+      }
+      if (event.key === "Tab") {
+        const focusable = document.querySelectorAll<HTMLElement>(
+          ".connect-modal button:not([disabled]), .connect-modal input:not([disabled])"
+        );
+        const first = focusable.item(0);
+        const last = focusable.item(focusable.length - 1);
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last?.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first?.focus();
+        }
+      }
     };
     window.addEventListener("keydown", handleEscape);
     return () => {
