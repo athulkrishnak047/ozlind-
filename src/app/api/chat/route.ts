@@ -1,6 +1,6 @@
 import { streamText, type ModelMessage } from "ai";
 import { createRequestId, jsonFailure } from "@/lib/http";
-import { consumeAiRateLimit, isValidAiAccessToken } from "@/lib/ai/access";
+import { consumeAiRateLimit } from "@/lib/ai/access";
 import { MAX_CHAT_BODY_BYTES, parseChatRequest, PayloadTooLargeError, readBoundedRequestBody } from "@/lib/ai/contracts";
 import { getProviderCandidates, type ProviderCandidate } from "@/lib/ai/providers";
 
@@ -111,19 +111,10 @@ async function streamWithFallback(
 }
 
 export async function POST(request: Request): Promise<Response> {
-  const accessToken = process.env.OZLIND_AI_ACCESS_TOKEN;
-  if (!accessToken || accessToken.length < 32) {
-    return jsonFailure("AI_ACCESS_NOT_CONFIGURED", "The AI service is not enabled yet.", 503);
-  }
-
   if (!consumeAiRateLimit(clientKey(request))) {
     const response = jsonFailure("RATE_LIMITED", "Too many requests. Please wait and try again.", 429);
     response.headers.set("Retry-After", "60");
     return response;
-  }
-
-  if (!isValidAiAccessToken(request.headers.get("authorization"), accessToken)) {
-    return jsonFailure("UNAUTHORIZED", "A valid access token is required.", 401);
   }
 
   const declaredLength = Number(request.headers.get("content-length") || 0);
