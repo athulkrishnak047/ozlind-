@@ -86,7 +86,9 @@ export async function POST(request: Request): Promise<Response> {
   let form: FormData;
   try {
     const body = await readBoundedBody(request);
-    form = await new Response(body, { headers: { "content-type": contentType } }).formData();
+    const bodyBuffer = new ArrayBuffer(body.byteLength);
+    new Uint8Array(bodyBuffer).set(body);
+    form = await new Response(bodyBuffer, { headers: { "content-type": contentType } }).formData();
   } catch (error) {
     if (error instanceof AudioPayloadTooLargeError) {
       return jsonFailure("AUDIO_TOO_LARGE", "Audio must be smaller than 4 MB.", 413);
