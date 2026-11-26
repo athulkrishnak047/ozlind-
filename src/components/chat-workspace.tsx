@@ -27,11 +27,6 @@ function isConversation(value: unknown): value is Conversation {
         typeof entry.content === "string";
     });
 }
-type Conversation = { id: string; title: string; updatedAt: number; messages: ChatMessage[] };
-const HISTORY_KEY = "ozlind:conversations:v1";
-const MAX_SAVED_CONVERSATIONS = 12;
-const MAX_SAVED_MESSAGES = 40;
-
 const suggestions = [
   { title: "Think through an idea", prompt: "Help me think through an idea. Ask focused questions before proposing a solution." },
   { title: "Explain something clearly", prompt: "Explain a difficult topic clearly, with an intuitive example and the important caveats." },
