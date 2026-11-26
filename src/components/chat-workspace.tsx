@@ -299,7 +299,7 @@ export function ChatWorkspace() {
           : [];
         setMessages((current) => current.map((message) =>
           message.id === assistantMessage.id
-            ? { ...message, content: result.text as string, provider: "groq", model: "groq/compound", sources }
+            ? { ...message, content: result.text as string, provider: typeof result.provider === "string" ? result.provider : "research", model: typeof result.model === "string" ? result.model : "web-search", sources }
             : message
         ));
       } catch (error) {
