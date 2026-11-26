@@ -139,8 +139,11 @@ export function ChatWorkspace() {
 
   useEffect(() => () => {
     abortRef.current?.abort();
-    recorderRef.current?.stream.getTracks().forEach((track) => track.stop());
-    recorderRef.current?.stop();
+    if (recorderRef.current) {
+      recorderRef.current.onstop = null;
+      recorderRef.current.stream.getTracks().forEach((track) => track.stop());
+      if (recorderRef.current.state !== "inactive") recorderRef.current.stop();
+    }
   }, []);
 
 
