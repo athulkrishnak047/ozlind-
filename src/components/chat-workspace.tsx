@@ -309,7 +309,7 @@ export function ChatWorkspace() {
     event.target.value = "";
     if (!file) return;
     if (!ACCEPTED_ATTACHMENT_TYPES.includes(file.type)) {
-      setErrorMessage("Attach a PDF, PNG, JPEG, or WebP file.");
+      setErrorMessage("Attach a PDF, PNG, JPEG, WebP, MP4, or WebM file.");
       return;
     }
     if (file.size === 0 || file.size > MAX_ATTACHMENT_BYTES) {
@@ -565,7 +565,7 @@ export function ChatWorkspace() {
           />
           {conversations
             .filter((conversation) => conversation.messages.length > 0)
-            .filter((conversation) => conversation.title.toLowerCase().includes(historySearch.trim().toLowerCase()))
+            .filter((conversation) => !historySearch.trim() || conversation.title.toLowerCase().includes(historySearch.trim().toLowerCase()) || conversation.messages.some((message) => message.content.toLowerCase().includes(historySearch.trim().toLowerCase())))
             .map((conversation) => (
             <button className={`nav-item history-item ${conversation.id === activeConversationId ? "active" : ""}`} key={conversation.id} type="button" onClick={() => openConversation(conversation.id)} disabled={isBusy}>
               <span aria-hidden="true">◷</span><span className="history-title">{conversation.title}</span>
@@ -712,7 +712,7 @@ export function ChatWorkspace() {
                 </select>
                 <button className={`web-search-button ${webSearchEnabled ? "enabled" : ""}`} type="button" onClick={() => setWebSearchEnabled((value) => !value)} disabled={isBusy} aria-pressed={webSearchEnabled} title="Use live web research">Web</button>
                 <button className={`voice-button ${isRecording ? "recording" : ""}`} type="button" onClick={() => void toggleVoiceRecording()} disabled={isBusy} aria-label={isRecording ? "Stop voice recording" : "Start voice recording"} title={isRecording ? "Stop recording" : "Speak your message"}>{isRecording ? "■" : "🎙"}</button>
-                <span className="composer-hint">{isRecording ? "Listening… tap stop when finished" : "Shift + Enter for a new line"}</span>
+                <span className="composer-hint">{isRecording ? "Listening… tap stop when finished" : attachment ? "Gemini multimodal analysis · Shift + Enter for a new line" : "Shift + Enter for a new line"}</span>
               </div>
               {isBusy ? (
                 <button className="send-button stop-button" type="button" onClick={() => abortRef.current?.abort()} aria-label="Stop generating">■</button>
