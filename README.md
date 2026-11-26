@@ -27,8 +27,6 @@ Add at least one provider key to `.env.local` to enable AI responses. Provider c
 
 In Vercel Project Settings → Environment Variables, configure:
 - `GEMINI_API_KEY` and/or `GROQ_API_KEY`
-- `UPSTASH_REDIS_REST_URL`
-- `UPSTASH_REDIS_REST_TOKEN`
 
 The public chat route fails closed in production if shared rate limiting is unavailable. The current shared limit is 8 requests per IP per minute. This is an anonymous public beta guardrail, not a full account-based quota or billing system.
 
