@@ -7,6 +7,10 @@ type Role = "user" | "assistant";
 type ChatMessage = { id: string; role: Role; content: string; provider?: string; model?: string; fallback?: boolean };
 type Provider = "auto" | "gemini" | "groq";
 type StreamEvent = { event: string; data: Record<string, unknown> };
+type Conversation = { id: string; title: string; updatedAt: number; messages: ChatMessage[] };
+const HISTORY_KEY = "ozlind:conversations:v1";
+const MAX_SAVED_CONVERSATIONS = 12;
+const MAX_SAVED_MESSAGES = 40;
 
 const suggestions = [
   { title: "Think through an idea", prompt: "Help me think through an idea. Ask focused questions before proposing a solution." },
@@ -221,7 +225,7 @@ export function ChatWorkspace() {
         <div className="sidebar-note">
           <span className="note-icon" aria-hidden="true">◇</span>
           <p>Thoughtful AI, built with care.</p>
-          <span>Built for curious minds</span>
+          <span>History saved on this device</span>
         </div>
         <div className="profile-row">
           <div className="profile-avatar">O</div>
@@ -264,7 +268,7 @@ export function ChatWorkspace() {
               {messages.map((message) => (
                 <article className={`message-row ${message.role}`} key={message.id}>
                   <div className={`message-avatar ${message.role === "assistant" ? "assistant-avatar" : "user-avatar"}`}>
-                    {message.role === "assistant" ? "✳" : "Y"}
+                    {message.role === "assistant" ? "✳" : "U"}
                   </div>
                   <div className="message-body">
                     <div className="message-meta">
