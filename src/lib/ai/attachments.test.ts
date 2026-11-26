@@ -7,11 +7,14 @@ describe("isSupportedAttachmentSignature", () => {
     expect(isSupportedAttachmentSignature("image/png", new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))).toBe(true);
     expect(isSupportedAttachmentSignature("image/jpeg", new Uint8Array([0xff, 0xd8, 0xff]))).toBe(true);
     expect(isSupportedAttachmentSignature("image/webp", new Uint8Array([0x52, 0x49, 0x46, 0x46, 0, 0, 0, 0, 0x57, 0x45, 0x42, 0x50]))).toBe(true);
+    expect(isSupportedAttachmentSignature("video/mp4", new Uint8Array([0, 0, 0, 0, 0x66, 0x74, 0x79, 0x70, 0x69, 0x73, 0x6f, 0x6d]))).toBe(true);
+    expect(isSupportedAttachmentSignature("video/webm", new Uint8Array([0x1a, 0x45, 0xdf, 0xa3]))).toBe(true);
   });
 
   it("rejects mismatched MIME types and truncated signatures", () => {
     expect(isSupportedAttachmentSignature("image/png", new Uint8Array([0xff, 0xd8, 0xff]))).toBe(false);
     expect(isSupportedAttachmentSignature("application/pdf", new Uint8Array([0x25, 0x50]))).toBe(false);
     expect(isSupportedAttachmentSignature("image/gif", new Uint8Array([0x47, 0x49, 0x46, 0x38]))).toBe(false);
+    expect(isSupportedAttachmentSignature("video/mp4", new Uint8Array([0x00, 0x00, 0x00, 0x00]))).toBe(false);
   });
 });
