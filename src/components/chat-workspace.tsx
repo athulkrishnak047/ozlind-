@@ -22,9 +22,17 @@ function isConversation(value: unknown): value is Conversation {
     item.messages.every((message) => {
       if (!message || typeof message !== "object") return false;
       const entry = message as Record<string, unknown>;
+      const sourcesValid = entry.sources === undefined ||
+        (Array.isArray(entry.sources) && entry.sources.every((source) =>
+          !!source && typeof source === "object" &&
+          typeof (source as Record<string, unknown>).title === "string" &&
+          typeof (source as Record<string, unknown>).url === "string" &&
+          /^https?:\\/\\//.test((source as Record<string, string>).url)
+        ));
       return typeof entry.id === "string" &&
         (entry.role === "user" || entry.role === "assistant") &&
-        typeof entry.content === "string";
+        typeof entry.content === "string" &&
+        sourcesValid;
     });
 }
 const suggestions = [
