@@ -1,5 +1,3 @@
-import { generateText, type ModelMessage } from "ai";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { consumeAiRateLimit, RateLimitUnavailableError } from "@/lib/ai/access";
 import { MAX_CHAT_BODY_BYTES, parseChatRequest, PayloadTooLargeError, readBoundedRequestBody } from "@/lib/ai/contracts";
 import { jsonFailure } from "@/lib/http";
@@ -92,37 +90,66 @@ export async function POST(request: Request): Promise<Response> {
   const parsed = parseChatRequest(rawBody);
   if (!parsed.ok) return jsonFailure(parsed.code, parsed.message, parsed.code === "PAYLOAD_TOO_LARGE" ? 413 : 400);
 
-  const modelMessages: ModelMessage[] = parsed.messages.map(({ role, content }) => ({ role, content }));
   const system = "You are Ozlind Research. Research the user question using live web search. Prefer primary and authoritative sources, distinguish verified facts from uncertainty, include dates when relevant, and never invent sources. Give a concise but useful answer.";
   const signal = AbortSignal.any([request.signal, AbortSignal.timeout(45_000)]);
 
   if (process.env.GEMINI_API_KEY) {
     try {
-      const google = createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY });
-      const modelId = process.env.GEMINI_MODEL || "gemini-3.8-flash";
-      const result = await generateText({
-        model: google(modelId),
-        system,
-        messages: modelMessages,
-        tools: { google_search: google.tools.googleSearch({}) },
-        maxOutputTokens: 2048,
-        temperature: 0.2,
-        abortSignal: signal
+      const input = parsed.messages.map((message) => `${message.role === "user" ? "User" : "Assistant"}: ${message.content}`).join("\n\n");
+      const response = await fetch("https://generativelanguage.googleapis.com/v1beta/interactions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-goog-api-key": process.env.GEMINI_API_KEY },
+        body: JSON.stringify({
+          model: process.env.GEMINI_MODEL || "gemini-3.8-flash",
+          input: `${system}\n\n${input}`,
+          tools: [{ type: "google_search" }]
+        }),
+        cache: "no-store",
+        signal
       });
-      if (result.text.trim()) {
-        return Response.json({
-          text: result.text,
-          provider: "gemini",
-          model: modelId,
-          sources: normalizeSources(result.sources)
-        }, { headers: { "Cache-Control": "no-store" } });
+      if (response.ok) {
+        const payload: unknown = await response.json();
+        if (payload && typeof payload === "object") {
+          const record = payload as { output_text?: unknown; steps?: unknown };
+          const textParts: string[] = [];
+          const citations: { title: string; url: string }[] = [];
+          if (Array.isArray(record.steps)) {
+            for (const step of record.steps) {
+              if (!step || typeof step !== "object") continue;
+              const stepRecord = step as { type?: unknown; content?: unknown };
+              if (stepRecord.type !== "model_output" || !Array.isArray(stepRecord.content)) continue;
+              for (const part of stepRecord.content) {
+                if (!part || typeof part !== "object") continue;
+                const content = part as { type?: unknown; text?: unknown; annotations?: unknown };
+                if (content.type === "text" && typeof content.text === "string") textParts.push(content.text);
+                if (Array.isArray(content.annotations)) {
+                  for (const annotation of content.annotations) {
+                    if (!annotation || typeof annotation !== "object") continue;
+                    const citation = annotation as { type?: unknown; url?: unknown; title?: unknown };
+                    if (citation.type === "url_citation" && typeof citation.url === "string") {
+                      citations.push({ title: typeof citation.title === "string" ? citation.title : "", url: citation.url });
+                    }
+                  }
+                }
+              }
+            }
+          }
+          const answer = textParts.join("\n\n").trim() || (typeof record.output_text === "string" ? record.output_text.trim() : "");
+          if (answer) {
+            return Response.json({
+              text: answer,
+              provider: "gemini",
+              model: process.env.GEMINI_MODEL || "gemini-3.8-flash",
+              sources: normalizeSources(citations)
+            }, { headers: { "Cache-Control": "no-store" } });
+          }
+        }
       }
     } catch {
       if (request.signal.aborted) return jsonFailure("REQUEST_CANCELLED", "The research request was cancelled.", 499);
-      // Fall back to Groq when Gemini Search is unavailable for this model or key.
+      // Fall back to Groq when Gemini Search is unavailable.
     }
   }
-
   if (!process.env.GROQ_API_KEY) {
     return jsonFailure("WEB_SEARCH_FAILED", "Gemini web research is temporarily unavailable.", 502);
   }
