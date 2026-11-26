@@ -10,6 +10,41 @@ afterEach(() => {
   if (originalGroqKey === undefined) delete process.env.GROQ_API_KEY;
   else process.env.GROQ_API_KEY = originalGroqKey;
   vi.unstubAllGlobals();
+});
+
+describe("POST /api/research", () => {
+  it("returns a safe unavailable response when no provider is configured", async () => {
+    delete process.env.GEMINI_API_KEY;
+    delete process.env.GROQ_API_KEY;
+    const response = await POST(new Request("https://ozlind.test/api/research", {
+      method: "POST",
+      headers: { "x-real-ip": "research-no-provider-test" },
+      body: JSON.stringify({ messages: [{ role: "user", content: "Find recent AI news" }] })
+    }));
+
+    expect(response.status).toBe(503);
+    expect(await response.json()).toMatchObject({
+      ok: false,
+      error: { code: "WEB_SEARCH_UNAVAILABLE" }
+    });
+  });
+
+  it("rejects malformed input before making an upstream provider request", async () => {
+    process.env.GEMINI_API_KEY = "test-only-key";
+    delete process.env.GROQ_API_KEY;
+    const response = await POST(new Request("https://ozlind.test/api/research", {
+      method: "POST",
+      headers: { "x-real-ip": "research-invalid-input-test", "content-type": "application/json" },
+      body: "{"
+    }));
+
+    expect(response.status).toBe(400);
+    expect(await response.json()).toMatchObject({
+      ok: false,
+      error: { code: "INVALID_JSON" }
+    });
+  });
+
   it("uses the explicitly selected Groq research provider first", async () => {
     process.env.GEMINI_API_KEY = "test-gemini-key";
     process.env.GROQ_API_KEY = "test-groq-key";
@@ -63,40 +98,5 @@ afterEach(() => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(fetchMock.mock.calls[0][0]).toBe("https://api.groq.com/openai/v1/chat/completions");
     expect(fetchMock.mock.calls[1][0]).toBe("https://generativelanguage.googleapis.com/v1beta/interactions");
-  });
-
-});
-
-describe("POST /api/research", () => {
-  it("returns a safe unavailable response when no provider is configured", async () => {
-    delete process.env.GEMINI_API_KEY;
-    delete process.env.GROQ_API_KEY;
-    const response = await POST(new Request("https://ozlind.test/api/research", {
-      method: "POST",
-      headers: { "x-real-ip": "research-no-provider-test" },
-      body: JSON.stringify({ messages: [{ role: "user", content: "Find recent AI news" }] })
-    }));
-
-    expect(response.status).toBe(503);
-    expect(await response.json()).toMatchObject({
-      ok: false,
-      error: { code: "WEB_SEARCH_UNAVAILABLE" }
-    });
-  });
-
-  it("rejects malformed input before making an upstream provider request", async () => {
-    process.env.GEMINI_API_KEY = "test-only-key";
-    delete process.env.GROQ_API_KEY;
-    const response = await POST(new Request("https://ozlind.test/api/research", {
-      method: "POST",
-      headers: { "x-real-ip": "research-invalid-input-test", "content-type": "application/json" },
-      body: "{"
-    }));
-
-    expect(response.status).toBe(400);
-    expect(await response.json()).toMatchObject({
-      ok: false,
-      error: { code: "INVALID_JSON" }
-    });
   });
 });
