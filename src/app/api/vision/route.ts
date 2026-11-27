@@ -45,12 +45,6 @@ async function readBoundedBody(request: Request): Promise<Uint8Array> {
   return body;
 }
 
-function getConversationContext(messages: { role: "user" | "assistant"; content: string }[]): string {
-  return messages
-    .map((message) => `${message.role === "user" ? "User" : "Ozlind"}: ${message.content}`)
-    .join("\n\n");
-}
-
 export async function POST(request: Request): Promise<Response> {
   if (!await consumeAiRateLimit(clientKey(request))) {
     const response = jsonFailure("RATE_LIMITED", "Too many requests. Please wait and try again.", 429);
@@ -135,7 +129,7 @@ export async function POST(request: Request): Promise<Response> {
     "",
     "Untrusted conversation data (JSON):",
     JSON.stringify(parsed.messages)
-  ].join("\\n");
+  ].join("\n");
   const base64 = Buffer.from(fileBytes).toString("base64");
 
   try {
