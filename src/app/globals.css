@@ -1619,3 +1619,11 @@ html[data-density="compact"] .settings-card { min-height:62px; padding-top:11px;
 .history-delete:disabled { cursor: not-allowed; opacity: .25; }
 .history-row .history-item:focus-visible, .history-delete:focus-visible, .settings-rail-link:focus-visible, .settings-back-link:focus-visible { outline: 2px solid var(--muted); outline-offset: 2px; }
 @media (hover: none) { .history-delete { opacity: 1; } }
+
+
+.history-empty-state { padding: 13px 10px; color: var(--muted); font-size: 10px; line-height: 1.5; }
+.history-empty-state p { margin: 0 0 8px; }
+.history-empty-state button { padding: 0; border: 0; background: none; color: var(--text); font-size: 10px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+html[data-density="compact"] .sidebar .nav-item { min-height: 31px; padding-top: 6px; padding-bottom: 6px; }
+html[data-density="compact"] .message-row { margin-block: 18px; }
+html[data-density="compact"] .conversation { padding-top: 22px; padding-bottom: 22px; }
