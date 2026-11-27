@@ -78,7 +78,7 @@ async function researchWithGemini(
           "",
           "UNTRUSTED CONVERSATION DATA:",
           JSON.stringify(messages)
-        ].join("\\n"),
+        ].join("\n"),
         tools: [{ type: "google_search" }],
         store: false
       }),
