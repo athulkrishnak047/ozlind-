@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
+import { OzlindMark } from "./ozlind-mark";
 
 const capabilities = [
   {
@@ -37,7 +38,7 @@ export function LandingPage() {
     <main className="site-shell">
       <header className="site-nav">
         <Link href="/" className="site-brand" aria-label="Ozlind home">
-          <span className="site-brand-mark"><i /></span>
+          <OzlindMark className="site-brand-mark-svg" />
           <span>ozlind<span className="site-brand-period">.</span></span>
         </Link>
         <nav className="site-nav-links" aria-label="Main navigation">
@@ -67,7 +68,7 @@ export function LandingPage() {
         <div className="site-product-preview" aria-label="Ozlind workspace preview">
           <div className="site-preview-window">
             <div className="site-preview-bar">
-              <div className="site-preview-brand"><span className="site-brand-mark"><i /></span> ozlind</div>
+              <div className="site-preview-brand"><OzlindMark className="site-brand-mark-svg" /> ozlind</div>
               <span className="site-preview-label">WORKSPACE PREVIEW</span>
               <span className="site-preview-dots"><i /><i /><i /></span>
             </div>
