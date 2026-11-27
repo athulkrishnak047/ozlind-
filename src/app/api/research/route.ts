@@ -60,7 +60,6 @@ async function researchWithGemini(
 ): Promise<ResearchResult | null> {
   const key = process.env.GEMINI_API_KEY;
   if (!key) return null;
-  const input = messages.map((message) => `${message.role === "user" ? "User" : "Assistant"}: ${message.content}`).join("\n\n");
   try {
     const model = process.env.GEMINI_MODEL || "gemini-3.8-flash";
     const response = await fetch("https://generativelanguage.googleapis.com/v1beta/interactions", {
