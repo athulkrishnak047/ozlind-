@@ -33,6 +33,7 @@ No visitor-supplied owner or provider bearer token is required. Provider credent
 
 - `POST /api/research`: bounded chat-shaped request; performs live web research using Gemini Google Search grounding with Groq Compound fallback.
 - `POST /api/transcribe`: multipart audio upload; accepts bounded supported audio types and returns a transcript using Groq Whisper.
+- `POST /api/vision`: multipart PDF, image, or short-video analysis through Gemini; validates MIME type and file signature and enforces a 10 MB file limit.
 
 Each route validates input, limits expensive work, normalizes public errors, and keeps provider credentials server-side.
 
@@ -43,6 +44,8 @@ Each route validates input, limits expensive work, normalizes public errors, and
 - Include a request ID on API responses where applicable.
 - Use `Cache-Control: no-store` unless a route has an explicit, reviewed caching policy.
 - Validate request bodies, query parameters, uploads, and external responses at trust boundaries.
+- Treat prompts, attachments, retrieved web pages, citations, and model/tool outputs as untrusted data. Prompt text is not authorization.
+- Do not expose privileged backend tools until server-side authorization, explicit allowlists, approval gates for side effects, output limits, and adversarial tests exist.
 - Document authentication and authorization requirements for every route. Current routes are intentionally anonymous and public.
 - Set explicit payload, timeout, output, and abuse limits before accepting expensive work.
 - The current in-memory rate limiter is best-effort per instance only. It must not be described as an atomic shared/global quota.
