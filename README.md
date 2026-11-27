@@ -9,11 +9,12 @@ The current foundation includes:
 - Streaming text chat through server-side Gemini and Groq adapters.
 - Provider preference with pre-first-token fallback.
 - Live web research through Gemini Google Search grounding, with Groq Compound fallback.
+- Gemini-powered analysis for supported PDFs, images, and short videos (10 MB upload limit).
 - Browser microphone capture and Groq Whisper speech-to-text.
 - Browser-local conversation history; no account or cloud synchronization.
 - Bounded request validation, provider timeouts, output limits, and best-effort in-memory abuse protection.
 
-This is an early platform foundation, not a claim of feature parity with ChatGPT. Real-time bidirectional voice, image/document/video understanding, durable memory, accounts, cloud history, tool execution, agents, and billing remain future capabilities.
+This is an early platform foundation, not a claim of feature parity with ChatGPT. Real-time bidirectional voice, durable memory, accounts, cloud history, tool execution, agents, and billing remain future capabilities. File understanding is available through a separate Gemini-powered multimodal route.
 
 ## Technology foundation
 
