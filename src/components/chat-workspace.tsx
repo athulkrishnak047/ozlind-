@@ -115,7 +115,24 @@ export function ChatWorkspace() {
   const recorderRef = useRef<MediaRecorder | null>(null);
   const recordingChunksRef = useRef<Blob[]>([]);
   const [isRecording, setIsRecording] = useState(false);
+  const [accountName, setAccountName] = useState("Ozlind user");
   const isBusy = status !== "idle";
+
+  useEffect(() => {
+    const syncProfile = (event?: Event) => {
+      const detail = event instanceof CustomEvent && typeof event.detail === "string" ? event.detail : "";
+      if (detail) { setAccountName(detail); return; }
+      try { setAccountName(window.localStorage.getItem("ozlind:profile:v1") || "Ozlind user"); }
+      catch { setAccountName("Ozlind user"); }
+    };
+    syncProfile();
+    window.addEventListener("ozlind:profile-updated", syncProfile);
+    window.addEventListener("storage", syncProfile);
+    return () => {
+      window.removeEventListener("ozlind:profile-updated", syncProfile);
+      window.removeEventListener("storage", syncProfile);
+    };
+  }, []);
 
   useEffect(() => {
     function handleGlobalShortcut(event: KeyboardEvent) {
@@ -602,8 +619,8 @@ export function ChatWorkspace() {
           <span>History saved on this device</span>
         </div>
         <Link className="profile-row" href="/settings#account" aria-label="Open account and profile settings">
-          <div className="profile-avatar">O</div>
-          <div><strong>Account</strong><span>Local profile · Settings</span></div>
+          <div className="profile-avatar">{accountName.trim().charAt(0).toUpperCase() || "O"}</div>
+          <div><strong>{accountName}</strong><span>Local profile · Settings</span></div>
           <span className="profile-chevron" aria-hidden="true">↗</span>
         </Link>
       </aside>
