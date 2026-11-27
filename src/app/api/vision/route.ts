@@ -116,7 +116,6 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   const model = process.env.GEMINI_MODEL || "gemini-3.8-flash";
-  const context = getConversationContext(parsed.messages);
   const isVideo = uploaded.type.startsWith("video/");
   const prompt = [
     "Analyze the attached file and answer the user's request using only information supported by the file and conversation.",
