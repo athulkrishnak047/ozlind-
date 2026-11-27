@@ -12,13 +12,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    let savedTheme: Theme | null = null;
     try {
       const saved = window.localStorage.getItem(STORAGE_KEY);
-      if (saved === "light" || saved === "dark") setTheme(saved);
+      if (saved === "light" || saved === "dark") savedTheme = saved;
     } catch {
       // Theme preference is optional; the workspace remains usable without storage.
     }
-    setReady(true);
+    const frame = window.requestAnimationFrame(() => {
+      if (savedTheme) setTheme(savedTheme);
+      setReady(true);
+    });
+    return () => window.cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {
