@@ -32,6 +32,7 @@ export function SettingsPanel() {
     const name = displayName.trim().slice(0, 48) || "Ozlind user";
     setDisplayName(name);
     try { localStorage.setItem(PROFILE_KEY, name); } catch { /* Optional persistence. */ }
+    window.dispatchEvent(new CustomEvent("ozlind:profile-updated", { detail: name }));
     setSaved(true);
     window.setTimeout(() => setSaved(false), 1800);
   }
