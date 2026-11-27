@@ -44,7 +44,7 @@ Authentication and authorization are not currently implemented because the curre
 
 ## Data and identity decisions
 
-No production database, vector store, or identity provider is provisioned. Choose these only after defining data residency, retention, deletion/export, tenant isolation, traffic, and cost requirements.
+No production database, vector store, or identity provider is provisioned. Basic PDF, image, and short-video analysis is available through a separate Gemini route; durable cloud storage and identity are not. Choose these only after defining data residency, retention, deletion/export, tenant isolation, traffic, and cost requirements.
 
 Memory must be opt-in, user-visible, inspectable, editable, and deletable. A vector index must never become the source of truth for user consent or deletion.
 
@@ -54,7 +54,7 @@ The chat runtime uses Vercel AI SDK with Gemini and Groq adapters. Provider-spec
 
 Automatic routing tries Gemini first and Groq second by default. A caller may change the preferred provider, but the other configured provider remains a fallback. Failover is permitted only before the first output token; after streaming begins, the route reports an interrupted stream rather than replaying content and risking duplicated or contradictory answers.
 
-Live research uses Gemini Google Search grounding through the Interactions API, with Groq Compound as a fallback. Voice input uses Groq Whisper transcription. These capabilities have separate route contracts and bounded inputs.
+Live research uses Gemini Google Search grounding through the Interactions API, with Groq Compound as a fallback. Voice input uses Groq Whisper transcription. PDF, image, and short-video understanding uses a separate Gemini multimodal route with bounded uploads and file-signature checks. These capabilities have separate route contracts and bounded inputs.
 
 Provider credentials and model overrides are server-only. Each provider attempt has a bounded timeout and output-token budget. The in-memory limiter is per-instance defense in depth only; it is not a global quota.
 
