@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { RichText } from "./rich-text";
+import { ThemeToggle } from "./theme-toggle";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent, type KeyboardEvent as ReactKeyboardEvent } from "react";
 
 type Role = "user" | "assistant";
@@ -597,6 +598,7 @@ export function ChatWorkspace() {
           <div className="breadcrumbs"><span>Workspace</span><span className="crumb-separator">/</span><strong>Assistant</strong></div>
           <div className="topbar-actions">
             <span className="privacy-pill"><span /> Local history</span>
+            <ThemeToggle />
           </div>
         </header>
 
