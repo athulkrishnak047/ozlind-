@@ -13,21 +13,42 @@ export function SettingsPanel() {
   const [displayName, setDisplayName] = useState("Ozlind user");
   const [saved, setSaved] = useState(false);
   const [historyCount, setHistoryCount] = useState(0);
+  const [preferencesLoaded, setPreferencesLoaded] = useState(false);
   useEffect(() => {
+    let nextPreferences = defaults;
+    let nextDisplayName = "Ozlind user";
+    let nextHistoryCount = 0;
     try {
       const raw = localStorage.getItem(PREFS_KEY);
-      if (raw) setPreferences({ ...defaults, ...(JSON.parse(raw) as Partial<Preferences>) });
+      if (raw) {
+        const parsed: unknown = JSON.parse(raw);
+        if (parsed && typeof parsed === "object") {
+          const value = parsed as Record<string, unknown>;
+          nextPreferences = {
+            reducedMotion: typeof value.reducedMotion === "boolean" ? value.reducedMotion : defaults.reducedMotion,
+            compactMode: typeof value.compactMode === "boolean" ? value.compactMode : defaults.compactMode
+          };
+        }
+      }
       const profile = localStorage.getItem(PROFILE_KEY);
-      if (profile) setDisplayName(profile.slice(0, 48));
-      const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
-      if (Array.isArray(history)) setHistoryCount(history.length);
+      if (profile) nextDisplayName = profile.slice(0, 48);
+      const history: unknown = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+      if (Array.isArray(history)) nextHistoryCount = history.length;
     } catch { /* Optional browser persistence. */ }
+    const frame = window.requestAnimationFrame(() => {
+      setPreferences(nextPreferences);
+      setDisplayName(nextDisplayName);
+      setHistoryCount(nextHistoryCount);
+      setPreferencesLoaded(true);
+    });
+    return () => window.cancelAnimationFrame(frame);
   }, []);
   useEffect(() => {
+    if (!preferencesLoaded) return;
     document.documentElement.dataset.motion = preferences.reducedMotion ? "reduced" : "full";
     document.documentElement.dataset.density = preferences.compactMode ? "compact" : "comfortable";
     try { localStorage.setItem(PREFS_KEY, JSON.stringify(preferences)); } catch { /* Optional persistence. */ }
-  }, [preferences]);
+  }, [preferences, preferencesLoaded]);
   function saveProfile() {
     const name = displayName.trim().slice(0, 48) || "Ozlind user";
     setDisplayName(name);
