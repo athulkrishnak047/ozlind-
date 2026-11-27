@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThemeToggle } from "./theme-toggle";
 
 const capabilities = [
   {
@@ -43,7 +44,7 @@ export function LandingPage() {
           <a href="#capabilities">Capabilities</a>
           <a href="#approach">Our approach</a>
         </nav>
-        <Link className="site-nav-cta" href="/workspace">Open Ozlind <span>↗</span></Link>
+        <div className="site-nav-actions"><ThemeToggle /><Link className="site-nav-cta" href="/workspace">Open Ozlind <span>↗</span></Link></div>
       </header>
 
       <section className="site-hero">
