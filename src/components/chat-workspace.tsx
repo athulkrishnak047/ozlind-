@@ -770,13 +770,13 @@ export function ChatWorkspace() {
                   aria-label="Attach a PDF, image, or short video"
                   title="Attach a PDF, image or short video (up to 10 MB)"
                 >＋</button>
-                <label className="provider-select-label" htmlFor="provider-select">MODEL</label>
-                <select id="provider-select" value={provider} onChange={(event) => setProvider(event.target.value as Provider)} disabled={!historyLoaded || isBusy}>
+                <label className="provider-select-label" htmlFor="provider-select">{attachment ? "MODEL · GEMINI FILE ANALYSIS" : "MODEL"}</label>
+                <select id="provider-select" value={attachment ? "gemini" : provider} onChange={(event) => setProvider(event.target.value as Provider)} disabled={!historyLoaded || isBusy || !!attachment} title={attachment ? "PDF, image and video analysis currently runs on Gemini." : "Choose the preferred chat model."}>
                   <option value="auto">Auto</option>
                   <option value="gemini">Gemini</option>
                   <option value="groq">Groq</option>
                 </select>
-                <button className={`web-search-button ${webSearchEnabled ? "enabled" : ""}`} type="button" onClick={() => setWebSearchEnabled((value) => !value)} disabled={!historyLoaded || isBusy} aria-pressed={webSearchEnabled} title="Use live web research">Web</button>
+                <button className={`web-search-button ${webSearchEnabled ? "enabled" : ""}`} type="button" onClick={() => setWebSearchEnabled((value) => !value)} disabled={!historyLoaded || isBusy || !!attachment} aria-pressed={webSearchEnabled} title={attachment ? "Remove the attachment to use live web research." : "Use live web research"}>Web</button>
                 <button className={`voice-button ${isRecording ? "recording" : ""}`} type="button" onClick={() => void toggleVoiceRecording()} disabled={!historyLoaded || isBusy} aria-label={isRecording ? "Stop voice recording" : "Start voice recording"} title={isRecording ? "Stop recording" : "Speak your message"}>{isRecording ? <span aria-hidden="true">■</span> : <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3" /><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3m-4 0h8" /></svg>}</button>
                 <span className="composer-hint">{isRecording ? "Listening… tap stop when finished" : attachment ? "Gemini multimodal analysis · Shift + Enter for a new line" : "Shift + Enter for a new line"}</span>
               </div>
