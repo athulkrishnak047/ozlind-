@@ -654,6 +654,9 @@ export function ChatWorkspace() {
           <button className="mobile-nav-toggle" type="button" aria-label={sidebarOpen ? "Close navigation" : "Open navigation"} aria-expanded={sidebarOpen} onClick={() => setSidebarOpen((open) => !open)}><span /><span /><span /></button>
           <div className="breadcrumbs"><span>Workspace</span><span className="crumb-separator">/</span><strong>Assistant</strong></div>
           <div className="topbar-actions">
+            <button className="command-trigger workspace-command-trigger" type="button" onClick={() => setCommandOpen(true)} aria-label="Search workspace actions" title="Search actions · Ctrl K">
+              <span aria-hidden="true">⌕</span><span>Search</span><kbd>Ctrl K</kbd>
+            </button>
             <span className="privacy-pill"><span /> Local history</span>
             <ThemeToggle />
           </div>
@@ -663,9 +666,14 @@ export function ChatWorkspace() {
           {messages.length === 0 ? (
             <section className="welcome" aria-labelledby="welcome-title">
               <div className="welcome-mark"><OzlindMark className="welcome-brand-mark" /></div>
-              <p className="welcome-kicker">A CLEARER WAY TO THINK</p>
-              <h1 id="welcome-title">What’s on your <span>mind?</span></h1>
-              <p className="welcome-copy">Ask a question, explore an idea, or work through something complex. Let’s make progress together.</p>
+              <p className="welcome-kicker">YOUR AI WORKSPACE</p>
+              <h1 id="welcome-title">What would you like<br className="welcome-title-break" /> to <span>work on?</span></h1>
+              <p className="welcome-copy">Ask a question, research a topic, or bring a file. Start with a prompt or choose a shortcut.</p>
+              <div className="welcome-quick-actions" aria-label="Start with a capability">
+                <button type="button" onClick={() => { setWebSearchEnabled(true); composerRef.current?.querySelector("textarea")?.focus(); }}><span aria-hidden="true">⌕</span> Research a topic</button>
+                <button type="button" onClick={() => fileInputRef.current?.click()}><span aria-hidden="true">＋</span> Analyze a file</button>
+                <button type="button" onClick={() => void toggleVoiceRecording()}><span aria-hidden="true">◖</span> Use voice</button>
+              </div>
               <div className="suggestion-grid">
                 {suggestions.map((suggestion, index) => (
                   <button className="suggestion-card" key={suggestion.title} type="button" onClick={() => setDraft(suggestion.prompt)}>
@@ -743,6 +751,10 @@ export function ChatWorkspace() {
               disabled={!historyLoaded || isBusy}
               aria-label="Choose a PDF, image, or short video"
             />
+            <div className="composer-context">
+              <span className="composer-context-label">{attachment ? "File analysis" : "Message Ozlind"}</span>
+              <span className="composer-context-hint">{attachment ? "Gemini will analyze your attachment" : "A thoughtful answer starts with a good question"}</span>
+            </div>
             {attachment && (
               <div className="attachment-chip">
                 <span aria-hidden="true">{attachment.type === "application/pdf" ? "▤" : attachment.type.startsWith("video/") ? "▶" : "▧"}</span>
@@ -755,7 +767,7 @@ export function ChatWorkspace() {
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
               onKeyDown={handleComposerKeyDown}
-              placeholder="Message Ozlind..."
+              placeholder="Ask anything, or describe what you need..."
               rows={1}
               aria-label="Message Ozlind"
               maxLength={8000}
@@ -770,13 +782,13 @@ export function ChatWorkspace() {
                   aria-label="Attach a PDF, image, or short video"
                   title="Attach a PDF, image or short video (up to 10 MB)"
                 >＋</button>
-                <label className="provider-select-label" htmlFor="provider-select">{attachment ? "MODEL · GEMINI FILE ANALYSIS" : "MODEL"}</label>
-                <select id="provider-select" value={attachment ? "gemini" : provider} onChange={(event) => setProvider(event.target.value as Provider)} disabled={!historyLoaded || isBusy || !!attachment} title={attachment ? "PDF, image and video analysis currently runs on Gemini." : "Choose the preferred chat model."}>
+                <label className="sr-only" htmlFor="provider-select">Choose AI model</label>
+                <select className="model-select" id="provider-select" aria-label="Choose AI model" value={attachment ? "gemini" : provider} onChange={(event) => setProvider(event.target.value as Provider)} disabled={!historyLoaded || isBusy || !!attachment} title={attachment ? "PDF, image and video analysis currently runs on Gemini." : "Choose the preferred chat model."}>
                   <option value="auto">Auto</option>
                   <option value="gemini">Gemini</option>
                   <option value="groq">Groq</option>
                 </select>
-                <button className={`web-search-button ${webSearchEnabled ? "enabled" : ""}`} type="button" onClick={() => setWebSearchEnabled((value) => !value)} disabled={!historyLoaded || isBusy || !!attachment} aria-pressed={webSearchEnabled} title={attachment ? "Remove the attachment to use live web research." : "Use live web research"}>Web</button>
+                <button className={`web-search-button ${webSearchEnabled ? "enabled" : ""}`} type="button" onClick={() => setWebSearchEnabled((value) => !value)} disabled={!historyLoaded || isBusy || !!attachment} aria-pressed={webSearchEnabled} title={attachment ? "Remove the attachment to use live web research." : "Use live web research"}><span aria-hidden="true">⌕</span> Research</button>
                 <button className={`voice-button ${isRecording ? "recording" : ""}`} type="button" onClick={() => void toggleVoiceRecording()} disabled={!historyLoaded || isBusy} aria-label={isRecording ? "Stop voice recording" : "Start voice recording"} title={isRecording ? "Stop recording" : "Speak your message"}>{isRecording ? <span aria-hidden="true">■</span> : <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3" /><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3m-4 0h8" /></svg>}</button>
                 <span className="composer-hint">{isRecording ? "Listening… tap stop when finished" : attachment ? "Gemini multimodal analysis · Shift + Enter for a new line" : "Shift + Enter for a new line"}</span>
               </div>
@@ -792,5 +804,14 @@ export function ChatWorkspace() {
       </section>
 
     </main>
+    <CommandPalette
+      open={commandOpen}
+      onClose={() => setCommandOpen(false)}
+      onNewChat={startNewChat}
+      onFocusComposer={() => composerRef.current?.querySelector("textarea")?.focus()}
+      onExport={exportConversation}
+      onClear={clearConversation}
+      onToggleWeb={() => setWebSearchEnabled((value) => !value)}
+    />
   );
 }
