@@ -86,6 +86,12 @@ export function ChatWorkspace() {
   const [commandOpen, setCommandOpen] = useState(false);
   const activeConversation = conversations.find((conversation) => conversation.id === activeConversationId);
   const messages = useMemo(() => activeConversation?.messages ?? [], [activeConversation]);
+  const visibleConversations = useMemo(() => conversations
+    .filter((conversation) => conversation.messages.length > 0)
+    .filter((conversation) => !historySearch.trim() ||
+      conversation.title.toLowerCase().includes(historySearch.trim().toLowerCase()) ||
+      conversation.messages.some((message) => message.content.toLowerCase().includes(historySearch.trim().toLowerCase()))),
+    [conversations, historySearch]);
 
   function setMessages(updater: (current: ChatMessage[]) => ChatMessage[]) {
     if (!activeConversationId) return;
@@ -616,10 +622,7 @@ export function ChatWorkspace() {
             placeholder="Search conversations"
             aria-label="Search conversations"
           />
-          {conversations
-            .filter((conversation) => conversation.messages.length > 0)
-            .filter((conversation) => !historySearch.trim() || conversation.title.toLowerCase().includes(historySearch.trim().toLowerCase()) || conversation.messages.some((message) => message.content.toLowerCase().includes(historySearch.trim().toLowerCase())))
-            .map((conversation) => (
+          {visibleConversations.map((conversation) => (
             <div className="history-row" key={conversation.id}>
               <button className={`nav-item history-item ${conversation.id === activeConversationId ? "active" : ""}`} type="button" onClick={() => openConversation(conversation.id)} disabled={isBusy}>
                 <span aria-hidden="true">◷</span><span className="history-title">{conversation.title}</span>
@@ -627,7 +630,8 @@ export function ChatWorkspace() {
               <button className="history-delete" type="button" onClick={() => deleteConversation(conversation.id)} disabled={isBusy} aria-label={`Delete conversation: ${conversation.title}`} title="Delete conversation">×</button>
             </div>
           ))}
-          {conversations.every((conversation) => conversation.messages.length === 0) && <p className="history-empty">Your conversations will appear here.</p>}
+          {historySearch.trim() && visibleConversations.length === 0 && <div className="history-empty-state"><p>No conversations match “{historySearch.trim()}”.</p><button type="button" onClick={() => setHistorySearch("")}>Clear search</button></div>}
+          {!historySearch.trim() && conversations.every((conversation) => conversation.messages.length === 0) && <p className="history-empty">Your conversations will appear here.</p>}
         </div>
 
         <div className="sidebar-spacer" />
