@@ -662,7 +662,7 @@ export function ChatWorkspace() {
         <div className="chat-scroll">
           {messages.length === 0 ? (
             <section className="welcome" aria-labelledby="welcome-title">
-              <div className="welcome-mark"><span className="welcome-spark">✳</span></div>
+              <div className="welcome-mark"><OzlindMark className="welcome-brand-mark" /></div>
               <p className="welcome-kicker">A CLEARER WAY TO THINK</p>
               <h1 id="welcome-title">What’s on your <span>mind?</span></h1>
               <p className="welcome-copy">Ask a question, explore an idea, or work through something complex. Let’s make progress together.</p>
@@ -690,7 +690,7 @@ export function ChatWorkspace() {
               {messages.map((message, index) => (
                 <article className={`message-row ${message.role}`} key={message.id}>
                   <div className={`message-avatar ${message.role === "assistant" ? "assistant-avatar" : "user-avatar"}`}>
-                    {message.role === "assistant" ? "✳" : "U"}
+                    {message.role === "assistant" ? <OzlindMark className="message-brand-mark" /> : (accountName.trim().charAt(0).toUpperCase() || "U")}
                   </div>
                   <div className="message-body">
                     <div className="message-meta">
