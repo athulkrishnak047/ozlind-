@@ -39,20 +39,20 @@ export function CommandPalette({ open, onClose, onNewChat, onFocusComposer, onEx
 
   useEffect(() => {
     if (!open) return;
-    setQuery("");
-    setActiveIndex(0);
     const frame = window.requestAnimationFrame(() => inputRef.current?.focus());
     return () => window.cancelAnimationFrame(frame);
   }, [open]);
 
-  useEffect(() => {
+  function close() {
+    setQuery("");
     setActiveIndex(0);
-  }, [query]);
+    onClose();
+  }
 
   if (!open) return null;
 
   function run(command: Command) {
-    onClose();
+    close();
     window.requestAnimationFrame(command.run);
   }
 
@@ -68,13 +68,13 @@ export function CommandPalette({ open, onClose, onNewChat, onFocusComposer, onEx
       run(filtered[activeIndex]);
     } else if (event.key === "Escape") {
       event.preventDefault();
-      onClose();
+      close();
     }
   }
 
   return (
     <div className="command-backdrop" role="presentation" onMouseDown={(event) => {
-      if (event.target === event.currentTarget) onClose();
+      if (event.target === event.currentTarget) close();
     }}>
       <section className="command-dialog" role="dialog" aria-modal="true" aria-labelledby="command-title">
         <div className="command-search-row">
@@ -82,7 +82,7 @@ export function CommandPalette({ open, onClose, onNewChat, onFocusComposer, onEx
           <input
             ref={inputRef}
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) => { setQuery(event.target.value); setActiveIndex(0); }}
             onKeyDown={handleKeyDown}
             placeholder="What would you like to do?"
             aria-label="Search commands"
