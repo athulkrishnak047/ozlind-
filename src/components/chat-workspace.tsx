@@ -4,6 +4,7 @@ import Link from "next/link";
 import { RichText } from "./rich-text";
 import { ThemeToggle } from "./theme-toggle";
 import { CommandPalette } from "./command-palette";
+import { OzlindMark } from "./ozlind-mark";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent, type KeyboardEvent as ReactKeyboardEvent } from "react";
 
 type Role = "user" | "assistant";
@@ -558,7 +559,7 @@ export function ChatWorkspace() {
     <main className="workspace">
       <aside className={`sidebar ${sidebarOpen ? "sidebar-open" : ""}`} aria-label="Workspace navigation">
         <Link className="brand" href="/" aria-label="Ozlind home">
-          <span className="brand-symbol" aria-hidden="true"><span /></span>
+          <OzlindMark className="brand-symbol-svg" />
           <span className="brand-word">ozlind<span className="brand-period">.</span></span>
         </Link>
 
@@ -569,7 +570,8 @@ export function ChatWorkspace() {
 
         <div className="sidebar-section">
           <p className="sidebar-label">WORKSPACE</p>
-          <div className="nav-item active"><span aria-hidden="true">✳</span> Assistant</div>
+          <Link href="/workspace" className="nav-item active"><span aria-hidden="true">✳</span> Assistant</Link>
+          <Link href="/settings" className="nav-item settings-nav-item"><span aria-hidden="true">⚙</span> Settings</Link>
         </div>
 
         <div className="sidebar-section recent-chats">
@@ -599,10 +601,11 @@ export function ChatWorkspace() {
           <p>Thoughtful AI, built with care.</p>
           <span>History saved on this device</span>
         </div>
-        <div className="profile-row">
+        <Link className="profile-row" href="/settings#account" aria-label="Open account and profile settings">
           <div className="profile-avatar">O</div>
-          <div><strong>Ozlind</strong><span>AI workspace</span></div>
-        </div>
+          <div><strong>Account</strong><span>Local profile · Settings</span></div>
+          <span className="profile-chevron" aria-hidden="true">↗</span>
+        </Link>
       </aside>
       {sidebarOpen && <button className="mobile-sidebar-backdrop" type="button" aria-label="Close navigation" onClick={() => setSidebarOpen(false)} />}
 
