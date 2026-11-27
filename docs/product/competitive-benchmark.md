@@ -35,7 +35,7 @@
 
 ### Phase 0 — Product truth and UX integrity
 - Keep capability claims aligned with working routes.
-- Make provider routing visible and predictable. File analysis currently uses Gemini even when the ordinary chat provider selector is set to Groq.
+- Make provider routing visible and predictable. The composer now explicitly shows and locks Gemini while a file is attached, because the current vision route is Gemini-only.
 - Keep attachment and live-research controls from implying that both paths run together when the current request flow prioritizes file analysis.
 - Maintain strict input bounds, server-side secrets, request cancellation, and truthful error states.
 
