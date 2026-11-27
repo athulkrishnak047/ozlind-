@@ -222,13 +222,14 @@ export function ChatWorkspace() {
 
   function deleteConversation(conversationId: string) {
     if (isBusy) return;
-    const fallback: Conversation = { id: newId(), title: "New chat", updatedAt: Date.now(), messages: [] };
-    setConversations((current) => {
-      const remaining = current.filter((conversation) => conversation.id !== conversationId);
-      return remaining.length ? remaining : [fallback];
-    });
+    const conversation = conversations.find((item) => item.id === conversationId);
+    if (!conversation) return;
+    if (!window.confirm(`Delete “${conversation.title}”? This cannot be undone.`)) return;
+    const remaining = conversations.filter((item) => item.id !== conversationId);
+    const nextActive = remaining[0] ?? { id: newId(), title: "New chat", updatedAt: Date.now(), messages: [] };
+    setConversations(remaining.length ? remaining : [nextActive]);
     if (conversationId === activeConversationId) {
-      setActiveConversationId(fallback.id);
+      setActiveConversationId(nextActive.id);
       setDraft("");
       setAttachment(null);
       setErrorMessage("");
