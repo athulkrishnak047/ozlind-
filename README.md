@@ -69,6 +69,7 @@ The public landing page is in `src/components/landing-page.tsx`; the chat worksp
 - `POST /api/chat`: bounded JSON input and Server-Sent Events output.
 - `POST /api/research`: grounded web research with provider fallback and normalized citations.
 - `POST /api/transcribe`: bounded audio upload and speech-to-text.
+- `POST /api/vision`: bounded PDF, image, and short-video analysis through Gemini.
 
 Provider keys and model IDs remain server-side. See [AI orchestration](docs/ai/orchestration.md) for contracts, limits, fallback behavior, and deployment configuration.
 
@@ -81,13 +82,14 @@ Provider keys and model IDs remain server-side. See [AI orchestration](docs/ai/o
 - Provider secrets remain server-side. Do not expose them in client bundles or logs.
 - External websites calling Ozlind APIs cross-origin require an explicit CORS policy; public browser access alone does not imply unrestricted cross-origin API access.
 
-Identity, cloud persistence, long-term memory, retrieval, tool execution, agents, multimodal uploads, and billing require dedicated privacy, tenancy, safety, cost, and lifecycle designs before release.
+Identity, cloud persistence, durable memory, retrieval, in-chat tool execution, agents, real-time voice, and billing require dedicated privacy, tenancy, safety, cost, and lifecycle designs before release. Basic PDF, image, and short-video analysis is already available through `/api/vision`.
 
 ## Engineering documents
 
 - [System architecture](docs/architecture/system-overview.md)
 - [API contract](docs/architecture/api-contract.md)
 - [AI orchestration](docs/ai/orchestration.md)
+- [ChatGPT and Claude competitive benchmark](docs/product/competitive-benchmark.md)
 - [Threat model](docs/security/threat-model.md)
 - [Definition of done](docs/engineering/definition-of-done.md)
 - [Security policy](SECURITY.md)
