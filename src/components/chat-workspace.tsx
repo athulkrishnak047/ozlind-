@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { RichText } from "./rich-text";
 import { ThemeToggle } from "./theme-toggle";
+import { CommandPalette } from "./command-palette";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent, type KeyboardEvent as ReactKeyboardEvent } from "react";
 
 type Role = "user" | "assistant";
@@ -81,6 +82,7 @@ export function ChatWorkspace() {
   const [historyLoaded, setHistoryLoaded] = useState(false);
   const [historySearch, setHistorySearch] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [commandOpen, setCommandOpen] = useState(false);
   const activeConversation = conversations.find((conversation) => conversation.id === activeConversationId);
   const messages = useMemo(() => activeConversation?.messages ?? [], [activeConversation]);
 
@@ -113,6 +115,18 @@ export function ChatWorkspace() {
   const recordingChunksRef = useRef<Blob[]>([]);
   const [isRecording, setIsRecording] = useState(false);
   const isBusy = status !== "idle";
+
+  useEffect(() => {
+    function handleGlobalShortcut(event: KeyboardEvent) {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setCommandOpen((open) => !open);
+      }
+      if (event.key === "Escape") setCommandOpen(false);
+    }
+    window.addEventListener("keydown", handleGlobalShortcut);
+    return () => window.removeEventListener("keydown", handleGlobalShortcut);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
