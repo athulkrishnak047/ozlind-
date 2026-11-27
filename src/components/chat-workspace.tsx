@@ -214,6 +214,21 @@ export function ChatWorkspace() {
     setErrorMessage("");
   }
 
+  function deleteConversation(conversationId: string) {
+    if (isBusy) return;
+    const fallback: Conversation = { id: newId(), title: "New chat", updatedAt: Date.now(), messages: [] };
+    setConversations((current) => {
+      const remaining = current.filter((conversation) => conversation.id !== conversationId);
+      return remaining.length ? remaining : [fallback];
+    });
+    if (conversationId === activeConversationId) {
+      setActiveConversationId(fallback.id);
+      setDraft("");
+      setAttachment(null);
+      setErrorMessage("");
+    }
+  }
+
   function openConversation(conversationId: string) {
     if (isBusy || conversationId === activeConversationId) return;
     abortRef.current?.abort();
@@ -605,9 +620,12 @@ export function ChatWorkspace() {
             .filter((conversation) => conversation.messages.length > 0)
             .filter((conversation) => !historySearch.trim() || conversation.title.toLowerCase().includes(historySearch.trim().toLowerCase()) || conversation.messages.some((message) => message.content.toLowerCase().includes(historySearch.trim().toLowerCase())))
             .map((conversation) => (
-            <button className={`nav-item history-item ${conversation.id === activeConversationId ? "active" : ""}`} key={conversation.id} type="button" onClick={() => openConversation(conversation.id)} disabled={isBusy}>
-              <span aria-hidden="true">◷</span><span className="history-title">{conversation.title}</span>
-            </button>
+            <div className="history-row" key={conversation.id}>
+              <button className={`nav-item history-item ${conversation.id === activeConversationId ? "active" : ""}`} type="button" onClick={() => openConversation(conversation.id)} disabled={isBusy}>
+                <span aria-hidden="true">◷</span><span className="history-title">{conversation.title}</span>
+              </button>
+              <button className="history-delete" type="button" onClick={() => deleteConversation(conversation.id)} disabled={isBusy} aria-label={`Delete conversation: ${conversation.title}`} title="Delete conversation">×</button>
+            </div>
           ))}
           {conversations.every((conversation) => conversation.messages.length === 0) && <p className="history-empty">Your conversations will appear here.</p>}
         </div>
