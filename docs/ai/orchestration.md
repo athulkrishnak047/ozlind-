@@ -47,7 +47,7 @@ Body:
 - No Redis, Upstash, or external rate-limit database is required.
 - A bounded in-memory sliding window limits each observed client key to 8 requests per minute per running server instance.
 - Serverless instances do not share memory; this is best-effort abuse protection, not a global or account-level quota. A distributed limiter can be added later if traffic requires it.
-- Request bodies and output are bounded. No tools are exposed to the model in this phase.
+- Request bodies and output are bounded. No external tools are exposed to the standard chat model in this phase. Live research and Gemini file analysis are separate, explicitly selected routes.
 - Each provider attempt has a 25-second timeout; the route has a 60-second maximum duration.
 - Provider fallback only occurs before the first emitted text. After streaming starts, the client receives a clear interruption event rather than duplicated output.
 - No prompt, completion, key, or raw upstream error is intentionally written to logs.
@@ -66,4 +66,4 @@ Apply secrets to the intended environments and redeploy. A successful build does
 
 ## Current limitations
 
-The endpoint is public and anonymous. The in-memory IP limit is a baseline anti-abuse control, not per-account quotas, identity, billing, or a guarantee against sophisticated distributed abuse. Browser-local chat history is not synced or backed up. Account identity, server-side persistence, memory, retrieval, tools/agents, multimodal uploads, and billing need separate designs and tests.
+The endpoint is public and anonymous. The in-memory IP limit is a baseline anti-abuse control, not per-account quotas, identity, billing, or a guarantee against sophisticated distributed abuse. Browser-local chat history is not synced or backed up. Account identity, server-side persistence, durable memory, retrieval, in-chat tool execution/agents, real-time voice, and billing need separate designs and tests. A separate Gemini route already supports bounded PDF, image, and short-video analysis.
