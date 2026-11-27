@@ -595,7 +595,8 @@ export function ChatWorkspace() {
   }
 
   return (
-    <main className="workspace">
+    <>
+      <main className="workspace">
       <aside className={`sidebar ${sidebarOpen ? "sidebar-open" : ""}`} aria-label="Workspace navigation">
         <Link className="brand" href="/" aria-label="Ozlind home">
           <OzlindMark className="brand-symbol-svg" />
@@ -813,5 +814,6 @@ export function ChatWorkspace() {
       onClear={clearConversation}
       onToggleWeb={() => setWebSearchEnabled((value) => !value)}
     />
+    </>
   );
 }
