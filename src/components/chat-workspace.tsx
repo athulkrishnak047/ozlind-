@@ -53,6 +53,10 @@ function newId(): string {
   return globalThis.crypto.randomUUID();
 }
 
+function timestampNow(): number {
+  return Date.now();
+}
+
 function readEvent(frame: string): StreamEvent | null {
   let event = "message";
   const data: string[] = [];
@@ -104,7 +108,7 @@ export function ChatWorkspace() {
         ...conversation,
         messages: nextMessages,
         title: firstUserMessage ? firstUserMessage.content.trim().slice(0, 48) : "New chat",
-        updatedAt: Date.now()
+        updatedAt: timestampNow()
       };
     }));
   }
