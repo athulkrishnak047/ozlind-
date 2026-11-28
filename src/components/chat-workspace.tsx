@@ -637,11 +637,6 @@ export function ChatWorkspace() {
         </div>
 
         <div className="sidebar-spacer" />
-        <div className="sidebar-note">
-          <span className="note-icon" aria-hidden="true">◇</span>
-          <p>Thoughtful AI, built with care.</p>
-          <span>History saved on this device</span>
-        </div>
         <Link className="profile-row" href="/settings#account" aria-label="Open account and profile settings">
           <div className="profile-avatar">{accountName.trim().charAt(0).toUpperCase() || "O"}</div>
           <div><strong>{accountName}</strong><span>Local profile · Settings</span></div>
@@ -658,7 +653,6 @@ export function ChatWorkspace() {
             <button className="command-trigger workspace-command-trigger" type="button" onClick={() => setCommandOpen(true)} aria-label="Search workspace actions" title="Search actions · Ctrl K">
               <span aria-hidden="true">⌕</span><span>Search</span><kbd>Ctrl K</kbd>
             </button>
-            <span className="privacy-pill"><span /> Local history</span>
             <ThemeToggle />
           </div>
         </header>
