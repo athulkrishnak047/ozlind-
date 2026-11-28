@@ -10,8 +10,8 @@
 | `public/brand/ozlind-logo-dark.svg` | Logo for dark surfaces | Light wordmark and light-on-dark symbol |
 | `src/app/icon.svg` | Next.js favicon | Browser icon source |
 | `src/app/apple-icon.svg` | Apple icon vector source | Verify platform output; raster PNG may still be needed |
-| `public/icons/ozlind-ui.svg` | Existing UI symbol sprite | 24 existing reusable symbols; IDs retained for compatibility |
-| `public/icons/ozlind-brand-system.svg` | OzLind extended icon system | 64 additional `oz-*` symbols for brand, sidebar, chat, topbar and account UI |
+| `public/icons/ozlind-ui.svg` | Legacy UI symbol sprite | Retained for backward compatibility; do not add new product UI references |
+| `public/icons/ozlind-brand-system.svg` | Canonical UI icon sprite | 63 `oz-*` symbols; use through the typed `OzlindIcon` component |
 
 ## Extended symbol groups
 
@@ -23,17 +23,19 @@
 
 ## Usage
 
-Reference an individual symbol from the public sprite:
+Use the typed shared component in React:
 
 ~~~tsx
-<svg aria-hidden="true" focusable="false" width="20" height="20">
-  <use href="/icons/ozlind-brand-system.svg#oz-search" />
-</svg>
+import { OzlindIcon } from "@/components/ozlind-icon";
+
+<OzlindIcon name="oz-search" size={20} />
 ~~~
+
+Direct `<svg><use /></svg>` references are reserved for non-React documents and static assets.
 
 Use `currentColor` to inherit the surrounding control's color. Give icon-only interactive controls an accessible name with `aria-label`; decorative SVGs should use `aria-hidden="true"`. Prefer 20–24 px for standard controls and preserve the viewBox proportions for brand marks. Do not inline the entire sprite into every page or download icon packs at runtime.
 
-The original `ozlind-ui.svg` sprite remains unchanged so existing references continue working. The extended library uses the `oz-` prefix to avoid ID collisions.
+`ozlind-brand-system.svg` is the single source of truth for all new product UI icons. `ozlind-ui.svg` is a legacy compatibility asset only; do not add new references to it. The typed `OzlindIcon` component is the preferred React interface.
 
 ## Asset principles
 
