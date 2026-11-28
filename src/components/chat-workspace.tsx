@@ -757,21 +757,21 @@ export function ChatWorkspace() {
                       <div className="message-sources" aria-label="Research sources">
                         <strong>Sources</strong>
                         {message.sources.map((source) => (
-                          <a href={source.url} key={source.url} target="_blank" rel="noopener noreferrer">{source.title} ↗</a>
+                          <a href={source.url} key={source.url} target="_blank" rel="noopener noreferrer">{source.title} <OzlindIcon name="oz-chevron-right" size={13} /></a>
                         ))}
                       </div>
                     )}
                     {message.role === "assistant" && message.content && (
                       <div className="message-actions">
-                        <button type="button" onClick={() => void copyMessage(message)}>{copiedId === message.id ? "Copied" : "Copy"}</button>
+                        <button type="button" onClick={() => void copyMessage(message)}><OzlindIcon name={copiedId === message.id ? "oz-check" : "oz-copy"} size={14} />{copiedId === message.id ? "Copied" : "Copy"}</button>
                         {!isBusy && message.id === messages[messages.length - 1]?.id && (
-                          <button type="button" onClick={() => regenerateResponse(index)}>Regenerate</button>
+                          <button type="button" onClick={() => regenerateResponse(index)}><OzlindIcon name="oz-regenerate" size={14} />Regenerate</button>
                         )}
                       </div>
                     )}
                     {message.role === "user" && !isBusy && (
                       <div className="message-actions">
-                        <button type="button" onClick={() => editMessage(message, index)}>Edit</button>
+                        <button type="button" onClick={() => editMessage(message, index)}><OzlindIcon name="oz-edit" size={14} />Edit</button>
                       </div>
                     )}
                   </div>
@@ -801,7 +801,7 @@ export function ChatWorkspace() {
                 </span>
                 <span className="attachment-chip-name">{attachment.name}</span>
                 <span className="attachment-chip-size">{Math.max(1, Math.round(attachment.size / 1024))} KB</span>
-                <button type="button" onClick={() => setAttachment(null)} disabled={isBusy} aria-label="Remove attachment">×</button>
+                <button type="button" onClick={() => setAttachment(null)} disabled={isBusy} aria-label="Remove attachment"><OzlindIcon name="oz-close" size={14} /></button>
               </div>
             )}
             <textarea
