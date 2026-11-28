@@ -1,6 +1,6 @@
 # Ozlind Brand Guidelines
 
-**Status:** Working brand standard — v1.0  
+**Status:** Working brand standard — v1.1  
 **Owner:** Ozlind product team  
 **Last reviewed:** 2026-11-28  
 **Purpose:** Keep every product surface, asset, document and communication recognizably Ozlind.
@@ -78,7 +78,9 @@ Do not combine multiple decorative treatments in one component without a clear r
 
 ## 6. Iconography and illustration
 
-- Prefer the local `public/icons/ozlind-ui.svg` symbol set for the 24 documented UI symbols.
+- Use `OzlindIcon` from `src/components/ozlind-icon.tsx` for every new React UI icon. It references the canonical `public/icons/ozlind-brand-system.svg` sprite.
+- Keep `public/icons/ozlind-ui.svg` as a legacy compatibility asset only; do not introduce new references to it.
+- Do not use Unicode glyphs or emoji as substitutes for interface icons. Text symbols are acceptable only when they are meaningful content, such as keyboard shortcut labels.
 - Keep stroke weight, optical size, alignment and visual density consistent.
 - Icons must have accessible labels when they are the only visible control content.
 - Do not download icon fonts or remote icon packs at runtime.
