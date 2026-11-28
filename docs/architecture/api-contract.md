@@ -23,6 +23,10 @@
 }
 ```
 
+## Liveness
+
+`GET /api/health` returns a minimal service liveness response using the standard success envelope. It confirms that the Next.js API process can serve requests; it does not verify provider credentials, external provider availability, database connectivity, or end-to-end AI readiness. It intentionally reveals no secret or provider configuration.
+
 ## Streaming AI contract
 
 `POST /api/chat` is an anonymous public Server-Sent Events endpoint. It accepts a constrained provider preference plus user/assistant messages and emits `start`, `delta`, `done`, and `error` events. Request limits, model defaults, failover behavior, and abuse controls are documented in [AI orchestration](../ai/orchestration.md).
