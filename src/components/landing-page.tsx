@@ -79,7 +79,7 @@ export function LandingPage() {
               <p>Bring a question, a document, or an idea worth exploring.</p>
               <div className="site-preview-prompt">
                 <span>Help me make sense of a complex idea…</span>
-                <b>↑</b>
+                <OzlindIcon name="oz-send" size={15} />
               </div>
               <div className="site-preview-tools">
                 <span><OzlindIcon name="oz-sparkles" size={14} /> Chat</span>
