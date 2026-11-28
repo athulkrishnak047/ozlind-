@@ -194,8 +194,15 @@ export function ChatWorkspace() {
   }, [conversations, historyLoaded]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    bottomRef.current?.scrollIntoView({ behavior: "auto", block: "end" });
   }, [messages]);
+
+  useEffect(() => {
+    const textarea = composerRef.current?.querySelector("textarea");
+    if (!textarea) return;
+    textarea.style.height = "auto";
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 190)}px`;
+  }, [draft]);
 
   useEffect(() => () => {
     abortRef.current?.abort();
@@ -285,22 +292,29 @@ export function ChatWorkspace() {
           setErrorMessage("This recording is too large. Please record a shorter message (under 4 MB).");
           return;
         }
+        const transcriptionController = new AbortController();
+        abortRef.current = transcriptionController;
         setStatus("connecting");
         setErrorMessage("");
         try {
           const form = new FormData();
           const extension = blob.type.includes("mp4") ? "m4a" : "webm";
           form.append("audio", blob, `voice-message.${extension}`);
-          const response = await fetch("/api/transcribe", { method: "POST", body: form, cache: "no-store" });
+          const response = await fetch("/api/transcribe", { method: "POST", body: form, cache: "no-store", signal: transcriptionController.signal });
           const body: unknown = await response.json().catch(() => null);
           if (!response.ok) throw new Error(errorText(body, `Transcription failed (HTTP ${response.status}).`));
           const transcript = body && typeof body === "object" && "text" in body ? (body as { text?: unknown }).text : null;
           if (typeof transcript !== "string" || !transcript.trim()) throw new Error("No speech could be detected.");
           setDraft((current) => current ? `${current.trim()} ${transcript.trim()}` : transcript.trim());
         } catch (error) {
-          setErrorMessage(error instanceof Error ? error.message : "Voice transcription failed.");
+          if (!transcriptionController.signal.aborted) {
+            setErrorMessage(error instanceof Error ? error.message : "Voice transcription failed.");
+          }
         } finally {
-          setStatus("idle");
+          if (abortRef.current === transcriptionController) {
+            abortRef.current = null;
+            setStatus("idle");
+          }
         }
       };
       recorder.start(250);
@@ -452,10 +466,12 @@ export function ChatWorkspace() {
         }
         setMessages((current) => current.filter((message) => message.id !== assistantMessage.id));
       } finally {
-        if (abortRef.current === visionController) abortRef.current = null;
+        if (abortRef.current === visionController) {
+          abortRef.current = null;
+          setStatus("idle");
+        }
         if (fileInputRef.current) fileInputRef.current.value = "";
         setAttachment(null);
-        setStatus("idle");
       }
       return;
     }
@@ -494,8 +510,10 @@ export function ChatWorkspace() {
         }
         setMessages((current) => current.filter((message) => message.id !== assistantMessage.id));
       } finally {
-        if (abortRef.current === researchController) abortRef.current = null;
-        setStatus("idle");
+        if (abortRef.current === researchController) {
+          abortRef.current = null;
+          setStatus("idle");
+        }
       }
       return;
     }
@@ -508,6 +526,7 @@ export function ChatWorkspace() {
     let buffer = "";
 
     const handleFrame = (frame: string) => {
+      if (controller.signal.aborted) return;
       const item = readEvent(frame);
       if (!item) return;
       if (item.event === "start") {
@@ -582,13 +601,15 @@ export function ChatWorkspace() {
       if (controller.signal.aborted && !receivedText) {
         setMessages((current) => current.filter((message) => message.id !== assistantMessage.id));
       }
-      if (abortRef.current === controller) abortRef.current = null;
-      setStatus("idle");
+      if (abortRef.current === controller) {
+        abortRef.current = null;
+        setStatus("idle");
+      }
     }
   }
 
   function handleComposerKeyDown(event: ReactKeyboardEvent<HTMLTextAreaElement>) {
-    if (event.key === "Enter" && !event.shiftKey) {
+    if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
       event.preventDefault();
       event.currentTarget.form?.requestSubmit();
     }
