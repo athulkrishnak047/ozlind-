@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
 import { OzlindMark } from "./ozlind-mark";
+import { OzlindIcon } from "./ozlind-icon";
 
 const capabilities = [
   {
@@ -8,28 +9,28 @@ const capabilities = [
     name: "AI conversations",
     description: "Think, write, learn and solve problems with Gemini and Groq-powered chat.",
     status: "Available",
-    icon: "✳"
+    icon: "oz-sparkles"
   },
   {
     number: "02",
     name: "Live research",
     description: "Explore current information with web search and source links.",
     status: "Available",
-    icon: "⌕"
+    icon: "oz-search"
   },
   {
     number: "03",
     name: "File understanding",
     description: "Ask questions about supported images, PDFs and short video clips.",
     status: "Available",
-    icon: "▤"
+    icon: "oz-artifacts"
   },
   {
     number: "04",
     name: "Voice input",
     description: "Speak naturally and turn recordings into text for your conversation.",
     status: "Available",
-    icon: "◖"
+    icon: "oz-mic"
   }
 ];
 
@@ -45,7 +46,7 @@ export function LandingPage() {
           <a href="#capabilities">Capabilities</a>
           <a href="#approach">Our approach</a>
         </nav>
-        <div className="site-nav-actions"><ThemeToggle /><Link className="site-nav-cta" href="/workspace">Open Ozlind <span>↗</span></Link></div>
+        <div className="site-nav-actions"><ThemeToggle /><Link className="site-nav-cta" href="/workspace">Open Ozlind <OzlindIcon name="oz-chevron-right" size={15} /></Link></div>
       </header>
 
       <section className="site-hero">
@@ -56,7 +57,7 @@ export function LandingPage() {
             One considered workspace for thinking, research, writing and understanding the world around your work.
           </p>
           <div className="site-hero-actions">
-            <Link href="/workspace" className="site-primary-cta">Start a conversation <span>→</span></Link>
+            <Link href="/workspace" className="site-primary-cta">Start a conversation <OzlindIcon name="oz-chevron-right" size={16} /></Link>
             <a href="#capabilities" className="site-secondary-cta">Explore capabilities</a>
           </div>
           <div className="site-hero-meta">
@@ -105,7 +106,7 @@ export function LandingPage() {
             <article className="site-capability-card" key={capability.number}>
               <div className="site-capability-top">
                 <span>{capability.number}</span>
-                <span className="site-capability-icon" aria-hidden="true">{capability.icon}</span>
+                <span className="site-capability-icon" aria-hidden="true"><OzlindIcon name={capability.icon as "oz-sparkles" | "oz-search" | "oz-artifacts" | "oz-mic"} size={20} /></span>
               </div>
               <div className="site-capability-status"><i /> {capability.status}</div>
               <h3>{capability.name}</h3>
@@ -121,7 +122,7 @@ export function LandingPage() {
           <p className="site-overline">THE OZLIND STANDARD</p>
           <h2>Less theatre.<br /><span>More intelligence.</span></h2>
           <p>A great AI product is not a collection of buttons. It is a reliable experience: clear controls, useful answers, honest limitations, thoughtful details and performance that earns trust.</p>
-          <Link href="/workspace" className="site-text-link">Experience the workspace <span>↗</span></Link>
+          <Link href="/workspace" className="site-text-link">Experience the workspace <OzlindIcon name="oz-chevron-right" size={15} /></Link>
         </div>
         <div className="site-approach-aside">
           <span>OUR PRINCIPLES</span>
@@ -133,7 +134,7 @@ export function LandingPage() {
 
       <footer className="site-footer">
         <Link href="/" className="site-brand" aria-label="Ozlind home">
-          <span className="site-brand-mark"><i /></span>
+          <span className="site-brand-mark"><OzlindIcon name="oz-logo-small" size={22} /></span>
           <span>ozlind<span className="site-brand-period">.</span></span>
         </Link>
         <span>Built for what comes next.</span>
