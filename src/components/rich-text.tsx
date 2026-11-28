@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { parseMarkdown, type MarkdownBlock } from "@/lib/markdown";
+import { OzlindIcon } from "./ozlind-icon";
 
 function safeHref(value: string): string | null {
   try {
@@ -61,7 +62,10 @@ function CodeBlock({ block }: { block: Extract<MarkdownBlock, { kind: "code" }> 
     <div className="rich-code-block">
       <div className="rich-code-header">
         <span>{block.language || "Code"}</span>
-        <button type="button" onClick={() => void copyCode()} aria-label="Copy code">{copied ? "Copied" : "Copy code"}</button>
+        <button type="button" onClick={() => void copyCode()} aria-label={copied ? "Code copied" : "Copy code"}>
+          <OzlindIcon name={copied ? "oz-check" : "oz-copy"} size={14} />
+          <span>{copied ? "Copied" : "Copy code"}</span>
+        </button>
       </div>
       <pre><code>{block.code}</code></pre>
     </div>
