@@ -746,14 +746,13 @@ export function ChatWorkspace() {
               disabled={!historyLoaded || isBusy}
               aria-label="Choose a PDF, image, or short video"
             />
-            <div className="composer-context">
-              <span className="composer-context-label">{attachment ? "File analysis" : "Message Ozlind"}</span>
-              <span className="composer-context-hint">{attachment ? "Gemini will analyze your attachment" : "A thoughtful answer starts with a good question"}</span>
-            </div>
             {attachment && (
               <div className="attachment-chip">
-                <span aria-hidden="true">{attachment.type === "application/pdf" ? "▤" : attachment.type.startsWith("video/") ? "▶" : "▧"}</span>
-                <span>{attachment.name} · {Math.max(1, Math.round(attachment.size / 1024))} KB</span>
+                <span className="attachment-chip-icon" aria-hidden="true">
+                  {attachment.type === "application/pdf" ? "PDF" : attachment.type.startsWith("video/") ? "VIDEO" : "IMAGE"}
+                </span>
+                <span className="attachment-chip-name">{attachment.name}</span>
+                <span className="attachment-chip-size">{Math.max(1, Math.round(attachment.size / 1024))} KB</span>
                 <button type="button" onClick={() => setAttachment(null)} disabled={isBusy} aria-label="Remove attachment">×</button>
               </div>
             )}
@@ -762,7 +761,7 @@ export function ChatWorkspace() {
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
               onKeyDown={handleComposerKeyDown}
-              placeholder="Ask anything, or describe what you need..."
+              placeholder="Message Ozlind"
               rows={1}
               aria-label="Message Ozlind"
               maxLength={8000}
@@ -774,27 +773,38 @@ export function ChatWorkspace() {
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={!historyLoaded || isBusy}
-                  aria-label="Attach a PDF, image, or short video"
+                  aria-label="Attach a file"
                   title="Attach a PDF, image or short video (up to 10 MB)"
-                >＋</button>
+                >
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+                </button>
                 <label className="sr-only" htmlFor="provider-select">Choose AI model</label>
                 <select className="model-select" id="provider-select" aria-label="Choose AI model" value={attachment ? "gemini" : provider} onChange={(event) => setProvider(event.target.value as Provider)} disabled={!historyLoaded || isBusy || !!attachment} title={attachment ? "PDF, image and video analysis currently runs on Gemini." : "Choose the preferred chat model."}>
                   <option value="auto">Auto</option>
                   <option value="gemini">Gemini</option>
                   <option value="groq">Groq</option>
                 </select>
-                <button className={`web-search-button ${webSearchEnabled ? "enabled" : ""}`} type="button" onClick={() => setWebSearchEnabled((value) => !value)} disabled={!historyLoaded || isBusy || !!attachment} aria-pressed={webSearchEnabled} title={attachment ? "Remove the attachment to use live web research." : "Use live web research"}><span aria-hidden="true">⌕</span> Research</button>
-                <button className={`voice-button ${isRecording ? "recording" : ""}`} type="button" onClick={() => void toggleVoiceRecording()} disabled={!historyLoaded || isBusy} aria-label={isRecording ? "Stop voice recording" : "Start voice recording"} title={isRecording ? "Stop recording" : "Speak your message"}>{isRecording ? <span aria-hidden="true">■</span> : <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3" /><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3m-4 0h8" /></svg>}</button>
-                <span className="composer-hint">{isRecording ? "Listening… tap stop when finished" : attachment ? "Gemini multimodal analysis · Shift + Enter for a new line" : "Shift + Enter for a new line"}</span>
+                <button className={`web-search-button ${webSearchEnabled ? "enabled" : ""}`} type="button" onClick={() => setWebSearchEnabled((value) => !value)} disabled={!historyLoaded || isBusy || !!attachment} aria-pressed={webSearchEnabled} title={attachment ? "Remove the attachment to use live web research." : "Use live web research"}>
+                  <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m16 16 4 4M4 11h14M11 4a11 11 0 0 1 0 14" /></svg>
+                  <span>Search</span>
+                </button>
+                <button className={`voice-button ${isRecording ? "recording" : ""}`} type="button" onClick={() => void toggleVoiceRecording()} disabled={!historyLoaded || isBusy} aria-label={isRecording ? "Stop voice recording" : "Start voice recording"} title={isRecording ? "Stop recording" : "Speak your message"}>
+                  {isRecording ? <span aria-hidden="true">■</span> : <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3" /><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3m-4 0h8" /></svg>}
+                </button>
+                <span className="composer-hint">{isRecording ? "Listening…" : "Shift + Enter for a new line"}</span>
               </div>
               {isBusy ? (
-                <button className="send-button stop-button" type="button" onClick={() => abortRef.current?.abort()} aria-label="Stop generating">■</button>
+                <button className="send-button stop-button" type="button" onClick={() => abortRef.current?.abort()} aria-label="Stop generating" title="Stop generating">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" /></svg>
+                </button>
               ) : (
-                <button className="send-button" type="submit" disabled={!historyLoaded || (!draft.trim() && !attachment)} aria-label="Send message">↑</button>
+                <button className="send-button" type="submit" disabled={!historyLoaded || (!draft.trim() && !attachment)} aria-label="Send message" title="Send message">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6" /></svg>
+                </button>
               )}
             </div>
           </form>
-          <p className="composer-disclaimer">Ozlind is an AI assistant. Check important details independently.</p>
+          <p className="composer-disclaimer">Ozlind can make mistakes. Verify important information.</p>
         </div>
       </section>
 
