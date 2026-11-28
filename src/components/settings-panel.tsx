@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "./theme-toggle";
 import { OzlindMark } from "./ozlind-mark";
+import { OzlindIcon } from "./ozlind-icon";
 const PREFS_KEY = "ozlind:preferences:v1";
 const PROFILE_KEY = "ozlind:profile:v1";
 const HISTORY_KEY = "ozlind:conversations:v1";
@@ -65,12 +66,12 @@ export function SettingsPanel() {
   return <main className="settings-shell">
     <aside className="settings-rail">
       <Link href="/workspace" className="settings-brand"><OzlindMark /><span>ozlind<span>.</span></span></Link>
-      <p className="settings-rail-label">WORKSPACE</p><Link href="/workspace" className="settings-rail-link"><span>⌂</span> Assistant</Link>
+      <p className="settings-rail-label">WORKSPACE</p><Link href="/workspace" className="settings-rail-link"><OzlindIcon name="oz-sparkles" size={17} /> Assistant</Link>
       <p className="settings-rail-label">PREFERENCES</p>
-      <a href="#appearance" className="settings-rail-link active"><span>◐</span> Appearance</a>
-      <a href="#account" className="settings-rail-link"><span>◎</span> Account</a>
-      <a href="#privacy" className="settings-rail-link"><span>◇</span> Privacy & data</a>
-      <div className="settings-rail-spacer" /><Link href="/workspace" className="settings-back-link">← Back to workspace</Link>
+      <a href="#appearance" className="settings-rail-link active"><OzlindIcon name="oz-sun" size={17} /> Appearance</a>
+      <a href="#account" className="settings-rail-link"><OzlindIcon name="oz-user" size={17} /> Account</a>
+      <a href="#privacy" className="settings-rail-link"><OzlindIcon name="oz-shield" size={17} /> Privacy & data</a>
+      <div className="settings-rail-spacer" /><Link href="/workspace" className="settings-back-link"><OzlindIcon name="oz-chevron-left" size={16} /> Back to workspace</Link>
     </aside>
     <section className="settings-content">
       <header className="settings-header"><div><p className="settings-eyebrow">OZLIND / PREFERENCES</p><h1>Settings</h1><p>Make your workspace feel right for the way you work.</p></div><ThemeToggle /></header>
@@ -82,14 +83,14 @@ export function SettingsPanel() {
       </section>
       <section className="settings-section" id="account">
         <div className="settings-section-heading"><div><span>02</span><h2>Account & profile</h2></div><p>Your local workspace identity on this device.</p></div>
-        <div className="settings-card profile-settings-card"><div className="settings-profile-avatar">{displayName.trim().charAt(0).toUpperCase() || "O"}</div><div className="settings-profile-fields"><label htmlFor="display-name">Display name</label><input id="display-name" maxLength={48} value={displayName} onChange={e => setDisplayName(e.target.value)} /><small>This is a local profile only. Sign-in and synced accounts are not enabled yet.</small></div><button type="button" className="settings-save-button" onClick={saveProfile}>{saved ? "Saved ✓" : "Save profile"}</button></div>
+        <div className="settings-card profile-settings-card"><div className="settings-profile-avatar">{displayName.trim().charAt(0).toUpperCase() || "O"}</div><div className="settings-profile-fields"><label htmlFor="display-name">Display name</label><input id="display-name" maxLength={48} value={displayName} onChange={e => setDisplayName(e.target.value)} /><small>This is a local profile only. Sign-in and synced accounts are not enabled yet.</small></div><button type="button" className="settings-save-button" onClick={saveProfile}>{saved ? <>Saved <OzlindIcon name="oz-check" size={14} /></> : "Save profile"}</button></div>
       </section>
       <section className="settings-section" id="privacy">
         <div className="settings-section-heading"><div><span>03</span><h2>Privacy & data</h2></div><p>Understand what stays on this browser.</p></div>
         <div className="settings-card data-card"><div className="settings-card-copy"><strong>Conversation history</strong><span>{historyCount} conversation{historyCount === 1 ? "" : "s"} stored locally in this browser. No account sync.</span></div><button type="button" className="settings-danger-button" onClick={clearLocalHistory}>Clear local history</button></div>
-        <div className="settings-note"><span>i</span><p>AI requests are sent to the selected model provider to generate responses. Avoid entering passwords, payment details, or other sensitive information.</p></div>
+        <div className="settings-note"><OzlindIcon name="oz-help" size={16} /><p>AI requests are sent to the selected model provider to generate responses. Avoid entering passwords, payment details, or other sensitive information.</p></div>
       </section>
-      <footer className="settings-footer"><OzlindMark /><span>Ozlind · A clearer space to think.</span><Link href="/workspace">Return to chat ↗</Link></footer>
+      <footer className="settings-footer"><OzlindMark /><span>Ozlind · A clearer space to think.</span><Link href="/workspace">Return to chat <OzlindIcon name="oz-chevron-right" size={15} /></Link></footer>
     </section>
   </main>;
 }
