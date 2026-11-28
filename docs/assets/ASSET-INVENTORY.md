@@ -9,44 +9,46 @@
 | `public/brand/ozlind-logo-light.svg` | Logo for light surfaces | Dark wordmark and light-on-dark symbol |
 | `public/brand/ozlind-logo-dark.svg` | Logo for dark surfaces | Light wordmark and light-on-dark symbol |
 | `src/app/icon.svg` | Next.js favicon | Browser icon source |
-| `src/app/apple-icon.svg` | Apple icon vector source | Verify Next.js/platform output; raster PNG may still be needed |
-| `public/icons/ozlind-ui.svg` | UI symbol sprite | 24 reusable symbols |
+| `src/app/apple-icon.svg` | Apple icon vector source | Verify platform output; raster PNG may still be needed |
+| `public/icons/ozlind-ui.svg` | Existing UI symbol sprite | 24 existing reusable symbols; IDs retained for compatibility |
+| `public/icons/ozlind-brand-system.svg` | OzLind extended icon system | 64 additional `oz-*` symbols for brand, sidebar, chat, topbar and account UI |
 
-See [Brand Guidelines](../brand/BRAND-GUIDELINES.md) for logo clear space, color, typography and usage rules.
+## Extended symbol groups
 
-## UI symbol IDs
+- Brand and model: `oz-logo`, `oz-logo-small`, `oz-logo-text`, `oz-model-flash`, `oz-model-pro`, `oz-model-max`, `oz-avatar`.
+- Sidebar: `oz-new-chat`, `oz-search`, `oz-library`, `oz-history`, `oz-star`, `oz-star-fill`, `oz-folder`, `oz-projects`, `oz-gpts`, `oz-video`, `oz-artifacts`, `oz-code`, `oz-image`, `oz-trash`, `oz-archive`.
+- Chat: `oz-attach`, `oz-mic`, `oz-send`, `oz-send-outline`, `oz-stop`, `oz-copy`, `oz-check`, `oz-like`, `oz-dislike`, `oz-regenerate`, `oz-edit`, `oz-share`, `oz-download`, `oz-sparkles`, `oz-thinking`, `oz-voice-wave`, `oz-globe`, `oz-bookmark`, `oz-pin`.
+- Topbar: `oz-chevron-down`, `oz-chevron-up`, `oz-chevron-left`, `oz-chevron-right`, `oz-menu`, `oz-close`, `oz-more`, `oz-more-vertical`, `oz-expand`, `oz-collapse`, `oz-notification`.
+- Settings/account: `oz-settings`, `oz-upgrade`, `oz-crown`, `oz-key`, `oz-shield`, `oz-user`, `oz-logout`, `oz-help`, `oz-moon`, `oz-sun`, `oz-language`.
 
-`arrow-up`, `arrow-left`, `arrow-right`, `plus`, `x`, `menu`, `search`, `settings`, `sun`, `moon`, `copy`, `edit`, `trash`, `paperclip`, `mic`, `stop`, `send`, `file`, `globe`, `check`, `alert`, `info`, `external-link`, `refresh`.
+## Usage
 
-Example external SVG sprite reference:
+Reference an individual symbol from the public sprite:
 
 ~~~tsx
 <svg aria-hidden="true" focusable="false" width="20" height="20">
-  <use href="/icons/ozlind-ui.svg#search" />
+  <use href="/icons/ozlind-brand-system.svg#oz-search" />
 </svg>
 ~~~
 
-Browser support and CSP must be tested before adopting external SVG sprite references across the app. For inline critical icons, keep using the existing React SVG component or inline SVG. Do not download remote icon packs at runtime.
+Use `currentColor` to inherit the surrounding control's color. Give icon-only interactive controls an accessible name with `aria-label`; decorative SVGs should use `aria-hidden="true"`. Prefer 20–24 px for standard controls and preserve the viewBox proportions for brand marks. Do not inline the entire sprite into every page or download icon packs at runtime.
+
+The original `ozlind-ui.svg` sprite remains unchanged so existing references continue working. The extended library uses the `oz-` prefix to avoid ID collisions.
 
 ## Asset principles
 
 - SVG first for logos and simple UI icons.
-- UI symbols use currentColor so they can adapt to light/dark themes.
+- Keep UI symbols theme-aware through `currentColor`.
 - Keep decorative media optional and never block initial workspace use.
-- Do not add large font, video, raster illustration or animation dependencies without a measured reason.
+- Avoid large font, raster illustration, or animation dependencies without a measured reason.
 - Provide accessible names on controls; SVG artwork is not a substitute for button labels.
 - Keep one approved source of truth for each brand mark.
 - Follow the [performance and low-data UX standard](../product/performance-and-low-data.md).
 
-## Still needed for broader distribution
+## Remaining checks
 
-- [ ] Raster PNG 192×192 and 512×512 install icons if a PWA manifest is introduced.
-- [ ] Apple touch icon PNG 180×180 if required by target platform; current SVG is a source, not proof of PNG compatibility.
-- [ ] Maskable PWA icon with safe-zone validation, only if PWA is added.
-- [ ] Social sharing image (Open Graph, 1200×630) after brand composition is approved.
-- [ ] Monochrome/reverse variants only if a real surface requires them.
-- [ ] Full favicon/browser test.
-- [ ] Verify SVG sprite rendering and CSP in production.
-- [ ] Confirm all logos render correctly in light/dark themes.
-
-No binary PNG or social image has been generated in this pass. Avoid treating a vector source as a verified platform-ready raster asset.
+- [ ] Replace the wordmark text in `oz-logo-text` with approved vector paths if font-independent rendering is required.
+- [ ] Review the white send-icon cutout against both themes; its white path is intentional for the filled send control.
+- [ ] Verify external SVG sprite references and CSP in production.
+- [ ] Test all symbols at 16, 20, 24 and 32 px.
+- [ ] Complete favicon, PWA and social-image checks only when those platform features are introduced.
