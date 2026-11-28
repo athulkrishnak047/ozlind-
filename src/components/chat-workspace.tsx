@@ -5,6 +5,7 @@ import { RichText } from "./rich-text";
 import { ThemeToggle } from "./theme-toggle";
 import { CommandPalette } from "./command-palette";
 import { OzlindMark } from "./ozlind-mark";
+import { OzlindIcon } from "./ozlind-icon";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent, type KeyboardEvent as ReactKeyboardEvent } from "react";
 
 type Role = "user" | "assistant";
@@ -651,14 +652,14 @@ export function ChatWorkspace() {
         </Link>
 
         <button className="new-chat-button" type="button" onClick={startNewChat} disabled={!historyLoaded}>
-          <span aria-hidden="true">＋</span> New chat
+          <OzlindIcon name="oz-new-chat" size={18} /> New chat
 
         </button>
 
         <div className="sidebar-section">
           <p className="sidebar-label">WORKSPACE</p>
-          <Link href="/workspace" className="nav-item active"><span aria-hidden="true">✳</span> Assistant</Link>
-          <Link href="/settings" className="nav-item settings-nav-item"><span aria-hidden="true">⚙</span> Settings</Link>
+          <Link href="/workspace" className="nav-item active"><OzlindIcon name="oz-sparkles" size={18} /> Assistant</Link>
+          <Link href="/settings" className="nav-item settings-nav-item"><OzlindIcon name="oz-settings" size={18} /> Settings</Link>
         </div>
 
         <div className="sidebar-section recent-chats">
@@ -674,9 +675,9 @@ export function ChatWorkspace() {
           {visibleConversations.map((conversation) => (
             <div className="history-row" key={conversation.id}>
               <button className={`nav-item history-item ${conversation.id === activeConversationId ? "active" : ""}`} type="button" onClick={() => openConversation(conversation.id)} disabled={isBusy}>
-                <span aria-hidden="true">◷</span><span className="history-title">{conversation.title}</span>
+                <OzlindIcon name="oz-history" size={17} /><span className="history-title">{conversation.title}</span>
               </button>
-              <button className="history-delete" type="button" onClick={() => deleteConversation(conversation.id)} disabled={isBusy} aria-label={`Delete conversation: ${conversation.title}`} title="Delete conversation">×</button>
+              <button className="history-delete" type="button" onClick={() => deleteConversation(conversation.id)} disabled={isBusy} aria-label={`Delete conversation: ${conversation.title}`} title="Delete conversation"><OzlindIcon name="oz-close" size={15} /></button>
             </div>
           ))}
           {historySearch.trim() && visibleConversations.length === 0 && <div className="history-empty-state"><p>No conversations match “{historySearch.trim()}”.</p><button type="button" onClick={() => setHistorySearch("")}>Clear search</button></div>}
@@ -687,7 +688,7 @@ export function ChatWorkspace() {
         <Link className="profile-row" href="/settings#account" aria-label="Open account and profile settings">
           <div className="profile-avatar">{accountName.trim().charAt(0).toUpperCase() || "O"}</div>
           <div><strong>{accountName}</strong><span>Local profile · Settings</span></div>
-          <span className="profile-chevron" aria-hidden="true">↗</span>
+          <OzlindIcon className="profile-chevron" name="oz-chevron-right" size={16} />
         </Link>
       </aside>
       {sidebarOpen && <button className="mobile-sidebar-backdrop" type="button" aria-label="Close navigation" onClick={() => setSidebarOpen(false)} />}
@@ -698,7 +699,7 @@ export function ChatWorkspace() {
           <div className="breadcrumbs"><span>Workspace</span><span className="crumb-separator">/</span><strong>Assistant</strong></div>
           <div className="topbar-actions">
             <button className="command-trigger workspace-command-trigger" type="button" onClick={() => setCommandOpen(true)} aria-label="Search workspace actions" title="Search actions · Ctrl K">
-              <span aria-hidden="true">⌕</span><span>Search</span><kbd>Ctrl K</kbd>
+              <OzlindIcon name="oz-search" size={16} /><span>Search</span><kbd>Ctrl K</kbd>
             </button>
             <ThemeToggle />
           </div>
@@ -712,20 +713,20 @@ export function ChatWorkspace() {
               <h1 id="welcome-title">What would you like<br className="welcome-title-break" /> to <span>work on?</span></h1>
               <p className="welcome-copy">Ask a question, research a topic, or bring a file. Start with a prompt or choose a shortcut.</p>
               <div className="welcome-quick-actions" aria-label="Start with a capability">
-                <button type="button" onClick={() => { setWebSearchEnabled(true); composerRef.current?.querySelector("textarea")?.focus(); }}><span aria-hidden="true">⌕</span> Research a topic</button>
-                <button type="button" onClick={() => fileInputRef.current?.click()}><span aria-hidden="true">＋</span> Analyze a file</button>
-                <button type="button" onClick={() => void toggleVoiceRecording()}><span aria-hidden="true">◖</span> Use voice</button>
+                <button type="button" onClick={() => { setWebSearchEnabled(true); composerRef.current?.querySelector("textarea")?.focus(); }}><OzlindIcon name="oz-globe" size={17} /> Research a topic</button>
+                <button type="button" onClick={() => fileInputRef.current?.click()}><OzlindIcon name="oz-attach" size={17} /> Analyze a file</button>
+                <button type="button" onClick={() => void toggleVoiceRecording()}><OzlindIcon name="oz-mic" size={17} /> Use voice</button>
               </div>
               <div className="suggestion-grid">
                 {suggestions.map((suggestion, index) => (
                   <button className="suggestion-card" key={suggestion.title} type="button" onClick={() => setDraft(suggestion.prompt)}>
-                    <span className={`suggestion-icon suggestion-icon-${index + 1}`} aria-hidden="true">{["✧", "⌘", "↗", "⌁"][index]}</span>
+                    <span className={`suggestion-icon suggestion-icon-${index + 1}`} aria-hidden="true">{[<OzlindIcon name="oz-sparkles" size={18} />, <OzlindIcon name="oz-thinking" size={18} />, <OzlindIcon name="oz-projects" size={18} />, <OzlindIcon name="oz-code" size={18} />][index]}</span>
                     <span><strong>{suggestion.title}</strong><small>{["Explore possibilities", "Get to the heart of it", "Turn goals into action", "Improve quality"][index]}</small></span>
-                    <span className="suggestion-arrow" aria-hidden="true">↗</span>
+                    <OzlindIcon className="suggestion-arrow" name="oz-chevron-right" size={16} />
                   </button>
                 ))}
               </div>
-              <div className="welcome-footnote"><span>✦</span> Ozlind can make mistakes. Verify important information.</div>
+              <div className="welcome-footnote"><OzlindIcon name="oz-sparkles" size={14} /> Ozlind can make mistakes. Verify important information.</div>
             </section>
           ) : (
             <section className="conversation" aria-label="Conversation" aria-live="polite" aria-relevant="additions text">
@@ -782,7 +783,7 @@ export function ChatWorkspace() {
         </div>
 
         <div className="composer-area">
-          {errorMessage && <div className="error-banner" role="alert"><span>!</span>{errorMessage}<button type="button" onClick={() => setErrorMessage("")} aria-label="Dismiss error">×</button></div>}
+          {errorMessage && <div className="error-banner" role="alert"><span>!</span>{errorMessage}<button type="button" onClick={() => setErrorMessage("")} aria-label="Dismiss error"><OzlindIcon name="oz-close" size={15} /></button></div>}
           <form className="composer" onSubmit={sendMessage} ref={composerRef}>
             <input
               ref={fileInputRef}
@@ -827,7 +828,7 @@ export function ChatWorkspace() {
                   aria-label="Attach a file"
                   title="Attach a PDF, image or short video (up to 10 MB)"
                 >
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+                  <OzlindIcon name="oz-attach" size={20} />
                 </button>
                 <label className="sr-only" htmlFor="provider-select">Choose AI model</label>
                 <select className="model-select" id="provider-select" aria-label="Choose AI model" value={attachment ? "gemini" : provider} onChange={(event) => setProvider(event.target.value as Provider)} disabled={!historyLoaded || isBusy || !!attachment} title={attachment ? "PDF, image and video analysis currently runs on Gemini." : "Choose the preferred chat model."}>
@@ -836,21 +837,21 @@ export function ChatWorkspace() {
                   <option value="groq">Groq</option>
                 </select>
                 <button className={`web-search-button ${webSearchEnabled ? "enabled" : ""}`} type="button" onClick={() => setWebSearchEnabled((value) => !value)} disabled={!historyLoaded || isBusy || !!attachment} aria-pressed={webSearchEnabled} title={attachment ? "Remove the attachment to use live web research." : "Use live web research"}>
-                  <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m16 16 4 4M4 11h14M11 4a11 11 0 0 1 0 14" /></svg>
+                  <OzlindIcon name="oz-globe" size={17} />
                   <span>Search</span>
                 </button>
                 <button className={`voice-button ${isRecording ? "recording" : ""}`} type="button" onClick={() => void toggleVoiceRecording()} disabled={!historyLoaded || isBusy} aria-label={isRecording ? "Stop voice recording" : "Start voice recording"} title={isRecording ? "Stop recording" : "Speak your message"}>
-                  {isRecording ? <span aria-hidden="true">■</span> : <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3" /><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3m-4 0h8" /></svg>}
+                  {isRecording ? <OzlindIcon name="oz-stop" size={18} /> : <OzlindIcon name="oz-mic" size={19} />}
                 </button>
                 <span className="composer-hint">{isRecording ? "Listening…" : "Shift + Enter for a new line"}</span>
               </div>
               {isBusy ? (
                 <button className="send-button stop-button" type="button" onClick={() => abortRef.current?.abort()} aria-label="Stop generating" title="Stop generating">
-                  <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" /></svg>
+                  <OzlindIcon name="oz-stop" size={17} />
                 </button>
               ) : (
                 <button className="send-button" type="submit" disabled={!historyLoaded || (!draft.trim() && !attachment)} aria-label="Send message" title="Send message">
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6" /></svg>
+                  <OzlindIcon name="oz-send" size={20} />
                 </button>
               )}
             </div>
