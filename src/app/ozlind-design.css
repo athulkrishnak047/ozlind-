@@ -1227,3 +1227,58 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   .chat-scroll { scroll-behavior: auto; }
   .sidebar { transition: none; }
 }
+
+
+/* Composer cleanup: the textarea is an invisible editing surface inside one pill. */
+.composer textarea,
+.composer textarea:focus,
+.composer textarea:focus-visible {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.composer:focus-within {
+  border-color: var(--oz-line-strong);
+  box-shadow: none;
+}
+.composer-toolbar { min-width: 0; }
+.composer-options { min-width: 0; }
+.composer button { flex-shrink: 0; }
+@media (max-width: 760px) {
+  /* The model dropdown was the small square control inside the mobile composer.
+     Keep the composer visually clean; model selection remains available on desktop. */
+  .composer .model-select { display: none !important; }
+  .composer .web-search-button { display: none !important; }
+  .composer {
+    width: 100%;
+    border-radius: 28px !important;
+    overflow: hidden;
+  }
+  .composer textarea {
+    min-height: 42px;
+    padding: 8px 9px 5px !important;
+    line-height: 1.5;
+  }
+  .composer-options { gap: 8px; }
+  .attach-button,.voice-button {
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  .send-button,.stop-button {
+    border-radius: 50% !important;
+    box-shadow: none !important;
+  }
+  .composer button:focus-visible {
+    outline: 2px solid var(--oz-accent);
+    outline-offset: -2px;
+  }
+}
