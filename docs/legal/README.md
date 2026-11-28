@@ -11,6 +11,12 @@
 - [Cookie and Local Storage Notice](./COOKIE-AND-LOCAL-STORAGE-NOTICE.md)
 - [Copyright and IP Notice](./COPYRIGHT-AND-IP.md)
 
+## AI transparency and operational references
+
+- [AI transparency standard](../ai/AI-TRANSPARENCY.md) — internal disclosure baseline; reconcile with actual implementation before publication.
+- [Support and incident playbook](../operations/SUPPORT-AND-INCIDENT-PLAYBOOK.md) — internal operating template.
+- [Help Center FAQ](../support/HELP-CENTER-FAQ.md) — user-facing content draft; verify before publication.
+
 ## Operational policy drafts
 
 - [Support, safety and complaints process](./COMPLAINTS-AND-SUPPORT.md)
