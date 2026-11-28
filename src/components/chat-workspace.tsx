@@ -43,10 +43,10 @@ function isConversation(value: unknown): value is Conversation {
     });
 }
 const suggestions = [
-  { icon: "oz-sparkles", title: "Think through an idea", prompt: "Help me think through an idea. Ask focused questions before proposing a solution." },
-  { icon: "oz-thinking", title: "Explain something clearly", prompt: "Explain a difficult topic clearly, with an intuitive example and the important caveats." },
-  { icon: "oz-projects", title: "Build a plan", prompt: "Help me turn a goal into a practical plan with milestones, risks, and measurable outcomes." },
-  { icon: "oz-code", title: "Review my code", prompt: "Review the code I share for correctness, security, performance, and maintainability." }
+  { icon: "oz-sparkles" as const, title: "Think through an idea", prompt: "Help me think through an idea. Ask focused questions before proposing a solution." },
+  { icon: "oz-thinking" as const, title: "Explain something clearly", prompt: "Explain a difficult topic clearly, with an intuitive example and the important caveats." },
+  { icon: "oz-projects" as const, title: "Build a plan", prompt: "Help me turn a goal into a practical plan with milestones, risks, and measurable outcomes." },
+  { icon: "oz-code" as const, title: "Review my code", prompt: "Review the code I share for correctness, security, performance, and maintainability." }
 ];
 
 function newId(): string {
@@ -172,7 +172,7 @@ export function ChatWorkspace() {
       }
       if (cancelled) return;
       if (recent.length === 0) {
-        const initial: Conversation = { id: newId(), title: "New chat", updatedAt: currentTimestamp(), messages: [] };
+        const initial: Conversation = { id: newId(), title: "New chat", updatedAt: timestampNow(), messages: [] };
         recent = [initial];
       }
       setConversations(recent);
