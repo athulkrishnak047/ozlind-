@@ -958,3 +958,6 @@ button,a,input,textarea,select { -webkit-tap-highlight-color: transparent; }
   .composer-options { gap:2px; }
   .message-row.user .message-body { max-width:88%; }
 }
+
+.composer textarea { overflow-y:auto; }
+.message-row.user .message-avatar { display:none; }
