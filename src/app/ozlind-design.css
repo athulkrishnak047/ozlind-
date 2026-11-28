@@ -998,3 +998,71 @@ button,a,input,textarea,select { -webkit-tap-highlight-color: transparent; }
     animation:none !important;
   }
 }
+
+
+/* Final product-wide refinement: consistent hierarchy, quiet surfaces, and
+   accessible controls. Keep light and dark canvases truly white and black. */
+:root {
+  --oz-radius-control: 11px;
+  --oz-radius-card: 16px;
+  --oz-radius-panel: 22px;
+}
+html[data-theme="dark"] {
+  --oz-canvas: #000;
+  --oz-surface: #080808;
+  --oz-raised: #111;
+  --oz-soft: #171717;
+  --oz-text: #f5f5f5;
+}
+html[data-theme="light"] {
+  --oz-canvas: #fff;
+  --oz-surface: #fff;
+  --oz-raised: #f6f6f6;
+  --oz-soft: #ededed;
+  --oz-text: #111;
+}
+html,body { min-height: 100%; background: var(--oz-canvas); }
+button:disabled { cursor: not-allowed; }
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible {
+  outline: 2px solid var(--oz-accent);
+  outline-offset: 3px;
+}
+.sidebar { border-right: 1px solid var(--oz-line); }
+.topbar { border-bottom: 1px solid var(--oz-line); }
+.new-chat-button { border-radius: 12px; }
+.nav-item { border-radius: 10px; }
+.sidebar-note,.settings-card,.site-capability-card,.site-approach-aside { border-radius: 16px; }
+.suggestion-card { border-radius: 14px; }
+.welcome-mark { width: 56px; height: 56px; border-radius: 17px; }
+.composer { border-radius: 22px; }
+.attach-button,.voice-button,.send-button { border-radius: 11px; }
+.model-select,.web-search-button,.theme-toggle,.workspace-command-trigger,.privacy-pill {
+  border-radius: 11px !important;
+}
+.theme-toggle { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.theme-toggle-icon { display: block; flex: 0 0 auto; }
+.settings-header { align-items: flex-start; }
+.settings-theme-card { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.settings-theme-control { flex: 0 0 auto; }
+.site-preview-tools span { display: inline-flex; align-items: center; gap: 6px; }
+.site-preview-tools svg { color: var(--oz-accent); }
+.site-preview-brand { display: inline-flex; align-items: center; gap: 8px; }
+.site-footer .site-brand { display: inline-flex; align-items: center; gap: 8px; }
+.site-footer .site-brand-mark-svg { width: 24px; height: 24px; flex-basis: 24px; }
+.message-row.user .message-body { max-width: min(100%, 720px); }
+.rich-text { overflow-wrap: anywhere; }
+.rich-text pre { max-width: 100%; overflow-x: auto; }
+@media (max-width: 760px) {
+  .sidebar { border-right: 1px solid var(--oz-line-strong); }
+  .settings-theme-card { flex-wrap: nowrap; }
+  .settings-content { padding-bottom: max(36px,env(safe-area-inset-bottom)); }
+  .site-preview-tools { flex-wrap: wrap; gap: 10px; }
+}
+@media (max-width: 390px) {
+  .settings-theme-card { align-items: flex-start; }
+  .settings-theme-card .settings-card-copy { flex: 1 1 auto; }
+  .settings-theme-control { flex: 0 0 auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
