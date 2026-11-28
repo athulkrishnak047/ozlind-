@@ -30,12 +30,22 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     if (!ready) return;
     document.documentElement.dataset.theme = theme;
     document.documentElement.style.colorScheme = theme;
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme === "dark" ? "#000000" : "#ffffff");
     try {
       window.localStorage.setItem(STORAGE_KEY, theme);
     } catch {
       // Private browsing may disable storage.
     }
   }, [theme, ready]);
+
+  useEffect(() => {
+    function syncTheme(event: StorageEvent) {
+      if (event.key !== STORAGE_KEY) return;
+      if (event.newValue === "light" || event.newValue === "dark") setTheme(event.newValue);
+    }
+    window.addEventListener("storage", syncTheme);
+    return () => window.removeEventListener("storage", syncTheme);
+  }, []);
 
   const value = useMemo(() => ({
     theme,
