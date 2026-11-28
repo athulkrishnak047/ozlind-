@@ -139,5 +139,7 @@ Identity, cloud persistence, durable memory, retrieval, in-chat tool execution, 
 - [AI transparency standard](docs/ai/AI-TRANSPARENCY.md)
 - [Threat model](docs/security/threat-model.md)
 - [Support and incident playbook](docs/operations/SUPPORT-AND-INCIDENT-PLAYBOOK.md)
+- [Support communication templates](docs/operations/COMMUNICATION-TEMPLATES.md)
+- [Help Center FAQ draft](docs/support/HELP-CENTER-FAQ.md)
 - [Definition of done](docs/engineering/definition-of-done.md)
 - [Security policy](SECURITY.md)
