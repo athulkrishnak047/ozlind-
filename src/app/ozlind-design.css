@@ -1075,3 +1075,5 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .message-actions button,.rich-code-header button,.message-sources a { display: inline-flex; align-items: center; gap: 6px; }
 .message-actions button svg,.rich-code-header button svg,.message-sources a svg { display: block; flex: 0 0 auto; }
 .attachment-chip button { display: inline-grid; place-items: center; }
+
+.site-preview-prompt > svg { display: block; flex: 0 0 auto; }
