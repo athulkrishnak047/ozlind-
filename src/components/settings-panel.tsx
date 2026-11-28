@@ -74,10 +74,10 @@ export function SettingsPanel() {
       <div className="settings-rail-spacer" /><Link href="/workspace" className="settings-back-link"><OzlindIcon name="oz-chevron-left" size={16} /> Back to workspace</Link>
     </aside>
     <section className="settings-content">
-      <header className="settings-header"><div><p className="settings-eyebrow">OZLIND / PREFERENCES</p><h1>Settings</h1><p>Make your workspace feel right for the way you work.</p></div><ThemeToggle /></header>
+      <header className="settings-header"><div><p className="settings-eyebrow">OZLIND / PREFERENCES</p><h1>Settings</h1><p>Make your workspace feel right for the way you work.</p></div></header>
       <section className="settings-section" id="appearance">
         <div className="settings-section-heading"><div><span>01</span><h2>Appearance</h2></div><p>Keep the interface comfortable across every session.</p></div>
-        <div className="settings-card settings-theme-card"><div className="settings-card-copy"><strong>Color theme</strong><span>Switch between pure black and pure white canvases.</span></div><div className="settings-theme-choice"><span className="settings-theme-preview dark-preview" /> Dark</div><div className="settings-theme-choice"><span className="settings-theme-preview light-preview" /> Light</div><ThemeToggle /></div>
+        <div className="settings-card settings-theme-card"><div className="settings-card-copy"><strong>Color theme</strong><span>Switch between pure black and pure white canvases.</span></div><div className="settings-theme-control"><ThemeToggle /></div></div>
         <div className="settings-card settings-toggle-card"><div className="settings-card-copy"><strong>Reduced motion</strong><span>Minimize animations and transitions.</span></div><button type="button" role="switch" aria-checked={preferences.reducedMotion} className={`settings-switch ${preferences.reducedMotion ? "on" : ""}`} onClick={() => setPreferences(p => ({ ...p, reducedMotion: !p.reducedMotion }))}><span /></button></div>
         <div className="settings-card settings-toggle-card"><div className="settings-card-copy"><strong>Compact workspace</strong><span>Reduce spacing to fit more content on screen.</span></div><button type="button" role="switch" aria-checked={preferences.compactMode} className={`settings-switch ${preferences.compactMode ? "on" : ""}`} onClick={() => setPreferences(p => ({ ...p, compactMode: !p.compactMode }))}><span /></button></div>
       </section>
