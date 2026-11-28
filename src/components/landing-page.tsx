@@ -82,9 +82,9 @@ export function LandingPage() {
                 <b>↑</b>
               </div>
               <div className="site-preview-tools">
-                <span><i>✳</i> Chat</span>
-                <span><i>⌕</i> Research</span>
-                <span><i>▤</i> Files</span>
+                <span><OzlindIcon name="oz-sparkles" size={14} /> Chat</span>
+                <span><OzlindIcon name="oz-search" size={14} /> Research</span>
+                <span><OzlindIcon name="oz-artifacts" size={14} /> Files</span>
               </div>
             </div>
             <div className="site-preview-footer"><span /> Gemini + Groq models <span className="site-preview-footer-right">Designed for focus</span></div>
@@ -134,7 +134,7 @@ export function LandingPage() {
 
       <footer className="site-footer">
         <Link href="/" className="site-brand" aria-label="Ozlind home">
-          <span className="site-brand-mark"><OzlindIcon name="oz-logo-small" size={22} /></span>
+          <OzlindMark className="site-brand-mark-svg" />
           <span>ozlind<span className="site-brand-period">.</span></span>
         </Link>
         <span>Built for what comes next.</span>
