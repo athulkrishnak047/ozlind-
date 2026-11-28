@@ -721,3 +721,30 @@ button,a,input,textarea,select { -webkit-tap-highlight-color: transparent; }
   .composer-options { gap: 4px; }
   .model-select,.web-search-button { min-height: 34px; padding-inline: 10px !important; }
 }
+
+
+/* Final responsive cascade corrections: keep mobile viewport locked and settings rail compact. */
+@media (max-width: 760px) {
+  .workspace { min-height: 0; height: 100dvh; }
+  .settings-rail {
+    padding: max(10px,env(safe-area-inset-top)) 14px 10px;
+    min-height: 58px;
+    align-items: center;
+  }
+  .settings-content { padding: 22px 16px max(34px,env(safe-area-inset-bottom)); }
+  .settings-header { width: 100%; }
+  .settings-theme-card { align-items: center; }
+  .settings-toggle-card,.data-card,.profile-settings-card { align-items: center; }
+  .settings-card-copy { flex: 1 1 180px; }
+  .settings-save-button,.settings-danger-button { flex: 0 0 auto; }
+  .topbar-actions { min-width: 0; }
+  .breadcrumbs { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
+@media (max-width: 390px) {
+  .settings-content { padding-inline: 13px; }
+  .settings-header { align-items: flex-start; }
+  .settings-card { gap: 10px; }
+  .settings-toggle-card,.data-card { flex-wrap: wrap; }
+  .settings-danger-button { margin-left: auto; }
+  .settings-save-button { width: 100%; }
+}
