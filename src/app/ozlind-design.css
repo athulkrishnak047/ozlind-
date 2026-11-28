@@ -1066,3 +1066,12 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 @media (prefers-reduced-motion: reduce) {
   *,*::before,*::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
+
+
+/* Shared SVG icon alignment: every interactive icon sits on the same optical baseline. */
+.command-search-row > svg { flex: 0 0 auto; color: var(--oz-muted); }
+.command-option-icon { display: grid; place-items: center; }
+.command-option-icon svg,.command-option-arrow svg { display: block; }
+.message-actions button,.rich-code-header button,.message-sources a { display: inline-flex; align-items: center; gap: 6px; }
+.message-actions button svg,.rich-code-header button svg,.message-sources a svg { display: block; flex: 0 0 auto; }
+.attachment-chip button { display: inline-grid; place-items: center; }
