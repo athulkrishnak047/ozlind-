@@ -64,6 +64,12 @@ Or run all checks in sequence with `npm run verify`.
 
 The public landing page is in `src/components/landing-page.tsx`; the chat workspace is served at `/workspace`. The workspace supports streamed Gemini/Groq responses, provider preference, stop generation, copy, prompt starters, live research, voice-to-text, and browser-local conversation history. Local history is not synced across devices.
 
+## UI/UX-first development
+
+The current development priority is the Ozlind experience: visual consistency, responsive navigation, chat composer, message readability, settings, accessibility and low-data performance. Backend expansion is intentionally paused unless a UI requirement cannot be met without it.
+
+Start with the [UI/UX documentation index](docs/product/ui-ux-index.md). It links the product blueprint, design system, information architecture, screen and interaction specifications, component catalog, responsive rules, accessibility contract, microcopy, and low-data performance budget.
+
 ## AI core
 
 - `POST /api/chat`: bounded JSON input and Server-Sent Events output.
@@ -84,12 +90,30 @@ Provider keys and model IDs remain server-side. See [AI orchestration](docs/ai/o
 
 Identity, cloud persistence, durable memory, retrieval, in-chat tool execution, agents, real-time voice, and billing require dedicated privacy, tenancy, safety, cost, and lifecycle designs before release. Basic PDF, image, and short-video analysis is already available through `/api/vision`.
 
+## Product and UI/UX documents
+
+- [UI/UX documentation index](docs/product/ui-ux-index.md)
+- [Product blueprint](docs/product/ozlind-product-blueprint.md)
+- [Design system](docs/product/design-system.md)
+- [Information architecture](docs/product/information-architecture.md)
+- [Screen specifications](docs/product/screen-specifications.md)
+- [Interaction specifications](docs/product/interaction-specifications.md)
+- [Reusable component catalog](docs/product/component-catalog.md)
+- [Responsive behavior](docs/product/responsive-behavior.md)
+- [Accessibility specification](docs/product/accessibility-specification.md)
+- [Content and microcopy](docs/product/content-and-microcopy.md)
+- [Performance and low-data UX](docs/product/performance-and-low-data.md)
+- [Chat experience](docs/product/chat-experience.md)
+- [UI benchmark](docs/product/ui-benchmark.md)
+- [Platform roadmap](docs/product/platform-roadmap.md)
+- [Verified release status](docs/product/release-status.md)
+
 ## Engineering documents
 
+- [Frontend architecture](docs/engineering/frontend-architecture.md)
 - [System architecture](docs/architecture/system-overview.md)
 - [API contract](docs/architecture/api-contract.md)
 - [AI orchestration](docs/ai/orchestration.md)
-- [ChatGPT and Claude competitive benchmark](docs/product/competitive-benchmark.md)
 - [Threat model](docs/security/threat-model.md)
 - [Definition of done](docs/engineering/definition-of-done.md)
 - [Security policy](SECURITY.md)
