@@ -12,6 +12,8 @@
 | `src/app/apple-icon.svg` | Apple icon vector source | Verify Next.js/platform output; raster PNG may still be needed |
 | `public/icons/ozlind-ui.svg` | UI symbol sprite | 24 reusable symbols |
 
+See [Brand Guidelines](../brand/BRAND-GUIDELINES.md) for logo clear space, color, typography and usage rules.
+
 ## UI symbol IDs
 
 `arrow-up`, `arrow-left`, `arrow-right`, `plus`, `x`, `menu`, `search`, `settings`, `sun`, `moon`, `copy`, `edit`, `trash`, `paperclip`, `mic`, `stop`, `send`, `file`, `globe`, `check`, `alert`, `info`, `external-link`, `refresh`.
@@ -34,6 +36,7 @@ Browser support and CSP must be tested before adopting external SVG sprite refer
 - Do not add large font, video, raster illustration or animation dependencies without a measured reason.
 - Provide accessible names on controls; SVG artwork is not a substitute for button labels.
 - Keep one approved source of truth for each brand mark.
+- Follow the [performance and low-data UX standard](../product/performance-and-low-data.md).
 
 ## Still needed for broader distribution
 
