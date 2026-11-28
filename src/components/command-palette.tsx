@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { OzlindIcon, type OzlindIconName } from "./ozlind-icon";
 
 type Command = {
   id: string;
   label: string;
   detail: string;
+  icon: OzlindIconName;
   shortcut?: string;
   run: () => void;
 };
@@ -26,11 +28,11 @@ export function CommandPalette({ open, onClose, onNewChat, onFocusComposer, onEx
   const inputRef = useRef<HTMLInputElement>(null);
 
   const commands = useMemo<Command[]>(() => [
-    { id: "new", label: "Start a new chat", detail: "Create a fresh conversation", shortcut: "N", run: onNewChat },
-    { id: "focus", label: "Focus message composer", detail: "Jump to the message input", shortcut: "M", run: onFocusComposer },
-    { id: "web", label: "Toggle web research", detail: "Turn live web search on or off", run: onToggleWeb },
-    { id: "export", label: "Export conversation", detail: "Download this chat as Markdown", run: onExport },
-    { id: "clear", label: "Clear conversation", detail: "Remove messages from this chat", run: onClear },
+    { id: "new", label: "Start a new chat", detail: "Create a fresh conversation", icon: "oz-new-chat", shortcut: "N", run: onNewChat },
+    { id: "focus", label: "Focus message composer", detail: "Jump to the message input", icon: "oz-edit", shortcut: "M", run: onFocusComposer },
+    { id: "web", label: "Toggle web research", detail: "Turn live web search on or off", icon: "oz-globe", run: onToggleWeb },
+    { id: "export", label: "Export conversation", detail: "Download this chat as Markdown", icon: "oz-download", run: onExport },
+    { id: "clear", label: "Clear conversation", detail: "Remove messages from this chat", icon: "oz-trash", run: onClear },
   ], [onNewChat, onFocusComposer, onToggleWeb, onExport, onClear]);
 
   const filtered = commands.filter((command) =>
@@ -78,7 +80,7 @@ export function CommandPalette({ open, onClose, onNewChat, onFocusComposer, onEx
     }}>
       <section className="command-dialog" role="dialog" aria-modal="true" aria-labelledby="command-title">
         <div className="command-search-row">
-          <span aria-hidden="true">⌕</span>
+          <OzlindIcon name="oz-search" size={18} />
           <input
             ref={inputRef}
             value={query}
@@ -103,14 +105,14 @@ export function CommandPalette({ open, onClose, onNewChat, onFocusComposer, onEx
               onMouseEnter={() => setActiveIndex(index)}
               onClick={() => run(command)}
             >
-              <span className="command-option-icon" aria-hidden="true">{({new:"＋",focus:"↗",web:"⌕",export:"↓",clear:"⌫"} as Record<string,string>)[command.id]}</span>
+              <span className="command-option-icon" aria-hidden="true"><OzlindIcon name={command.icon} size={17} /></span>
               <span className="command-option-copy"><strong>{command.label}</strong><small>{command.detail}</small></span>
               {command.shortcut && <kbd>{command.shortcut}</kbd>}
-              <span className="command-option-arrow" aria-hidden="true">↵</span>
+              <span className="command-option-arrow" aria-hidden="true"><OzlindIcon name="oz-chevron-right" size={15} /></span>
             </button>
           )) : <p className="command-empty">No matching actions. Try another search.</p>}
         </div>
-        <footer className="command-footer"><span>↑↓ Navigate</span><span>↵ Run action</span><span>ESC Close</span></footer>
+        <footer className="command-footer"><span>Up / Down Navigate</span><span>Enter Run action</span><span>Esc Close</span></footer>
       </section>
     </div>
   );
