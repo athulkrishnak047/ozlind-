@@ -759,7 +759,11 @@ export function ChatWorkspace() {
             <textarea
               disabled={!historyLoaded || isBusy}
               value={draft}
-              onChange={(event) => setDraft(event.target.value)}
+              onChange={(event) => {
+                setDraft(event.target.value);
+                event.currentTarget.style.height = "auto";
+                event.currentTarget.style.height = `${Math.min(event.currentTarget.scrollHeight, 190)}px`;
+              }}
               onKeyDown={handleComposerKeyDown}
               placeholder="Message Ozlind"
               rows={1}
