@@ -43,10 +43,10 @@ function isConversation(value: unknown): value is Conversation {
     });
 }
 const suggestions = [
-  { title: "Think through an idea", prompt: "Help me think through an idea. Ask focused questions before proposing a solution." },
-  { title: "Explain something clearly", prompt: "Explain a difficult topic clearly, with an intuitive example and the important caveats." },
-  { title: "Build a plan", prompt: "Help me turn a goal into a practical plan with milestones, risks, and measurable outcomes." },
-  { title: "Review my code", prompt: "Review the code I share for correctness, security, performance, and maintainability." }
+  { icon: "oz-sparkles", title: "Think through an idea", prompt: "Help me think through an idea. Ask focused questions before proposing a solution." },
+  { icon: "oz-thinking", title: "Explain something clearly", prompt: "Explain a difficult topic clearly, with an intuitive example and the important caveats." },
+  { icon: "oz-projects", title: "Build a plan", prompt: "Help me turn a goal into a practical plan with milestones, risks, and measurable outcomes." },
+  { icon: "oz-code", title: "Review my code", prompt: "Review the code I share for correctness, security, performance, and maintainability." }
 ];
 
 function newId(): string {
@@ -168,7 +168,7 @@ export function ChatWorkspace() {
       }
       if (cancelled) return;
       if (recent.length === 0) {
-        const initial: Conversation = { id: newId(), title: "New chat", updatedAt: Date.now(), messages: [] };
+        const initial: Conversation = { id: newId(), title: "New chat", updatedAt: currentTimestamp(), messages: [] };
         recent = [initial];
       }
       setConversations(recent);
@@ -720,7 +720,7 @@ export function ChatWorkspace() {
               <div className="suggestion-grid">
                 {suggestions.map((suggestion, index) => (
                   <button className="suggestion-card" key={suggestion.title} type="button" onClick={() => setDraft(suggestion.prompt)}>
-                    <span className={`suggestion-icon suggestion-icon-${index + 1}`} aria-hidden="true">{[<OzlindIcon name="oz-sparkles" size={18} />, <OzlindIcon name="oz-thinking" size={18} />, <OzlindIcon name="oz-projects" size={18} />, <OzlindIcon name="oz-code" size={18} />][index]}</span>
+                    <span className={`suggestion-icon suggestion-icon-${index + 1}`} aria-hidden="true"><OzlindIcon name={suggestion.icon} size={18} /></span>
                     <span><strong>{suggestion.title}</strong><small>{["Explore possibilities", "Get to the heart of it", "Turn goals into action", "Improve quality"][index]}</small></span>
                     <OzlindIcon className="suggestion-arrow" name="oz-chevron-right" size={16} />
                   </button>
