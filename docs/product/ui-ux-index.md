@@ -20,10 +20,13 @@ This directory is the source of truth for Ozlind's user experience. The existing
 10. [Performance and low-data UX](./performance-and-low-data.md) — network, rendering and mobile-data budgets.
 11. [Frontend architecture](../engineering/frontend-architecture.md) — code ownership and implementation conventions.
 
-## Brand and legal resources
+## Brand, AI trust and legal resources
 
+- [Brand guidelines](../brand/BRAND-GUIDELINES.md) — identity, logo use, color, typography and visual language.
 - [Brand/UI asset inventory](../assets/ASSET-INVENTORY.md) — logo, favicon, SVG symbol library and remaining asset requirements.
+- [AI transparency standard](../ai/AI-TRANSPARENCY.md) — disclosure and output reliability requirements.
 - [Legal documents index](../legal/README.md) — Terms, Privacy, Acceptable Use, provider disclosure and related drafts.
+- [Launch readiness checklist](./launch-readiness-checklist.md) — release gates across product, security, accessibility, operations and legal.
 
 Legal files are not approved for publication. See the legal launch checklist and complete legal review before publishing.
 
