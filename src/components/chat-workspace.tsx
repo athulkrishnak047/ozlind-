@@ -702,8 +702,13 @@ export function ChatWorkspace() {
           <button className="mobile-nav-toggle" type="button" aria-label={sidebarOpen ? "Close navigation" : "Open navigation"} aria-expanded={sidebarOpen} onClick={() => setSidebarOpen((open) => !open)}><span /><span /><span /></button>
           <div className="breadcrumbs"><span>Workspace</span><span className="crumb-separator">/</span><strong>Assistant</strong></div>
           <div className="topbar-actions">
-            <button className="command-trigger workspace-command-trigger" type="button" onClick={() => setCommandOpen(true)} aria-label="Search workspace actions" title="Search actions · Ctrl K">
-              <OzlindIcon name="oz-search" size={16} /><span>Search</span><kbd>Ctrl K</kbd>
+            <button className="mobile-compose-trigger" type="button" onClick={startNewChat} aria-label="Start a new chat" title="New chat">
+              <OzlindIcon name="oz-new-chat" size={20} />
+            </button>
+            <button className="command-trigger workspace-command-trigger" type="button" onClick={() => setCommandOpen(true)} aria-label="Open chat menu and workspace actions" title="Search actions · Ctrl K">
+              <span className="desktop-search-icon"><OzlindIcon name="oz-search" size={16} /></span>
+              <span className="mobile-more-icon"><OzlindIcon name="oz-more-vertical" size={20} /></span>
+              <span>Search</span><kbd>Ctrl K</kbd>
             </button>
             <ThemeToggle />
           </div>
