@@ -72,6 +72,7 @@ Start with the [UI/UX documentation index](docs/product/ui-ux-index.md).
 
 ## Brand assets and legal documents
 
+- [Brand guidelines](docs/brand/BRAND-GUIDELINES.md)
 - [Brand and UI asset inventory](docs/assets/ASSET-INVENTORY.md)
 - [Standalone Ozlind symbol](public/brand/ozlind-symbol.svg)
 - [Horizontal Ozlind logo](public/brand/ozlind-logo.svg)
@@ -97,7 +98,7 @@ Legal files are working drafts, not approved policies or legal advice. Replace p
 - `POST /api/transcribe`: bounded audio upload and speech-to-text.
 - `POST /api/vision`: bounded PDF, image, and short-video analysis through Gemini.
 
-Provider keys and model IDs remain server-side. See [AI orchestration](docs/ai/orchestration.md) for contracts, limits, fallback behavior, and deployment configuration.
+Provider keys and model IDs remain server-side. See [AI orchestration](docs/ai/orchestration.md) for contracts, limits, fallback behavior, and deployment configuration. See the [AI transparency standard](docs/ai/AI-TRANSPARENCY.md) for product disclosure requirements.
 
 ## Security and scaling posture
 
@@ -127,13 +128,16 @@ Identity, cloud persistence, durable memory, retrieval, in-chat tool execution, 
 - [UI benchmark](docs/product/ui-benchmark.md)
 - [Platform roadmap](docs/product/platform-roadmap.md)
 - [Verified release status](docs/product/release-status.md)
+- [Launch readiness checklist](docs/product/launch-readiness-checklist.md)
 
-## Engineering documents
+## Engineering and operations documents
 
 - [Frontend architecture](docs/engineering/frontend-architecture.md)
 - [System architecture](docs/architecture/system-overview.md)
 - [API contract](docs/architecture/api-contract.md)
 - [AI orchestration](docs/ai/orchestration.md)
+- [AI transparency standard](docs/ai/AI-TRANSPARENCY.md)
 - [Threat model](docs/security/threat-model.md)
+- [Support and incident playbook](docs/operations/SUPPORT-AND-INCIDENT-PLAYBOOK.md)
 - [Definition of done](docs/engineering/definition-of-done.md)
 - [Security policy](SECURITY.md)
