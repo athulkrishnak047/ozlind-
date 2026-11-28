@@ -1,42 +1,49 @@
 # Ozlind asset inventory
 
-## Brand assets added
+## Brand assets
 
 | Path | Purpose | Notes |
 |---|---|---|
-| `public/brand/ozlind-symbol.svg` | Standalone brand symbol | Vector, scalable |
-| `public/brand/ozlind-logo.svg` | Horizontal wordmark | Uses current geometric mark; inherits text color |
-| `src/app/icon.svg` | Next.js browser favicon | Lightweight vector icon |
-| `public/icons/ozlind-ui.svg` | UI SVG symbol sheet | Reusable symbols via SVG `use`; current starter set |
+| `public/brand/ozlind-symbol.svg` | Standalone symbol | Square symbol, scalable SVG |
+| `public/brand/ozlind-logo.svg` | Horizontal wordmark | Generic currentColor text variant |
+| `public/brand/ozlind-logo-light.svg` | Logo for light surfaces | Dark wordmark and light-on-dark symbol |
+| `public/brand/ozlind-logo-dark.svg` | Logo for dark surfaces | Light wordmark and light-on-dark symbol |
+| `src/app/icon.svg` | Next.js favicon | Browser icon source |
+| `src/app/apple-icon.svg` | Apple icon vector source | Verify Next.js/platform output; raster PNG may still be needed |
+| `public/icons/ozlind-ui.svg` | UI symbol sprite | 24 reusable symbols |
 
 ## UI symbol IDs
 
 `arrow-up`, `arrow-left`, `arrow-right`, `plus`, `x`, `menu`, `search`, `settings`, `sun`, `moon`, `copy`, `edit`, `trash`, `paperclip`, `mic`, `stop`, `send`, `file`, `globe`, `check`, `alert`, `info`, `external-link`, `refresh`.
 
-Example reference (same-origin external SVG sprite):
-```tsx
+Example external SVG sprite reference:
+
+~~~tsx
 <svg aria-hidden="true" focusable="false" width="20" height="20">
   <use href="/icons/ozlind-ui.svg#search" />
 </svg>
-```
+~~~
 
 Browser support and CSP must be tested before adopting external SVG sprite references across the app. For inline critical icons, keep using the existing React SVG component or inline SVG. Do not download remote icon packs at runtime.
 
 ## Asset principles
 
 - SVG first for logos and simple UI icons.
-- Use currentColor for UI symbols so light/dark themes work.
+- UI symbols use currentColor so they can adapt to light/dark themes.
 - Keep decorative media optional and never block initial workspace use.
 - Do not add large font, video, raster illustration or animation dependencies without a measured reason.
-- Provide accessible names on controls; SVG artwork itself is not a substitute for button labels.
-- Keep a single source of truth for each brand mark.
+- Provide accessible names on controls; SVG artwork is not a substitute for button labels.
+- Keep one approved source of truth for each brand mark.
 
-## Still needed before public app-store/PWA distribution
+## Still needed for broader distribution
 
-- [ ] PNG 192×192 and 512×512 install icons (generate and inspect from approved brand source).
-- [ ] Apple touch icon PNG 180×180.
-- [ ] Maskable PWA icon with safe-zone validation, only if PWA manifest is added.
-- [ ] Social sharing image (Open Graph, 1200×630), only after final brand layout approved.
-- [ ] Monochrome and reverse logo variants after brand approval.
-- [ ] Full favicon/browser test across major browsers.
-- [ ] Verify SVG sprite rendering/CSP in production.
+- [ ] Raster PNG 192×192 and 512×512 install icons if a PWA manifest is introduced.
+- [ ] Apple touch icon PNG 180×180 if required by target platform; current SVG is a source, not proof of PNG compatibility.
+- [ ] Maskable PWA icon with safe-zone validation, only if PWA is added.
+- [ ] Social sharing image (Open Graph, 1200×630) after brand composition is approved.
+- [ ] Monochrome/reverse variants only if a real surface requires them.
+- [ ] Full favicon/browser test.
+- [ ] Verify SVG sprite rendering and CSP in production.
+- [ ] Confirm all logos render correctly in light/dark themes.
+
+No binary PNG or social image has been generated in this pass. Avoid treating a vector source as a verified platform-ready raster asset.
