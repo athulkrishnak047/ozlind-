@@ -68,7 +68,27 @@ The public landing page is in `src/components/landing-page.tsx`; the chat worksp
 
 The current development priority is the Ozlind experience: visual consistency, responsive navigation, chat composer, message readability, settings, accessibility and low-data performance. Backend expansion is intentionally paused unless a UI requirement cannot be met without it.
 
-Start with the [UI/UX documentation index](docs/product/ui-ux-index.md). It links the product blueprint, design system, information architecture, screen and interaction specifications, component catalog, responsive rules, accessibility contract, microcopy, and low-data performance budget.
+Start with the [UI/UX documentation index](docs/product/ui-ux-index.md).
+
+## Brand assets and legal documents
+
+- [Brand and UI asset inventory](docs/assets/ASSET-INVENTORY.md)
+- [Standalone Ozlind symbol](public/brand/ozlind-symbol.svg)
+- [Horizontal Ozlind logo](public/brand/ozlind-logo.svg)
+- [Light-theme logo](public/brand/ozlind-logo-light.svg)
+- [Dark-theme logo](public/brand/ozlind-logo-dark.svg)
+- [UI SVG symbol library](public/icons/ozlind-ui.svg)
+- [Legal documents index — drafts only](docs/legal/README.md)
+- [Terms of Service draft](docs/legal/TERMS-OF-SERVICE.md)
+- [Privacy Policy draft](docs/legal/PRIVACY-POLICY.md)
+- [Acceptable Use Policy draft](docs/legal/ACCEPTABLE-USE-POLICY.md)
+- [Third-party services disclosure](docs/legal/THIRD-PARTY-SERVICES.md)
+- [Cookie and local storage notice](docs/legal/COOKIE-AND-LOCAL-STORAGE-NOTICE.md)
+- [Copyright and IP notice](docs/legal/COPYRIGHT-AND-IP.md)
+- [Support and complaints process](docs/legal/COMPLAINTS-AND-SUPPORT.md)
+- [Legal launch checklist](docs/legal/LEGAL-LAUNCH-CHECKLIST.md)
+
+Legal files are working drafts, not approved policies or legal advice. Replace placeholders, verify production data handling and provider contracts, and obtain qualified legal review before publishing.
 
 ## AI core
 
