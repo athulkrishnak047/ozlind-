@@ -1,10 +1,10 @@
-# Ozlind UI/UX documentation
+# Ozlind UI/UX and product documentation
 
 **Status:** Product direction and design contracts  
 **Scope:** Current web application and future UI surfaces  
 **Priority:** UI/UX first; no backend expansion in this phase
 
-This directory is the source of truth for Ozlind's user experience. The existing [product blueprint](./ozlind-product-blueprint.md), [design system](./design-system.md), [chat experience](./chat-experience.md), and [competitive benchmark](./ui-benchmark.md) remain foundational. The following specifications make those decisions implementable.
+This directory is the source of truth for Ozlind's user experience. The existing [product blueprint](./ozlind-product-blueprint.md), [design system](./design-system.md), [chat experience](./chat-experience.md), and [competitive benchmark](./ui-benchmark.md) remain foundational.
 
 ## Required reading order
 
@@ -19,6 +19,13 @@ This directory is the source of truth for Ozlind's user experience. The existing
 9. [Content and microcopy](./content-and-microcopy.md) — naming, labels, errors and tone.
 10. [Performance and low-data UX](./performance-and-low-data.md) — network, rendering and mobile-data budgets.
 11. [Frontend architecture](../engineering/frontend-architecture.md) — code ownership and implementation conventions.
+
+## Brand and legal resources
+
+- [Brand/UI asset inventory](../assets/ASSET-INVENTORY.md) — logo, favicon, SVG symbol library and remaining asset requirements.
+- [Legal documents index](../legal/README.md) — Terms, Privacy, Acceptable Use, provider disclosure and related drafts.
+
+Legal files are not approved for publication. See the legal launch checklist and complete legal review before publishing.
 
 ## Current phase
 
