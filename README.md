@@ -91,6 +91,10 @@ Start with the [UI/UX documentation index](docs/product/ui-ux-index.md).
 
 Legal files are working drafts, not approved policies or legal advice. Replace placeholders, verify production data handling and provider contracts, and obtain qualified legal review before publishing.
 
+## API health
+
+- `GET /api/health` provides a minimal liveness check with a request ID. It confirms that the API process can respond; it does not verify AI provider credentials or external service readiness.
+
 ## AI core
 
 - `POST /api/chat`: bounded JSON input and Server-Sent Events output.
