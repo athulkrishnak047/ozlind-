@@ -9,166 +9,27 @@
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);min-height:100vh}button,input,textarea,select{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 55%,transparent);outline-offset:2px}.app{display:flex;min-height:100vh}.sidebar{width:264px;flex:0 0 264px;border-right:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;padding:18px 14px;transition:transform .25s,width .25s}.brand{display:flex;align-items:center;gap:11px;padding:5px 8px 22px}.logo{width:34px;height:34px;border-radius:11px;background:var(--text);color:var(--bg);display:grid;place-items:center;font-size:19px;font-weight:850;letter-spacing:-1px}.brand-name{font-weight:780;font-size:18px;letter-spacing:-.7px}.brand-tag{font-size:10px;color:var(--muted);letter-spacing:1.6px;text-transform:uppercase;margin-top:2px}.new-chat{width:100%;border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:12px;padding:11px 13px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:650;box-shadow:var(--shadow)}.new-chat:hover,.nav-item:hover,.history-item:hover{background:var(--soft)}.plus{font-size:20px;font-weight:400;color:var(--accent)}.nav-label{font-size:10px;font-weight:750;color:var(--muted);letter-spacing:1.3px;text-transform:uppercase;padding:25px 9px 9px}.nav-list{display:grid;gap:3px}.nav-item,.history-item{display:flex;align-items:center;gap:11px;border:0;background:transparent;color:var(--muted);padding:10px 11px;border-radius:10px;text-align:left;font-size:13px;width:100%}.nav-item.active{background:var(--accent-soft);color:var(--accent);font-weight:680}.ico{width:17px;text-align:center;font-size:16px}.history{min-height:0;overflow:auto}.history-item{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px;padding:9px 11px}.history-item span:last-child{overflow:hidden;text-overflow:ellipsis}.sidebar-bottom{margin-top:auto;border-top:1px solid var(--line);padding-top:12px}.profile{display:flex;align-items:center;gap:10px;padding:11px 8px 3px}.avatar{width:31px;height:31px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:750}.profile-name{font-size:12px;font-weight:650}.profile-sub{font-size:10px;color:var(--muted);margin-top:2px}.main{flex:1;min-width:0;display:flex;flex-direction:column;min-height:100vh}.topbar{height:64px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 26px;gap:12px}.top-left,.top-actions{display:flex;align-items:center;gap:12px}.page-title{font-size:14px;font-weight:680}.top-note{font-size:11px;color:var(--muted)}.icon-btn{width:36px;height:36px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text);display:grid;place-items:center;font-size:16px}.icon-btn:hover{background:var(--soft)}.mobile-menu{display:none}.content{flex:1;min-height:0;display:flex;flex-direction:column}.chat-page{width:min(100%,850px);margin:0 auto;flex:1;display:flex;flex-direction:column;padding:36px 28px 22px;min-height:0}.welcome{margin:auto auto 30px;text-align:center;max-width:610px}.welcome-mark{width:52px;height:52px;border-radius:17px;background:var(--text);color:var(--bg);display:grid;place-items:center;font-size:27px;font-weight:850;margin:0 auto 20px}.welcome h1{font-size:clamp(27px,4vw,39px);letter-spacing:-1.8px;margin:0 0 10px;font-weight:730}.welcome p{color:var(--muted);font-size:14px;line-height:1.7;margin:0}.suggestions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:26px;text-align:left}.suggestion{border:1px solid var(--line);background:var(--surface);border-radius:13px;padding:14px;color:var(--text);font-size:12px;line-height:1.5}.suggestion:hover{border-color:var(--accent);background:var(--accent-soft)}.suggestion strong{display:block;font-size:12px;margin-bottom:4px}.messages{flex:1;overflow:auto;display:flex;flex-direction:column;gap:22px;padding:8px 0 22px}.message{display:flex;gap:12px;max-width:100%;align-items:flex-start}.message.user{flex-direction:row-reverse}.message-avatar{width:29px;height:29px;border-radius:10px;flex:0 0 29px;background:var(--soft);display:grid;place-items:center;font-size:12px;font-weight:750}.message.user .message-avatar{background:var(--accent-soft);color:var(--accent)}.bubble{max-width:min(680px,88%);font-size:14px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere}.message.user .bubble{background:var(--soft);padding:11px 14px;border-radius:15px 5px 15px 15px}.message.assistant .bubble{padding:3px 0}.composer-wrap{padding-top:12px}.composer{border:1px solid var(--line);background:var(--surface);border-radius:18px;padding:12px 13px 10px;box-shadow:var(--shadow)}.composer textarea{width:100%;border:0;outline:0!important;resize:none;background:transparent;color:var(--text);font-size:14px;line-height:1.55;min-height:30px;max-height:180px;padding:3px 3px 8px}.composer textarea::placeholder{color:var(--muted)}.composer-tools{display:flex;align-items:center;justify-content:space-between;gap:12px}.tool-left,.tool-right{display:flex;align-items:center;gap:7px}.tool-btn{border:0;background:transparent;color:var(--muted);border-radius:8px;padding:7px 9px;font-size:12px}.tool-btn:hover{background:var(--soft);color:var(--text)}.send-btn{border:0;background:var(--text);color:var(--bg);border-radius:10px;width:34px;height:34px;font-size:17px}.send-btn:disabled{opacity:.35;cursor:not-allowed}.disclaimer{text-align:center;color:var(--muted);font-size:10px;margin:10px 0 0}.notice{border:1px solid var(--line);background:var(--panel);padding:11px 13px;border-radius:11px;color:var(--muted);font-size:12px;line-height:1.6;margin-top:8px}.subpage{width:min(100%,850px);margin:0 auto;padding:42px 30px 70px}.subpage h1{font-size:30px;letter-spacing:-1.2px;margin:0 0 8px}.subpage .lead{color:var(--muted);font-size:14px;line-height:1.7;margin:0 0 30px}.settings-section{border:1px solid var(--line);border-radius:15px;margin:14px 0;padding:19px;background:var(--surface)}.settings-section h2{font-size:14px;margin:0 0 5px}.section-desc{font-size:12px;color:var(--muted);margin:0 0 16px;line-height:1.6}.setting-row{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:13px 0;border-top:1px solid var(--line)}.setting-row:first-of-type{border-top:0}.setting-title{font-size:13px;font-weight:620}.setting-help{font-size:11px;color:var(--muted);margin-top:4px}.select,.text-field{background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-size:12px;max-width:180px}.toggle{appearance:none;width:39px;height:22px;border-radius:99px;background:var(--line);position:relative;cursor:pointer;transition:.2s;flex:0 0 auto}.toggle:checked{background:var(--accent)}.toggle:after{content:"";position:absolute;width:16px;height:16px;border-radius:50%;background:white;left:3px;top:3px;transition:.2s}.toggle:checked:after{left:20px}.primary-btn{border:0;background:var(--text);color:var(--bg);border-radius:10px;padding:10px 14px;font-size:12px;font-weight:650}.secondary-btn{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:10px;padding:10px 14px;font-size:12px}.terms-card{border:1px solid var(--line);border-radius:15px;padding:22px;background:var(--surface);margin:12px 0}.terms-card h2{font-size:15px;margin:0 0 8px}.terms-card p,.terms-card li{font-size:13px;color:var(--muted);line-height:1.8}.terms-card ul{padding-left:20px}.terms-date{font-size:11px;color:var(--muted);margin-top:22px}.footer{border-top:1px solid var(--line);padding:15px 28px;color:var(--muted);font-size:10px;display:flex;justify-content:space-between;gap:12px}.footer a{color:inherit;text-decoration:none}.footer a:hover{color:var(--accent)}.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 15px;border-radius:10px;font-size:12px;box-shadow:var(--shadow);z-index:20;opacity:0;pointer-events:none;transition:opacity .2s}.toast.show{opacity:1}
 @media(max-width:760px){.sidebar{position:fixed;z-index:10;inset:0 auto 0 0;width:270px;transform:translateX(-105%);box-shadow:20px 0 60px #0002}.sidebar.open{transform:translateX(0)}.mobile-menu{display:grid}.topbar{padding:0 15px;height:58px}.chat-page{padding:28px 16px 16px}.subpage{padding:30px 17px 55px}.suggestions{grid-template-columns:1fr}.welcome{margin:auto auto 24px}.footer{padding:13px 16px}.top-note{display:none}}
 @media(min-width:761px){.sidebar{transform:none!important}}
-
-/* Ozlind signature visual system: restrained glass, bento, tactile surfaces and motion */
-:root{--glass:color-mix(in srgb,var(--surface) 76%,transparent);--glass-line:color-mix(in srgb,var(--text) 10%,transparent);--glow:color-mix(in srgb,var(--accent) 18%,transparent);--ease:cubic-bezier(.2,.75,.25,1)}
-@media(prefers-reduced-motion:no-preference){
-*{scroll-behavior:smooth}
-button,.settings-section,.terms-card,.composer,.icon-btn,.nav-item,.suggestion,.new-chat{transition:background .22s var(--ease),border-color .22s var(--ease),box-shadow .22s var(--ease),transform .22s var(--ease),color .22s var(--ease)}
-.suggestion:hover,.settings-section:hover,.terms-card:hover{transform:translateY(-2px)}
-}
-.sidebar{background:var(--glass);backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%)}
-.brand .logo,.welcome-mark{background:linear-gradient(145deg,var(--text),color-mix(in srgb,var(--text) 72%,var(--accent)));box-shadow:0 7px 22px var(--glow)}
-.brand .logo{border:1px solid var(--glass-line)}
-.topbar{background:var(--glass);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);position:relative;z-index:2}
-.new-chat{background:var(--glass);border-color:var(--glass-line);box-shadow:inset 0 1px 0 #ffffff55,0 5px 18px #00000008}
-.new-chat:hover{border-color:color-mix(in srgb,var(--accent) 40%,var(--line));box-shadow:0 8px 24px var(--glow);transform:translateY(-1px)}
-.nav-item{position:relative;overflow:hidden}
-.nav-item.active{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 12%,transparent)}
-.nav-item.active:before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:0 4px 4px 0;background:var(--accent)}
-.icon-btn{background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:inset 0 1px 0 #ffffff44}
-.icon-btn:hover{border-color:var(--accent);box-shadow:0 5px 18px var(--glow);transform:translateY(-1px)}
-.welcome{position:relative}
-.welcome-mark{position:relative;isolation:isolate}
-.welcome-mark:after{content:"";position:absolute;inset:-8px;border:1px solid color-mix(in srgb,var(--accent) 32%,transparent);border-radius:22px;z-index:-1;box-shadow:0 0 34px var(--glow)}
-.welcome h1{background:linear-gradient(105deg,var(--text) 20%,var(--accent) 75%,var(--text));background-clip:text;-webkit-background-clip:text;color:transparent}
-.suggestions{gap:12px}
-.suggestion{position:relative;isolation:isolate;overflow:hidden;text-align:left;min-height:92px;border-radius:16px;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 #ffffff55,0 5px 18px #00000006}
-.suggestion:before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 100% 0,var(--glow),transparent 58%);opacity:.7}
-.suggestion strong{font-size:13px;letter-spacing:-.2px}
-.suggestion:hover{border-color:color-mix(in srgb,var(--accent) 55%,var(--line));box-shadow:0 12px 28px var(--glow),inset 0 1px 0 #ffffff66;transform:translateY(-3px)}
-.message.user .bubble{border:1px solid var(--glass-line);background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:inset 0 1px 0 #ffffff44}
-.message-avatar{border:1px solid var(--glass-line);box-shadow:0 2px 8px #00000008}
-.composer{position:relative;background:var(--glass);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);border-color:color-mix(in srgb,var(--text) 15%,transparent);box-shadow:0 12px 36px #0000000c,inset 0 1px 0 #ffffff66}
-.composer:focus-within{border-color:color-mix(in srgb,var(--accent) 65%,var(--line));box-shadow:0 12px 36px var(--glow),inset 0 1px 0 #ffffff66}
-.send-btn{background:linear-gradient(145deg,var(--accent),color-mix(in srgb,var(--accent) 65%,#171717));color:white;box-shadow:0 4px 12px var(--glow)}
-.send-btn:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 7px 20px var(--glow)}
-.tool-btn{border:1px solid transparent}
-.tool-btn:hover{border-color:var(--glass-line);border-radius:9px}
-.settings-section,.terms-card{position:relative;overflow:hidden;background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:inset 0 1px 0 #ffffff40,0 8px 24px #00000006}
-.settings-section:before,.terms-card:before{content:"";position:absolute;left:0;top:0;width:3px;height:0;background:var(--accent);transition:height .25s var(--ease)}
-.settings-section:hover:before,.terms-card:hover:before{height:100%}
-.settings-section:hover,.terms-card:hover{border-color:color-mix(in srgb,var(--accent) 28%,var(--line));box-shadow:0 12px 28px #0000000b}
-.toggle{box-shadow:inset 0 1px 3px #0002}
-.toggle:checked{box-shadow:0 0 0 4px var(--glow)}
-.primary-btn{background:linear-gradient(120deg,var(--text),color-mix(in srgb,var(--text) 72%,var(--accent)));box-shadow:0 5px 14px #00000014}
-.primary-btn:hover,.secondary-btn:hover{transform:translateY(-1px);box-shadow:0 7px 18px var(--glow)}
-.notice{background:var(--glass);backdrop-filter:blur(12px);border-left:3px solid var(--accent)}
-.footer{background:var(--glass)}
-.toast{backdrop-filter:blur(18px);box-shadow:0 10px 32px #0003}
-@media(max-width:760px){.sidebar{background:var(--glass);backdrop-filter:blur(28px) saturate(160%);-webkit-backdrop-filter:blur(28px) saturate(160%)}.suggestion{min-height:76px}.chat-page{padding-bottom:18px}}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
-
-
-/* Usability refinement */
+/* Focused, consistent interface refinements */
 :root{--content-width:900px}
-body{letter-spacing:-.01em}
-.sidebar{padding:20px 15px}
-.brand{padding-bottom:25px}
-.brand-name{letter-spacing:-.8px}
-.topbar{padding-inline:clamp(16px,3vw,34px)}
-.page-title{letter-spacing:-.25px}
-.chat-page{width:min(100%,var(--content-width));padding-top:clamp(28px,6vh,64px)}
-.welcome{margin-top:auto;margin-bottom:clamp(24px,5vh,42px)}
-.welcome h1{line-height:1.13}
-.welcome p{max-width:490px;margin-inline:auto}
-.suggestions{max-width:650px;margin-inline:auto}
-.suggestion{padding:16px;min-height:96px}
-.composer-wrap{position:sticky;bottom:0;padding:14px 0 4px;background:linear-gradient(to bottom,transparent,var(--bg) 18%)}
-.composer{padding:14px 15px 11px;border-radius:20px}
-.composer textarea{min-height:34px}
-.subpage{width:min(100%,780px)}
-.subpage h1{letter-spacing:-1.4px}
-.settings-section,.terms-card{border-radius:17px}
-button{ -webkit-tap-highlight-color:transparent}
-.history-item{min-height:38px}
-.empty-history{padding:10px;color:var(--muted);font-size:11px;line-height:1.5}
-.sidebar-backdrop{display:none}
+.sidebar{background:var(--panel)}
+.brand .logo,.welcome-mark{box-shadow:none}
+.topbar{background:var(--bg)}
+.chat-page{width:min(100%,var(--content-width));padding-top:clamp(24px,5vh,48px)}
+.composer-wrap{width:100%;max-width:790px;margin:0 auto;padding-top:12px}
+.composer{border-radius:16px;box-shadow:0 4px 18px #00000008}
+.suggestion{min-height:84px}
+.suggestion:hover{transform:none}
+.settings-section,.terms-card{box-shadow:none}
+.footer{background:var(--bg)}
 @media(max-width:760px){
- .sidebar{width:min(84vw,300px);padding:18px 14px}
- .sidebar-backdrop{display:block;position:fixed;inset:0;background:#0007;z-index:9;opacity:0;pointer-events:none;transition:opacity .2s}
- .sidebar-backdrop.show{opacity:1;pointer-events:auto}
- .chat-page{padding:24px 14px 14px}
- .welcome{margin-top:30px}
- .welcome h1{font-size:30px}
- .suggestions{grid-template-columns:1fr;gap:9px}
- .suggestion{min-height:0;padding:13px 14px}
- .composer-wrap{padding-top:12px}
- .tool-btn{padding:8px 7px}
- .disclaimer{font-size:9px}
- .setting-row{gap:12px}
- .subpage{padding:28px 16px 48px}
- .footer{font-size:9px;flex-wrap:wrap}
+  .chat-page{padding:22px 14px 14px}
+  .welcome{margin-top:24px}
+  .suggestion{min-height:0}
+  .composer-wrap{padding-top:10px}
 }
-
-
-/* Premium interface pass — hierarchy, rhythm, responsive polish */
-:root{--accent:#6657e8;--accent-soft:#f2f0ff;--line:#e8e8ed}
-[data-theme="dark"]{--accent:#a99cff;--accent-soft:#1c1830;--line:#262626}
-body{background:var(--bg)}
-.app{background:var(--bg)}
-.sidebar{width:276px;flex-basis:276px;padding:22px 16px}
-.brand{padding:4px 8px 28px}
-.brand .logo{width:38px;height:38px;border-radius:13px;font-size:20px}
-.brand-name{font-size:19px;letter-spacing:-1px}
-.brand-tag{font-size:9px;letter-spacing:1.8px}
-.new-chat{min-height:46px;border-radius:13px;padding-inline:14px}
-.nav-label{padding-top:28px;font-size:9px;letter-spacing:1.6px}
-.nav-item{min-height:42px;border-radius:11px;font-size:13px}
-.nav-item .ico{font-size:17px}
-.profile{padding:13px 8px 4px}
-.avatar{width:34px;height:34px}
-.model-switch{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:10px;padding:8px 11px;font-size:13px;font-weight:700;cursor:pointer}.model-indicator{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}.model-chevron{color:var(--muted);font-size:11px}.page-context{font-size:11px;color:var(--muted);margin-left:3px}.think-btn[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);border-color:color-mix(in srgb,var(--accent) 30%,var(--line))}.topbar{height:68px;padding-inline:clamp(20px,4vw,42px)}
-.page-title{font-size:14px;letter-spacing:-.3px}
-.top-note{padding:7px 11px;border:1px solid var(--line);border-radius:99px;font-size:10px;letter-spacing:.1px}
-.chat-page{width:min(100%,920px);padding-inline:clamp(18px,4vw,42px)}
-.welcome{max-width:680px;margin-bottom:clamp(28px,6vh,54px)}
-.welcome-mark{width:58px;height:58px;border-radius:19px;font-size:28px;margin-bottom:24px}
-.welcome h1{font-size:clamp(32px,4.6vw,46px);letter-spacing:-2.2px;line-height:1.08;margin-bottom:14px}
-.welcome p{font-size:14px;line-height:1.8;max-width:500px}
-.suggestions{max-width:690px;gap:12px;margin-top:32px}
-.suggestion{min-height:108px;padding:18px 19px;border-radius:17px;font-size:12px;color:var(--muted);line-height:1.65}
-.suggestion strong{font-size:13px;color:var(--text);margin-bottom:6px}
-.composer-wrap{max-width:790px;margin-inline:auto;width:100%}
-.composer{padding:16px 17px 12px;border-radius:21px}
-.composer textarea{font-size:14px;min-height:38px;padding:5px 4px 12px}
-.composer-tools{padding-top:5px}
-.tool-btn{font-size:11px;padding:8px 10px}
-.send-btn{width:37px;height:37px;border-radius:12px}
-.disclaimer{font-size:10px;letter-spacing:.05px;margin-top:12px}
-.messages{gap:26px}
-.message{gap:14px}
-.message-avatar{width:32px;height:32px;flex-basis:32px;border-radius:11px}
-.bubble{font-size:14px;line-height:1.8}
-.subpage{padding-top:50px}
-.subpage h1{font-size:34px}
-.subpage .lead{font-size:14px;margin-bottom:34px}
-.settings-section,.terms-card{padding:22px 23px;border-radius:18px}
-.settings-section h2,.terms-card h2{font-size:15px;letter-spacing:-.2px}
-.setting-row{padding:16px 0}
-.setting-title{font-size:13px}
-.select,.text-field{min-height:38px}
-.footer{padding:17px clamp(18px,4vw,42px);font-size:10px}
-@media(max-width:760px){
- .sidebar{width:min(86vw,310px);flex-basis:auto}
- .topbar{height:60px;padding-inline:15px}
- .top-note{display:none}
- .chat-page{padding:24px 15px 15px}
- .welcome{margin-top:38px;margin-bottom:28px}
- .welcome-mark{width:52px;height:52px;margin-bottom:21px}
- .welcome h1{font-size:32px;letter-spacing:-1.6px}
- .welcome p{font-size:13px;padding-inline:8px}
- .suggestions{margin-top:25px;gap:9px}
- .suggestion{min-height:0;padding:14px 15px;border-radius:14px}
- .composer{padding:13px 12px 10px;border-radius:17px}
- .tool-btn{font-size:10px;padding:8px 7px}
- .send-btn{width:35px;height:35px}
- .subpage{padding:32px 16px 48px}
- .subpage h1{font-size:29px}
- .settings-section,.terms-card{padding:18px;border-radius:15px}
- .footer{padding:13px 15px}
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
 }
-@media(min-width:761px) and (max-height:760px){.chat-page{padding-top:24px}.welcome{margin-bottom:22px}.welcome-mark{margin-bottom:14px}.suggestions{margin-top:20px}.suggestion{min-height:88px}}
 
 </style>
 </head>
@@ -177,18 +38,18 @@ body{background:var(--bg)}
 <div class="app">
 <aside class="sidebar" id="sidebar">
   <div class="brand"><div class="logo">O</div><div><div class="brand-name">ozlind</div><div class="brand-tag">AI workspace</div></div></div>
-  <button class="new-chat" id="newChat"><span class="plus">＋</span> New chat <span style="margin-left:auto;color:var(--muted);font-size:10px">⌘ K</span></button>
+  <button class="new-chat" id="newChat"><span class="plus">+</span> New chat</button>
   <div class="nav-label">Workspace</div>
   <nav class="nav-list" aria-label="Main navigation">
-    <button class="nav-item active" data-page="chat"><span class="ico">◫</span> Chat</button>
-    <button class="nav-item" data-page="settings"><span class="ico">⚙</span> Settings</button>
-    <button class="nav-item" data-page="terms"><span class="ico">▤</span> Terms &amp; conditions</button>
+    <button class="nav-item active" data-page="chat"><span class="ico" aria-hidden="true">▤</span> Chat</button>
+    <button class="nav-item" data-page="settings"><span class="ico" aria-hidden="true">⚙</span> Settings</button>
+    <button class="nav-item" data-page="terms"><span class="ico" aria-hidden="true">≡</span> Terms &amp; conditions</button>
   </nav>
-  <div class="nav-label">Recent chats</div><div class="history" id="history"><div style="padding:8px 10px;color:var(--muted);font-size:11px">Your conversations will appear here.</div></div>
-  <div class="sidebar-bottom"><button class="nav-item" data-page="settings"><span class="ico">☻</span> Account &amp; preferences</button><div class="profile"><div class="avatar">O</div><div><div class="profile-name">Ozlind user</div><div class="profile-sub">Personal workspace</div></div></div></div>
+  <div class="nav-label">Recent chats</div><div class="history" id="history"><div style="padding:8px 10px;color:var(--muted);font-size:11px">No conversations yet.</div></div>
+  <div class="sidebar-bottom"><button class="nav-item" data-page="settings"><span class="ico">⚙</span> Settings</button></div>
 </aside>
 <main class="main">
-<header class="topbar"><div class="top-left"><button class="icon-btn mobile-menu" id="menuBtn" aria-label="Open menu">☰</button><button class="model-switch" id="modelSwitch" type="button" aria-label="Ozlind model"><span class="model-indicator"></span><span>Ozlind</span><span class="model-chevron">⌄</span></button><span class="page-context" id="pageTitle">New chat</span></div><div class="top-actions"><span class="top-note">A clearer way to think and create</span><button class="icon-btn" id="shareBtn" aria-label="Share conversation" title="Share conversation">↗</button><button class="icon-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle theme">◐</button></div></header>
+<header class="topbar"><div class="top-left"><button class="icon-btn mobile-menu" id="menuBtn" aria-label="Open menu">☰</button><span class="page-title" id="pageTitle">New chat</span></div><div class="top-actions"><button class="icon-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle theme">◐</button></div></header>
 <div class="content" id="content"></div>
 <footer class="footer"><span>© 2026 Ozlind. All rights reserved.</span><span><a href="#" data-link="terms">Terms &amp; conditions</a> · <a href="#" data-link="settings">Settings</a></span></footer>
 </main>
@@ -201,15 +62,15 @@ const toast=(msg)=>{const t=$('#toast');t.textContent=msg;t.classList.add('show'
 function setPage(next){page=next;$('#pageTitle').textContent=next==='chat'?(activeId?(conversations.find(c=>c.id===activeId)?.title.slice(0,36)||'Chat'):'New chat'):next==='settings'?'Settings':'Terms & conditions';document.querySelectorAll('.nav-item[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===next));sidebar.classList.remove('open');$('#sidebarBackdrop').classList.remove('show');render()}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function render(){if(page==='chat')renderChat();else if(page==='settings')renderSettings();else renderTerms()}
-function renderChat(){content.innerHTML='<section class="chat-page"><div class="messages" id="messages"></div><div class="composer-wrap"><div class="composer"><textarea id="prompt" rows="1" placeholder="Ask anything..." aria-label="Message Ozlind"></textarea><div class="composer-tools"><div class="tool-left"><button class="tool-btn" id="attachBtn" title="File uploads are not connected yet" aria-label="Attach a file">＋ Attach</button><button class="tool-btn" id="webBtn" title="Web search is not connected yet" aria-label="Web search">◎ Web search</button><button class="tool-btn think-btn" id="thinkBtn" type="button" aria-pressed="false">✧ Think</button></div><div class="tool-right"><span style="font-size:10px;color:var(--muted)" id="sendHint">Enter to send</span><button class="send-btn" id="sendBtn" aria-label="Send message" disabled>↑</button></div></div></div><p class="disclaimer">AI responses are not connected yet. Avoid entering sensitive information.</p></div></section>';
-const area=$('#messages');if(!messages.length){const showSuggestions=localStorage.getItem('ozlind-suggestions')!=='0';area.innerHTML='<div class="welcome"><div class="welcome-mark">O</div><h1>What can I help you with?</h1><p>A thoughtful workspace for questions, ideas and the work ahead.</p>'+(showSuggestions?'<div class="suggestions"><button class="suggestion" data-prompt="Explain a complex topic in simple terms"><strong>✳ Learn something</strong>Make a difficult topic easier to understand.</button><button class="suggestion" data-prompt="Help me draft and improve a piece of writing"><strong>✎ Write with clarity</strong>Draft, edit or explore a new idea.</button><button class="suggestion" data-prompt="Help me plan a project step by step"><strong>⌁ Plan a project</strong>Turn a goal into practical next steps.</button><button class="suggestion" data-prompt="Review this code and suggest improvements"><strong>⌘ Work with code</strong>Review, understand and improve code.</button></div>':'')+'</div>'}else{messages.forEach(m=>{const el=document.createElement('div');el.className='message '+m.role;el.innerHTML='<div class="message-avatar">'+(m.role==='user'?'U':'O')+'</div><div class="bubble">'+escapeHtml(m.text)+'</div>';area.appendChild(el)});area.scrollTop=area.scrollHeight}
-const input=$('#prompt'),send=$('#sendBtn'),enterToSend=localStorage.getItem('ozlind-enter-send')!=='0';$('#sendHint').textContent=enterToSend?'Enter to send':'Ctrl + Enter to send';input.addEventListener('input',()=>{send.disabled=!input.value.trim();input.style.height='auto';input.style.height=Math.min(input.scrollHeight,180)+'px'});input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&(enterToSend||e.ctrlKey||e.metaKey)){e.preventDefault();sendMessage()}});send.addEventListener('click',sendMessage);document.querySelectorAll('[data-prompt]').forEach(b=>b.addEventListener('click',()=>{input.value=b.dataset.prompt;input.dispatchEvent(new Event('input'));input.focus()}));$('#attachBtn').addEventListener('click',()=>toast('File uploads are not connected yet.'));$('#webBtn').addEventListener('click',()=>toast('Live web search is not connected yet.'))}
-function sendMessage(){const input=$('#prompt');if(!input||!input.value.trim())return;const text=input.value.trim();messages.push({role:'user',text});if(!activeId){activeId=Date.now();conversations.unshift({id:activeId,title:text.slice(0,42),messages:messages.slice()})}else{const current=conversations.find(c=>c.id===activeId);if(current)current.messages=messages.slice()}renderHistory();$('#pageTitle').textContent=text.slice(0,36);renderChat();toast('Message saved in this session. AI replies are not connected yet.')}
-function renderHistory(){const h=$('#history');h.innerHTML='';if(!conversations.length){h.innerHTML='<div class="empty-history">Your recent chats will show up here.</div>';return}conversations.slice(0,12).forEach(c=>{const b=document.createElement('button');b.className='history-item';b.textContent='◦ '+c.title;b.title=c.title;b.setAttribute('aria-label','Open chat: '+c.title);b.addEventListener('click',()=>{activeId=c.id;messages=c.messages.slice();setPage('chat');$('#pageTitle').textContent=c.title.slice(0,36)});h.appendChild(b)})}
+function renderChat(){content.innerHTML='<section class="chat-page"><div class="messages" id="messages"></div><div class="composer-wrap"><div class="composer"><textarea id="prompt" rows="1" placeholder="Ask anything..." aria-label="Message Ozlind"></textarea><div class="composer-tools"><div class="tool-left"></div><div class="tool-right"><span style="font-size:10px;color:var(--muted)" id="sendHint">Enter to send</span><button class="send-btn" id="sendBtn" aria-label="Send message" disabled>↑</button></div></div></div><p class="disclaimer">AI responses are not connected yet. Messages are kept only in this browser session.</p></div></section>';
+const area=$('#messages');if(!messages.length){const showSuggestions=localStorage.getItem('ozlind-suggestions')!=='0';area.innerHTML='<div class="welcome"><div class="welcome-mark">O</div><h1>What can I help you with?</h1><p>Ask a question or describe what you want to work on.</p>'+(showSuggestions?'<div class="suggestions"><button class="suggestion" data-prompt="Explain a complex topic in simple terms"><strong>Learn something</strong>Make a difficult topic easier to understand.</button><button class="suggestion" data-prompt="Help me draft and improve a piece of writing"><strong>Write with clarity</strong>Draft, edit or explore a new idea.</button><button class="suggestion" data-prompt="Help me plan a project step by step"><strong>Plan a project</strong>Turn a goal into practical next steps.</button><button class="suggestion" data-prompt="Review this code and suggest improvements"><strong>Work with code</strong>Review, understand and improve code.</button></div>':'')+'</div>'}else{messages.forEach(m=>{const el=document.createElement('div');el.className='message '+m.role;el.innerHTML='<div class="message-avatar">'+(m.role==='user'?'U':'O')+'</div><div class="bubble">'+escapeHtml(m.text)+'</div>';area.appendChild(el)});area.scrollTop=area.scrollHeight}
+const input=$('#prompt'),send=$('#sendBtn'),enterToSend=localStorage.getItem('ozlind-enter-send')!=='0';$('#sendHint').textContent=enterToSend?'Enter to send':'Ctrl + Enter to send';input.addEventListener('input',()=>{send.disabled=!input.value.trim();input.style.height='auto';input.style.height=Math.min(input.scrollHeight,180)+'px'});input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&(enterToSend||e.ctrlKey||e.metaKey)){e.preventDefault();sendMessage()}});send.addEventListener('click',sendMessage);document.querySelectorAll('[data-prompt]').forEach(b=>b.addEventListener('click',()=>{input.value=b.dataset.prompt;input.dispatchEvent(new Event('input'));input.focus()}));}
+function sendMessage(){const input=$('#prompt');if(!input||!input.value.trim())return;const text=input.value.trim();messages.push({role:'user',text});if(!activeId){activeId=Date.now();conversations.unshift({id:activeId,title:text.slice(0,42),messages:messages.slice()})}else{const current=conversations.find(c=>c.id===activeId);if(current)current.messages=messages.slice()}renderHistory();$('#pageTitle').textContent=text.slice(0,36);renderChat()}
+function renderHistory(){const h=$('#history');h.innerHTML='';if(!conversations.length){h.innerHTML='<div class="empty-history">Your recent chats will show up here.</div>';return}conversations.slice(0,12).forEach(c=>{const b=document.createElement('button');b.className='history-item';b.textContent=c.title;b.title=c.title;b.setAttribute('aria-label','Open chat: '+c.title);b.addEventListener('click',()=>{activeId=c.id;messages=c.messages.slice();setPage('chat');$('#pageTitle').textContent=c.title.slice(0,36)});h.appendChild(b)})}
 function renderSettings(){content.innerHTML='<section class="subpage"><h1>Settings</h1><p class="lead">Make Ozlind feel right for the way you work.</p><div class="settings-section"><h2>Appearance</h2><p class="section-desc">Choose how Ozlind looks on this device.</p><div class="setting-row"><div><div class="setting-title">Theme</div><div class="setting-help">Switch between pure white and pure black backgrounds.</div></div><select class="select" id="themeSelect"><option value="light">Light</option><option value="dark">Dark</option></select></div></div><div class="settings-section"><h2>Chat preferences</h2><p class="section-desc">Control your conversation experience.</p><div class="setting-row"><div><div class="setting-title">Enter to send</div><div class="setting-help">Press Enter to send; Shift + Enter for a new line.</div></div><input type="checkbox" class="toggle" id="enterToggle" checked></div><div class="setting-row"><div><div class="setting-title">Show prompt suggestions</div><div class="setting-help">Display helpful starting points on a new chat.</div></div><input type="checkbox" class="toggle" id="suggestToggle" checked></div></div><div class="settings-section"><h2>Privacy &amp; data</h2><p class="section-desc">This early interface keeps chat state in this browser session only. Account sync and server-side data controls are not connected.</p><div class="setting-row"><div><div class="setting-title">Clear current conversation</div><div class="setting-help">Remove messages from the open chat.</div></div><button class="secondary-btn" id="clearChat">Clear chat</button></div></div><div style="display:flex;justify-content:flex-end;margin-top:20px"><button class="primary-btn" id="saveSettings">Save preferences</button></div></section>';
 $('#themeSelect').value=document.documentElement.dataset.theme||'light';$('#enterToggle').checked=localStorage.getItem('ozlind-enter-send')!=='0';$('#suggestToggle').checked=localStorage.getItem('ozlind-suggestions')!=='0';$('#themeSelect').addEventListener('change',e=>applyTheme(e.target.value));$('#saveSettings').addEventListener('click',()=>{localStorage.setItem('ozlind-enter-send',$('#enterToggle').checked?'1':'0');localStorage.setItem('ozlind-suggestions',$('#suggestToggle').checked?'1':'0');toast('Preferences saved on this device.')});$('#clearChat').addEventListener('click',()=>{messages=[];activeId=0;setPage('chat');toast('Current conversation cleared.')})}
 function renderTerms(){content.innerHTML='<section class="subpage"><h1>Terms &amp; conditions</h1><p class="lead">Please read these terms before using the Ozlind interface.</p><div class="notice">This is a preliminary product terms page for the early Ozlind interface, not a substitute for legally reviewed terms. It must be reviewed and completed by the service operator before public launch.</div><article class="terms-card"><h2>1. Acceptance of terms</h2><p>By accessing or using Ozlind, you agree to comply with the terms and policies that apply to the service. If you do not agree, please do not use the service.</p></article><article class="terms-card"><h2>2. The service</h2><p>Ozlind is being developed as an AI workspace. Features may change, be added, or be temporarily unavailable as the platform evolves. The interface currently shown is an early frontend build; AI responses, accounts, uploads and cloud synchronisation are not yet connected.</p></article><article class="terms-card"><h2>3. Acceptable use</h2><p>You agree not to misuse the service, interfere with its operation, attempt unauthorised access, or use it in ways that violate applicable laws or the rights of others.</p></article><article class="terms-card"><h2>4. AI-generated content</h2><p>AI-generated information may be inaccurate, incomplete or outdated. You are responsible for reviewing outputs and verifying important information before relying on it. Do not treat generated content as professional legal, medical, financial or other regulated advice.</p></article><article class="terms-card"><h2>5. Privacy and data</h2><p>Data handling, retention, security, analytics and account controls must be described in a separate Privacy Policy before public launch. Do not submit sensitive personal information to an early or unverified build.</p></article><article class="terms-card"><h2>6. Availability and changes</h2><p>The service is provided during development on an evolving basis. We may modify, suspend or discontinue features. No uptime or uninterrupted availability is promised by this preliminary page.</p></article><article class="terms-card"><h2>7. Contact and governing law</h2><p>Official operator details, a support contact, governing law and dispute-resolution terms must be added and legally reviewed before these terms are published as binding terms.</p></article><p class="terms-date">Draft interface text · Last updated: 27 November 2026</p></section>'}
 function applyTheme(theme){document.documentElement.dataset.theme=theme;document.querySelector('meta[name="theme-color"]').content=theme==='dark'?'#000000':'#ffffff';localStorage.setItem('ozlind-theme',theme);const s=$('#themeSelect');if(s)s.value=theme}
-$('#modelSwitch').addEventListener('click',()=>toast('Ozlind model settings — connect model routing to enable selection.'));$('#shareBtn').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(location.href);toast('Page link copied.')}catch{toast('Use your browser share option to share Ozlind.')}});$('#thinkBtn').addEventListener('click',e=>{const b=e.currentTarget;const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(on));b.textContent=on?'✧ Think on':'✧ Think';toast(on?'Thinking mode selected.':'Standard mode selected.')});$('#newChat').addEventListener('click',()=>{messages=[];activeId=0;setPage('chat')});document.querySelectorAll('.nav-item[data-page]').forEach(b=>b.addEventListener('click',()=>setPage(b.dataset.page)));document.querySelectorAll('[data-link]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();setPage(a.dataset.link)}));$('#themeBtn').addEventListener('click',()=>applyTheme((document.documentElement.dataset.theme||'light')==='light'?'dark':'light'));$('#menuBtn').addEventListener('click',()=>{sidebar.classList.toggle('open');$('#sidebarBackdrop').classList.toggle('show',sidebar.classList.contains('open'))});$('#sidebarBackdrop').addEventListener('click',()=>{sidebar.classList.remove('open');$('#sidebarBackdrop').classList.remove('show')});document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('#newChat').click()}if(e.key==='Escape')sidebar.classList.remove('open')});applyTheme(localStorage.getItem('ozlind-theme')||'light');renderHistory();render();
+$('#newChat').addEventListener('click',()=>{messages=[];activeId=0;setPage('chat')});document.querySelectorAll('.nav-item[data-page]').forEach(b=>b.addEventListener('click',()=>setPage(b.dataset.page)));document.querySelectorAll('[data-link]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();setPage(a.dataset.link)}));$('#themeBtn').addEventListener('click',()=>applyTheme((document.documentElement.dataset.theme||'light')==='light'?'dark':'light'));$('#menuBtn').addEventListener('click',()=>{sidebar.classList.toggle('open');$('#sidebarBackdrop').classList.toggle('show',sidebar.classList.contains('open'))});$('#sidebarBackdrop').addEventListener('click',()=>{sidebar.classList.remove('open');$('#sidebarBackdrop').classList.remove('show')});document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('#newChat').click()}if(e.key==='Escape')sidebar.classList.remove('open')});applyTheme(localStorage.getItem('ozlind-theme')||'light');renderHistory();render();
 </script>
 </body></html>
