@@ -116,7 +116,7 @@ export function LandingPage() {
       </section>
 
       <section className="site-approach" id="approach">
-        <div className="site-approach-mark"><span className="site-brand-mark"><i /></span></div>
+        <div className="site-approach-mark"><OzlindMark className="site-brand-mark-svg" /></div>
         <div className="site-approach-copy">
           <p className="site-overline">THE OZLIND STANDARD</p>
           <h2>Less theatre.<br /><span>More intelligence.</span></h2>
