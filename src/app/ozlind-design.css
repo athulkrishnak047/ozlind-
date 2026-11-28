@@ -961,3 +961,40 @@ button,a,input,textarea,select { -webkit-tap-highlight-color: transparent; }
 
 .composer textarea { overflow-y:auto; }
 .message-row.user .message-avatar { display:none; }
+
+
+/* Small-screen resilience and long-content safety. */
+.message-row.user .message-body { min-width:0; overflow-wrap:anywhere; }
+.rich-text,.message-sources { min-width:0; overflow-wrap:anywhere; }
+.rich-code-block pre { max-width:100%; overflow-x:auto; overscroll-behavior-x:contain; }
+.attachment-chip { min-width:0; }
+.attachment-chip-name { min-width:0; }
+.message-actions button,.conversation-tools button,.attachment-chip button {
+  min-height:32px;
+  touch-action:manipulation;
+}
+@media (max-width:760px) {
+  .conversation-heading { align-items:flex-start; flex-wrap:wrap; row-gap:8px; }
+  .conversation-tools { max-width:100%; flex-wrap:wrap; }
+  .message-row.user .message-body { max-width:min(90%,680px); }
+  .composer-toolbar { flex-wrap:wrap; }
+  .composer-options { max-width:100%; flex-wrap:wrap; }
+  .composer-hint { display:none; }
+}
+@media (max-width:360px) {
+  .topbar { padding-inline:9px; }
+  .breadcrumbs { font-size:10px; }
+  .conversation { width:calc(100% - 22px); }
+  .conversation-tools button { padding-inline:6px; font-size:9px; }
+  .composer-area { width:calc(100% - 12px); }
+  .composer { padding-inline:9px; }
+  .composer-options { gap:3px; }
+  .model-select { max-width:76px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .composer,.composer button,.message-actions button,.conversation-tools button {
+    scroll-behavior:auto !important;
+    transition:none !important;
+    animation:none !important;
+  }
+}
