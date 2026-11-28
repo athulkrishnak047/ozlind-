@@ -235,7 +235,7 @@ export function ChatWorkspace() {
     cancelVoiceRecording();
     abortRef.current?.abort();
     abortRef.current = null;
-    const conversation: Conversation = { id: newId(), title: "New chat", updatedAt: Date.now(), messages: [] };
+    const conversation: Conversation = { id: newId(), title: "New chat", updatedAt: timestampNow(), messages: [] };
     setConversations((current) => [conversation, ...current].slice(0, MAX_SAVED_CONVERSATIONS));
     setActiveConversationId(conversation.id);
     setSidebarOpen(false);
@@ -251,7 +251,7 @@ export function ChatWorkspace() {
     if (!conversation) return;
     if (!window.confirm(`Delete “${conversation.title}”? This cannot be undone.`)) return;
     const remaining = conversations.filter((item) => item.id !== conversationId);
-    const nextActive = remaining[0] ?? { id: newId(), title: "New chat", updatedAt: Date.now(), messages: [] };
+    const nextActive = remaining[0] ?? { id: newId(), title: "New chat", updatedAt: timestampNow(), messages: [] };
     setConversations(remaining.length ? remaining : [nextActive]);
     if (conversationId === activeConversationId) {
       setActiveConversationId(nextActive.id);
