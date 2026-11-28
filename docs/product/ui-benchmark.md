@@ -63,3 +63,20 @@
 ## Quality gates
 
 Run lint, strict typecheck, tests, and a production build. Verify the live mobile and desktop workspaces in both themes, check the sidebar drawer, command palette, quick actions, attachments, research toggle, voice recording, stop generation, and keyboard focus. Do not claim a feature is live until its production deployment is ready and smoke-tested.
+
+
+## Hybrid design-system implementation update — 2026-11-28
+
+The approved product blueprint is documented in [ozlind-product-blueprint.md](./ozlind-product-blueprint.md). A dedicated final-layer stylesheet, [ozlind-design.css](../../src/app/ozlind-design.css), is loaded after the existing stylesheet to establish a coherent visual authority while avoiding a risky rewrite of the current workspace component and its working interactions.
+
+This pass refines:
+- Monochrome canvas and semantic surface tokens for both themes.
+- Sidebar hierarchy, history rows, profile area, top bar, and command launcher.
+- Empty state, suggestion cards, conversation reading width, message actions, citations, and composer.
+- Command palette surface and settings surfaces.
+- Landing page surfaces and typography to align with the product identity.
+- Tablet/mobile drawer, composer wrapping, settings navigation, and reduced-motion overrides.
+
+The Next.js App Router remains the application entry point. No AI API route, provider adapter, storage contract, or conversation state logic was intentionally changed by this UI pass.
+
+**Verification status:** GitHub Actions quality workflow is triggered by pushes to main. Its result must be checked before claiming lint, typecheck, tests, or production build passed. Visual QA across real browsers, themes, and device widths remains a separate release gate; the CSS commit itself is not proof of visual correctness or deployment.
