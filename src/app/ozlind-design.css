@@ -748,3 +748,47 @@ button,a,input,textarea,select { -webkit-tap-highlight-color: transparent; }
   .settings-danger-button { margin-left: auto; }
   .settings-save-button { width: 100%; }
 }
+
+
+/* Final visual cleanup: keep boundaries only where they improve interaction. */
+.sidebar { border-right: 0; }
+.topbar { border-bottom: 0; }
+.brand-symbol-svg,.site-brand-mark-svg { display: block; width: 32px; height: 32px; flex: 0 0 32px; color: var(--oz-accent); }
+.welcome-brand-mark { width: 34px; height: 34px; color: var(--oz-accent); }
+.message-brand-mark { width: 19px; height: 19px; color: var(--oz-accent); }
+.settings-brand svg,.settings-footer svg { width: 28px; height: 28px; color: var(--oz-accent); }
+.welcome-mark { border: 0; border-radius: 50%; background: var(--oz-accent-soft); }
+.suggestion-card { border: 0; background: var(--oz-raised); }
+.suggestion-card:hover { background: var(--oz-soft); }
+.suggestion-icon,.suggestion-icon-2,.suggestion-icon-3,.suggestion-icon-4 { border: 0; border-radius: 50%; }
+.conversation-heading { border-bottom: 0; }
+.message-row.user .message-body { border: 0; }
+.message-sources { border: 0; background: var(--oz-raised); }
+.sidebar-note,.privacy-pill { display: none !important; }
+.profile-row { border: 0; }
+.profile-row:hover { background: var(--oz-raised); }
+.history-search { border: 0; background: var(--oz-raised); border-radius: 999px; }
+.new-chat-button { border: 0; border-radius: 999px; background: var(--oz-accent-soft); }
+.workspace-command-trigger,.theme-toggle { border: 0; border-radius: 999px; background: var(--oz-raised); }
+.workspace-command-trigger kbd { border: 0; background: var(--oz-soft); border-radius: 999px; }
+.attach-button,.voice-button,.model-select,.web-search-button { border: 0 !important; border-radius: 999px !important; }
+.composer { border: 1px solid var(--oz-line-strong); border-radius: 24px; }
+.composer:focus-within { border-color: var(--oz-accent); }
+.settings-rail { border-right: 0; }
+.settings-header,.settings-footer { border-color: transparent; }
+.settings-card { border: 0; background: var(--oz-raised); }
+.settings-profile-fields input { border: 0; border-radius: 999px; }
+.settings-note { border: 0; border-radius: 14px; }
+.site-nav,.site-footer,.site-approach { border-color: transparent; }
+.site-product-preview,.site-preview-window,.site-capability-card,.site-approach-aside { border: 0; }
+.site-preview-bar,.site-preview-footer { border-color: transparent; }
+.site-preview-prompt { border: 0; border-radius: 999px; }
+.site-preview-tools span { border: 0; border-radius: 999px; background: var(--oz-raised); }
+.site-capability-card { background: var(--oz-raised); border-radius: 18px; }
+.site-approach-aside { border-left: 0; padding-left: 0; }
+.site-approach-mark .site-brand-mark-svg { width: 46px; height: 46px; }
+.site-footer .site-brand-mark-svg { width: 28px; height: 28px; }
+@media (max-width: 640px) {
+  .brand-symbol-svg { width: 29px; height: 29px; flex-basis: 29px; }
+  .settings-card { border-radius: 16px; }
+}
