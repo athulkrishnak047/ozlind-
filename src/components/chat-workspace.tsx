@@ -214,7 +214,20 @@ export function ChatWorkspace() {
   }, []);
 
 
+  function cancelVoiceRecording() {
+    const recorder = recorderRef.current;
+    if (!recorder) return;
+    recorder.onstop = null;
+    recorder.onerror = null;
+    recorder.stream.getTracks().forEach((track) => track.stop());
+    if (recorder.state !== "inactive") recorder.stop();
+    recorderRef.current = null;
+    recordingChunksRef.current = [];
+    setIsRecording(false);
+  }
+
   function startNewChat() {
+    cancelVoiceRecording();
     abortRef.current?.abort();
     abortRef.current = null;
     const conversation: Conversation = { id: newId(), title: "New chat", updatedAt: Date.now(), messages: [] };
@@ -245,6 +258,7 @@ export function ChatWorkspace() {
 
   function openConversation(conversationId: string) {
     if (isBusy || conversationId === activeConversationId) return;
+    cancelVoiceRecording();
     abortRef.current?.abort();
     abortRef.current = null;
     setActiveConversationId(conversationId);
@@ -279,6 +293,8 @@ export function ChatWorkspace() {
       };
       recorder.onerror = () => {
         stream.getTracks().forEach((track) => track.stop());
+        recorderRef.current = null;
+        recordingChunksRef.current = [];
         setIsRecording(false);
         setErrorMessage("The microphone recording failed. Please try again.");
       };
@@ -377,9 +393,19 @@ export function ChatWorkspace() {
   }
 
   function handleAttachmentChange(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0] ?? null;
+    const selectedFile = event.target.files?.[0] ?? null;
     event.target.value = "";
-    if (!file) return;
+    if (!selectedFile) return;
+    const extension = selectedFile.name.split(".").pop()?.toLowerCase();
+    const inferredType = extension === "pdf" ? "application/pdf"
+      : extension === "png" ? "image/png"
+      : extension === "jpg" || extension === "jpeg" ? "image/jpeg"
+      : extension === "webp" ? "image/webp"
+      : extension === "mp4" ? "video/mp4"
+      : extension === "webm" ? "video/webm" : "";
+    const file = selectedFile.type ? selectedFile : inferredType
+      ? new File([selectedFile], selectedFile.name, { type: inferredType })
+      : selectedFile;
     if (!ACCEPTED_ATTACHMENT_TYPES.includes(file.type)) {
       setErrorMessage("Attach a PDF, PNG, JPEG, WebP, MP4, or WebM file.");
       return;
